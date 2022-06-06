@@ -1,0 +1,37 @@
+{
+  "language":{
+    "title": "Choisissez la langue"
+  },
+  "address": {
+    "title": "Votre adresse",
+    "next": "Suivant",
+    "pass": "Passer"
+  },
+  "login":{
+    "title":"Connexion",
+    "subTitle":"Connectez-vous pour continuer",
+    "button": "Connexion",
+    "infos": "Pas encore de compte ?"
+  },
+  "register":{
+    "title":"Inscription",
+    "subTitle":"Inscrivez-vous pour continuer",
+    "button": "Inscription",
+    "infos": "Déjà un compte ?",
+    "form":{
+      "firstname": "Prénom",
+      "lastname": "Nom",
+      "sex": "Sexe",
+      "male": "Homme",
+      "female": "Femme",
+      "email": "Email",
+      "password": "Mot de passe",
+      "repeat": "Répétez votre mot de passe"    }
+  },
+  "profile": {
+    "profile": "Afficher mon profil",
+    "payment": "Informations de paiement",
+    "reset": "Réinitialiser mon mot de passe",
+    "logout": "Déconnexion"
+  }
+}

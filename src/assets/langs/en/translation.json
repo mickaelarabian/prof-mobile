@@ -1,0 +1,37 @@
+{
+  "language":{
+    "title": "Choose the language"
+  },
+  "address": {
+    "title": "Your address",
+    "next": "Next",
+    "pass": "Pass"
+  },
+  "login":{
+    "title":"Login",
+    "subTitle":"Please sign in to continue",
+    "button": "Login",
+    "infos": "Don't have an account ?"
+  },
+  "register":{
+    "title":"Create Account",
+    "subTitle":"Please sign up to continue",
+    "button": "Sign up",
+    "infos": "Already have an account ?",
+    "form":{
+      "firstname": "Firstname",
+      "lastname": "Lastname",
+      "sex": "Sex",
+      "male": "Male",
+      "female": "Female",
+      "email": "Email",
+      "password": "Password",
+      "repeat": "Repeat password"    }
+  },
+  "profile": {
+    "profile": "View my profile",
+    "payment": "Payment information",
+    "reset": "Reset my password",
+    "logout": "Logout"
+  }
+}
