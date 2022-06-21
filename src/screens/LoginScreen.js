@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
 import { useTranslation } from 'react-i18next';
 import { LoginForm } from '../components/LoginForm';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
@@ -10,7 +10,7 @@ export const LoginScreen = ({ navigation }) => {
   const { t } = useTranslation();
 
   return (
-    <View style={styles.contain}>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.topSection}>
         <TouchableOpacity
           activeOpacity={0.5}
@@ -30,15 +30,11 @@ export const LoginScreen = ({ navigation }) => {
           <Text style={styles.link}>{t('register.button')}</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
-  contain: {
-    flex: 1,
-    justifyContent: 'center'
-  },
   topSection: {
     flex: 1
   },
@@ -47,7 +43,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'flex-end',
-    padding: '8%',
+    padding: '8%'
   },
   infos: {
     color: THEME.colors.blueGray

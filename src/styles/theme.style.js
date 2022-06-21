@@ -8,11 +8,15 @@ export const THEME = {
     darkGray: '#151A30',
     middleGray: '#ddd',
     blueGray: '#808a9d',
-    primary: '#5d2bb2',
-    secondary: '#a44fb9',
+    primary: '#806bff',
+    secondary: '#a894ff',
     bg: '#f9fafc',
     green: '#4ec7b5',
     lightGreen: '#f2fffe',
-    error: '#ff4d4f'
+    error: '#ff4d4f',
+    cancelled: '#ffaa00',
+    done: '#00d68f',
+    confirmed: '#806bff',
+    unconfirmed: "#edf1f6"
   },
 };

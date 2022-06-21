@@ -5,7 +5,8 @@
   "address": {
     "title": "Your address",
     "next": "Next",
-    "pass": "Pass"
+    "skip": "Skip",
+    "error": "Choose an address or skip"
   },
   "login":{
     "title":"Login",
@@ -30,8 +31,17 @@
   },
   "profile": {
     "profile": "View my profile",
-    "payment": "Payment information",
+    "methods": "Payment methods",
+    "payments": "Payment history",
     "reset": "Reset my password",
     "logout": "Logout"
+  },
+  "subject": {
+    "maths": "Maths",
+    "english": "English",
+    "history": "History",
+    "french": "French",
+    "law": "Law",
+    "physics": "Physics"
   }
 }

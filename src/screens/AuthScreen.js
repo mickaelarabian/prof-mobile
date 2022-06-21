@@ -4,6 +4,7 @@ import { LinearButton } from '../components/LinearButton';
 import { Routes } from '../constants/routes';
 import { useTranslation } from 'react-i18next';
 import { LanguageButton } from '../components/LanguageButton'
+import { THEME } from '../styles/theme.style';
 
 export const AuthScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -21,6 +22,9 @@ export const AuthScreen = ({ navigation }) => {
         />
         <LinearButton
           title={t('register.button')}
+          primary={THEME.colors.white}
+          secondary={THEME.colors.white}
+          color={THEME.colors.primary}
           onPress={() => navigation.push(Routes.Register)}
         />
       </View>

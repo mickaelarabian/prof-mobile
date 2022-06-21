@@ -1,41 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
 import { setLanguageAction } from '../redux/app';
 import { THEME } from '../styles/theme.style';
 import { LANGS } from '../constants/global'
+import { getPaymentsCharges } from '../queries/PaymentQuery';
+import { Title } from '../components/Title';
 
-export const LanguageScreen = ({ navigation }) => {
+export const PaymentHistory = ({ navigation }) => {
   const dispatch = useDispatch();
   const { i18n, t } = useTranslation();
   const { lang } = useSelector(s => s.app);
+  const [history, setHistory] = useState([])
 
-  const handleSelectLanguage = (lang) => {
-    console.log('lang', lang)
-    i18n.changeLanguage(lang)
-    dispatch(setLanguageAction(lang))
-    AsyncStorage.setItem('current_lng', lang)
+  const fetchHistory = async () => {
+    const response = await getPaymentsCharges()
+    if (response) {
+      setHistory(response.data)
+    }
   }
 
-  const displayLanguages = () => LANGS.map((item, index) => (
-    <TouchableOpacity
-      activeOpacity={0.5}
-      onPress={()=>handleSelectLanguage(item.value)}
-      key={index}
-      style={item.value === lang ? styles.currentLang : styles.classicLang}
-    >
-      <View style={styles.lang} key={index}>
-        <Image style={styles.img} source={item.uri} />
-        <View style={styles.langRight}>
-          <Text style={styles.langTitle}>{item.label}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  ))
+  useEffect(() => {
+    fetchHistory()
+  }, [])
 
+  const displayHistory = () => history.map((item, index) => (
+    <View key={index}>
+      <Text style={{ color: 'red' }}>{item.description}</Text>
+    </View>
+  ))
+  console.log(history)
   return (
     <View style={styles.contain}>
       <View style={styles.topSection}>
@@ -48,9 +45,9 @@ export const LanguageScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.bottomSection}>
-        <Text style={styles.title}>{t('language.title')}</Text>
+        <Title title='Historique de paiement' />
         <ScrollView>
-          {displayLanguages()}
+          {displayHistory()}
         </ScrollView>
       </View>
     </View>
@@ -73,13 +70,6 @@ const styles = StyleSheet.create({
     padding: '8%',
     paddingTop: '10%',
   },
-  title: {
-    color: THEME.colors.gray,
-    alignSelf:'center',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
   lang: {
     flexDirection: 'row',
     paddingVertical: 15,
@@ -88,7 +78,7 @@ const styles = StyleSheet.create({
   img: {
     width: 50,
     height: 30,
-    borderRadius:7
+    borderRadius: 7
   },
   langRight: {
     marginLeft: 10,

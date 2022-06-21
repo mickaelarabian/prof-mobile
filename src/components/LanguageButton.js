@@ -23,13 +23,13 @@ export const LanguageButton = () => {
 
 const styles = StyleSheet.create({
   button: {
-    width: 50,
-    height: 30,
-    borderRadius: 10,
+    width: 40,
+    height: 25,
+    borderRadius: 7,
     backgroundColor: THEME.colors.lightGray
   },
   img: {
-    borderRadius: 10,
+    borderRadius: 7,
     width: '100%',
     height: '100%'
   }

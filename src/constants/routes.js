@@ -4,8 +4,14 @@ export const Routes = {
   Register: 'Register',
   Home: 'Home',
   Dashboard: 'Dashboard',
-  Calendar: 'Calendar',
+  Lessons: 'Lessons',
   Explore: 'Explore',
   Profile: 'Profile',
-  Language: 'Language'
+  Language: 'Language',
+  Lesson: 'Lesson',
+  ProfileInfos: 'ProfileInfos',
+  PaymentMethods: 'PaymentMethods',
+  PaymentHistory: 'PaymentHistory',
+  NewCard: 'NewCard',
+  Teacher: 'Teacher'
 }

@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { THEME } from '../styles/theme.style';
@@ -10,6 +10,9 @@ import { LockIcon } from './svgs/Lock';
 import { EmailIcon } from './svgs/Email';
 import { LinearButton } from './LinearButton';
 import { login } from '../queries/AuthQuery';
+import { apiClient } from '../utils/axiosClient.';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Input } from './Input';
 
 export const LoginForm = () => {
   const dispatch = useDispatch();
@@ -18,18 +21,22 @@ export const LoginForm = () => {
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [form, setForm] = useState({
-    email: 'polette.theo@hotmail.com',
+    email: 'mickaelarabian@gmail.com',
     password: '123'
   })
 
   const onSubmit = async () => {
     setIsLoading(true)
+    console.log('rec')
     const result = await login(form)
     if (result) {
+      console.log('ok')
       console.log(result)
       setIsLoading(false)
       if (result.token) {
-        dispatch(setUserAction({...result, hasAddress: true}))
+        AsyncStorage.setItem('user_token', result.token)
+        apiClient.defaults.headers.common.Authorization = `Bearer ${result.token}`;
+        dispatch(setUserAction({ ...result, hasAddress: true }))
       } else {
         setResponse(result)
       }
@@ -37,46 +44,35 @@ export const LoginForm = () => {
   }
 
   return (
+
     <View style={styles.form}>
       <Text style={styles.title}>{t('login.title')}</Text>
       <Text style={styles.subTitle}>{t('login.subTitle')}</Text>
-      <View style={styles.completeInput}>
-        <View style={styles.icon}>
-          <EmailIcon size={20} />
-        </View>
-        <TextInput
-          style={styles.input}
-          autoCapitalize="none"
-          placeholder={t('register.form.email')}
-          defaultValue={form.email}
-          placeholderTextColor="#666666"
-          returnKeyType="next"
-          keyboardType={'email-address'}
-          onSubmitEditing={() => {
-            inputRef.current.focus();
-          }}
-          blurOnSubmit={false}
-          onChangeText={(email) => setForm({ ...form, email })}
-        />
-      </View>
+      <Input
+        placeholder={t('register.form.email')}
+        defaultValue={form.email}
+        returnKeyType="next"
+        keyboardType={'email-address'}
+        onSubmitEditing={() => {
+          inputRef.current.focus();
+        }}
+        onChangeText={(email) => setForm({ ...form, email })}
+      >
+        <EmailIcon size={20} />
+      </Input>
+
       {(response.email) &&
         <Text style={styles.error}>{response.email}</Text>
       }
-      <View style={styles.completeInput}>
-        <View style={styles.icon}>
-          <LockIcon size={20} />
-        </View>
-        <TextInput
-          style={styles.input}
-          autoCapitalize="none"
-          placeholderTextColor="#666666"
-          placeholder={t('register.form.password')}
-          secureTextEntry
-          defaultValue={form.password}
-          ref={inputRef}
-          onChangeText={(password) => setForm({ ...form, password })}
-        />
-      </View>
+      <Input
+        placeholder={t('register.form.password')}
+        secureTextEntry
+        defaultValue={form.password}
+        inputRef={inputRef}
+        onChangeText={(password) => setForm({ ...form, password })}
+      >
+      <LockIcon size={20} />
+      </Input>
       {(response.password) &&
         <Text style={styles.error}>{response.password}</Text>
       }
@@ -117,26 +113,6 @@ const styles = StyleSheet.create({
   subTitle: {
     color: THEME.colors.blueGray,
     marginBottom: 25
-  },
-  completeInput: {
-    flexDirection: 'row',
-    marginBottom: 17,
-    borderBottomWidth: 1,
-    borderColor: THEME.colors.middleGray,
-    backgroundColor: THEME.colors.bg
-  },
-  icon: {
-    justifyContent: 'center',
-    paddingLeft: 5
-  },
-  input: {
-    backgroundColor: THEME.colors.bg,
-    borderRadius: 5,
-    fontSize: 13,
-    paddingHorizontal: 8,
-    paddingVertical: 8,
-    color: THEME.colors.gray,
-    width: '95%'
   },
   btnArea: {
     flexDirection: 'row',

@@ -1,39 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
 import { setLanguageAction } from '../redux/app';
 import { THEME } from '../styles/theme.style';
 import { LANGS } from '../constants/global'
+import { getPayments } from '../queries/PaymentQuery';
+import { LinearButton } from '../components/LinearButton';
+import { Routes } from '../constants/routes';
+import { Title } from '../components/Title';
 
-export const LanguageScreen = ({ navigation }) => {
+export const PaymentMethodsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { i18n, t } = useTranslation();
   const { lang } = useSelector(s => s.app);
+  const [payments, setPayment] = useState([])
 
-  const handleSelectLanguage = (lang) => {
-    console.log('lang', lang)
-    i18n.changeLanguage(lang)
-    dispatch(setLanguageAction(lang))
-    AsyncStorage.setItem('current_lng', lang)
+  const fetchPayments = async () => {
+    const response = await getPayments()
+    if (response) {
+      setPayment(response.data)
+    }
   }
 
-  const displayLanguages = () => LANGS.map((item, index) => (
-    <TouchableOpacity
-      activeOpacity={0.5}
-      onPress={()=>handleSelectLanguage(item.value)}
+  useEffect(() => {
+    fetchPayments()
+  }, [])
+  console.log('object', JSON.stringify(payments))
+  const displayPayments = () => payments.map((item, index) => (
+    <LinearButton
       key={index}
-      style={item.value === lang ? styles.currentLang : styles.classicLang}
-    >
-      <View style={styles.lang} key={index}>
-        <Image style={styles.img} source={item.uri} />
-        <View style={styles.langRight}>
-          <Text style={styles.langTitle}>{item.label}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+      title={`04/25    ARABIAN    **** **** **** ${item.card.last4}`}
+      color={THEME.colors.gray}
+      primary={THEME.colors.white}
+      secondary={THEME.colors.white}
+    />
   ))
 
   return (
@@ -48,10 +51,14 @@ export const LanguageScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.bottomSection}>
-        <Text style={styles.title}>{t('language.title')}</Text>
+        <Title title='Méthodes de paiement' />
         <ScrollView>
-          {displayLanguages()}
+          {displayPayments()}
         </ScrollView>
+        <LinearButton
+          title='Ajouter une carte'
+          onPress={() => navigation.push(Routes.NewCard)}
+        />
       </View>
     </View>
   )
@@ -67,18 +74,13 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     flex: 7,
+    paddingHorizontal: '8%',
+    paddingBottom: '15%'
   },
   back: {
     width: '25%',
     padding: '8%',
     paddingTop: '10%',
-  },
-  title: {
-    color: THEME.colors.gray,
-    alignSelf:'center',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
   },
   lang: {
     flexDirection: 'row',
@@ -88,7 +90,7 @@ const styles = StyleSheet.create({
   img: {
     width: 50,
     height: 30,
-    borderRadius:7
+    borderRadius: 7
   },
   langRight: {
     marginLeft: 10,
