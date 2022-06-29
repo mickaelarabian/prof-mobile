@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,36 +7,54 @@ import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
 import { setLanguageAction } from '../redux/app';
 import { THEME } from '../styles/theme.style';
 import { LANGS } from '../constants/global'
-import { getPaymentsCharges } from '../queries/PaymentQuery';
-import { CardField, useStripe } from '@stripe/stripe-react-native'
+import { addPaymentDefault, generateIntent } from '../queries/PaymentQuery';
+import { CardField, presentApplePay, useStripe } from '@stripe/stripe-react-native'
 import { Input } from '../components/Input';
 import { ProfileIcon } from '../components/svgs/Profile';
 import { LinearButton } from '../components/LinearButton';
 import { Title } from '../components/Title';
+import { CardIcon } from '../components/svgs/Card';
+import { toastError, toastSuccess } from '../utils/toastUtils';
+import { env } from '../../app.config';
 
-export const NewCardScreen = ({ navigation }) => {
+export const NewCardScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
   const { i18n, t } = useTranslation();
+  const { confirmSetupIntent, initPaymentSheet, createPaymentMethod, presentPaymentSheet } = useStripe();
   const { lang } = useSelector(s => s.app);
-  const [history, setHistory] = useState([])
   const [typedCard, setTypedCard] = useState({});
+  const [name, setName] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  const fetchHistory = async () => {
-    const response = await getPaymentsCharges()
-    if (response) {
-      setHistory(response)
+  const handleSubmit = async () => {
+    if (typedCard.complete && name) {
+      setIsLoading(true)
+      const intent = await generateIntent()
+      const billingDetails = {
+        name
+      }
+      console.log(intent)
+      const { setupIntent, error: setupIntentError } = await confirmSetupIntent(intent.client_secret, {
+        type: 'Card',
+        billingDetails,
+      })
+      if (!setupIntentError && setupIntent) {
+        const res = await addPaymentDefault(setupIntent.paymentMethodId)
+        if (res) {
+          setIsLoading(false)
+          if (res.data) {
+            
+            route.params.fetchPayments()
+            navigation.goBack()
+          }
+        }
+      } else {
+        toastError(setupIntentError?.localizedMessage)
+      }
+    } else {
+      toastError('Veuillez compléter tous les champs')
     }
   }
-
-  useEffect(() => {
-    fetchHistory()
-  }, [])
-
-  const displayHistory = () => history.map((item, index) => (
-    <View>
-
-    </View>
-  ))
 
   return (
     <View style={styles.contain}>
@@ -50,40 +68,53 @@ export const NewCardScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.bottomSection}>
-        <Title title='Nouvelle carte' />
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <View style={styles.cardField}>
-            <CardField
-              postalCodeEnabled={false}
-              // placeholders={{
-              //   number: '4242 4242 4242 4242',
-              // }}
-              cardStyle={{
-                backgroundColor: THEME.colors.bg,
-                placeholderColor: THEME.colors.blueGray,
-                borderColor: THEME.colors.bg,
-                borderWidth: 1,
-                textColor: '#686868'
-              }}
-              style={{
-                width: '100%',
-                height: 45,
-              }}
-              onCardChange={(cardDetails) => setTypedCard(cardDetails)}
-            />
-          </View>
+        <Title title={t('newcard.title')} />
+        <View style={styles.cardField}>
           <Input
-            placeholder='Nom du titulaire'
-            defaultValue=''
-          // onChangeText={(password) => setForm({ ...form, password })}
+            placeholder={t('newcard.holder')}
+            onChangeText={(name) => setName(name)}
           >
             <ProfileIcon size={20} />
           </Input>
+          <View style={styles.cardInput}>
+            <CardField
+              cardStyle={{
+                backgroundColor: THEME.colors.bg,
+                borderColor: '#E8E8E8',
+                borderWidth: 0,
+                textColor: THEME.colors.gray,
+                placeholderColor: THEME.colors.gray,
+                fontSize: 14,
+              }}
+              style={{
+                width: '100%',
+                height: 45
+              }}
+              postalCodeEnabled={false}
+              onCardChange={(cardDetails) => setTypedCard(cardDetails)}
+            />
+          </View>
           <LinearButton
             title='Ajouter'
+            onPress={handleSubmit}
+            disabled={isLoading}
           />
         </View>
       </View>
+      {isLoading &&
+        <ActivityIndicator
+          style={{
+            position: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0
+          }}
+          size={'large'} color={THEME.colors.primary}
+        />
+      }
     </View>
   )
 }
@@ -106,8 +137,17 @@ const styles = StyleSheet.create({
     paddingTop: '10%',
   },
   cardField: {
+    flex: 1,
+    justifyContent: 'center',
+    marginBottom: 50
+  },
+  inputFlex: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  cardInput: {
     borderBottomWidth: 1,
     borderColor: THEME.colors.middleGray,
-    marginBottom: 10,
+    marginBottom: 20
   }
 })

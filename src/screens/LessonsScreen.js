@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, FlatList } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, RefreshControl, FlatList } from 'react-native'
 import { useTranslation } from 'react-i18next';
 import { LanguageButton } from '../components/LanguageButton';
-import { Routes } from '../constants/routes';
-import { getHistoryLessons, getLessons, getUpcomingLessons } from '../queries/LessonQuery';
+import { getHistoryLessons, getUpcomingLessons } from '../queries/LessonQuery';
 import { THEME } from '../styles/theme.style';
-import { CODES } from '../constants/global';
 import { LessonCard } from '../components/LessonCard';
 import { Title } from '../components/Title';
 
@@ -72,8 +70,8 @@ export const LessonsScreen = ({ navigation }) => {
   const renderLesson = ({ item, index }) => <LessonCard key={index} item={item} />
 
   const toggleHistory = (isHistory) => {
-    setLessons([])
     setIsHistory(isHistory)
+    setPage(1)
   }
 
   return (
@@ -82,7 +80,7 @@ export const LessonsScreen = ({ navigation }) => {
         <LanguageButton />
       </View>
       <View style={styles.bottomSection}>
-        <Title title='Vos cours' white />
+        <Title title={t('lessons.title')} white />
         <View style={styles.tabArea}>
           <TouchableOpacity
             activeOpacity={0.5}
@@ -90,7 +88,7 @@ export const LessonsScreen = ({ navigation }) => {
             onPress={() => toggleHistory(false)}
             style={[styles.tab, { borderColor: isHistory ? THEME.colors.white : THEME.colors.primary }]}
           >
-            <Text style={[styles.tabTitle, { color: isHistory ? THEME.colors.blueGray : THEME.colors.primary }]}>Upcoming</Text>
+            <Text style={[styles.tabTitle, { color: isHistory ? THEME.colors.blueGray : THEME.colors.primary }]}>{t('lessons.upcoming')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => toggleHistory(true)}
@@ -98,7 +96,7 @@ export const LessonsScreen = ({ navigation }) => {
             activeOpacity={0.5}
             style={[styles.tab, { borderColor: isHistory ? THEME.colors.primary : THEME.colors.white }]}
           >
-            <Text style={[styles.tabTitle, { color: isHistory ? THEME.colors.primary : THEME.colors.blueGray }]}>History</Text>
+            <Text style={[styles.tabTitle, { color: isHistory ? THEME.colors.primary : THEME.colors.blueGray }]}>{t('lessons.history')}</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.bottomContain}>
@@ -106,21 +104,21 @@ export const LessonsScreen = ({ navigation }) => {
             <>
               <View style={styles.header}>
                 <View style={styles.col3}>
-                  <Text style={styles.headerTitle}>Teacher</Text>
+                  <Text style={styles.headerTitle}>{t('lessons.teacher')}</Text>
                 </View>
                 <View style={styles.col3}>
-                  <Text style={styles.headerTitle}>Subject</Text>
+                  <Text style={styles.headerTitle}>{t('lessons.subject')}</Text>
                 </View>
                 <View style={styles.col3}>
-                  <Text style={styles.headerTitle}>Scheduled At</Text>
+                  <Text style={styles.headerTitle}>{t('lessons.schedule')}</Text>
                 </View>
                 <View style={styles.col}>
-                  <Text style={styles.headerTitle}>Status</Text>
+                  <Text style={styles.headerTitle}>{t('lessons.status')}</Text>
                 </View>
               </View>
             </>
             :
-            <Text style={styles.noDatas}>Aucun cours</Text>}
+            <Text style={styles.noDatas}>{t('lessons.nodata')}</Text>}
             <FlatList
               data={lessons}
               renderItem={renderLesson}
@@ -157,7 +155,8 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    paddingVertical: 10
+    paddingVertical: 10,
+    paddingHorizontal: '3%'
   },
   headerTitle: {
     color: THEME.colors.blueGray,

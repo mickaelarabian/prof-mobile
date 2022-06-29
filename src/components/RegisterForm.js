@@ -14,6 +14,7 @@ import { GENDER, GENDER_OPTIONS } from '../constants/global';
 import { register } from '../queries/AuthQuery';
 import { Input } from './Input';
 import { Select } from './Select';
+import { toastError, toastSuccess } from '../utils/toastUtils';
 
 export const RegisterForm = () => {
   const { t } = useTranslation();
@@ -31,15 +32,24 @@ export const RegisterForm = () => {
   )
 
   const onSubmit = async () => {
-    setIsLoading(true)
-    const result = await register(form)
-    if (result) {
-      setIsLoading(false)
-      if (result.token) {
-        dispatch(setUserAction({ ...result, hasAddress: false }))
-      } else {
-        setResponse(result)
+    if (form.lastname && form.firstname && form.sexe && form.email && form.password && form.repeat_password) {
+      setIsLoading(true)
+      const result = await register(form)
+      if (result) {
+        setIsLoading(false)
+        if (result.token) {
+          console.log('oui')
+          toastSuccess('Vous vous êtes bien inscrit !')
+          dispatch(setUserAction({ ...result, hasAddress: false }))
+        } else {
+          setResponse(result)
+          if(response.error){
+            toastError(response.error)
+          }
+        }
       }
+    } else {
+      toastError('Veuillez compléter tous les champs')
     }
   }
 
@@ -146,9 +156,6 @@ export const RegisterForm = () => {
       </Input>
       {(response.repeat_password) &&
         <Text style={styles.error}>{response.repeat_password}</Text>
-      }
-      {(response.error) &&
-        <Text style={styles.error}>{response.error}</Text>
       }
       <View style={styles.btnArea}>
         {isLoading &&

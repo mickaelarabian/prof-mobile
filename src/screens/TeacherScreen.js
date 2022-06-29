@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity, RefreshControl, ActivityIndicator, Image } from 'react-native'
 import { useDispatch } from 'react-redux';
-import { LanguageButton } from '../components/LanguageButton';
+import { useTranslation } from 'react-i18next';
 import { getTeacherCalendar } from '../queries/CalendarQuery';
 import Swiper from 'react-native-swiper';
 import { THEME } from '../styles/theme.style';
@@ -17,6 +17,7 @@ import { PositionIcon } from '../components/svgs/Position';
 
 export const TeacherScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [calendar, setCalendar] = useState({})
   const [currentIndex, setCurrentIndex] = useState(0)
   const [teacher, setTeacher] = useState({})
@@ -95,7 +96,7 @@ export const TeacherScreen = ({ route, navigation }) => {
           </TouchableOpacity>
           <View style={styles.dayInfos}>
             <Text style={styles.number}>{item.date.day}</Text>
-            <Text style={styles.dayLabel}>{item.date.name}</Text>
+            <Text style={styles.dayLabel}>{item.date.month}</Text>
           </View>
           <TouchableOpacity
             style={styles.chevron}
@@ -119,35 +120,35 @@ export const TeacherScreen = ({ route, navigation }) => {
               key={`${index}-${idx}`} style={styles.hour}
               activeOpacity={0.5}
               disabled={hour.disabled}
-              onPress={() => handleSelectSchedule(`${item.detail} ${hour.time}`)}
+              onPress={() => handleSelectSchedule(`${item.date.full} ${hour.time}`)}
             >
               <View style={styles.hourLeft}>
                 <Text style={styles.time}>{hour.time}</Text>
               </View>
-                {hour.lesson ?
-                  <View style={[styles.hourRight, { height: 75, backgroundColor: THEME.colors.bg }]}>
-                    <TouchableOpacity
-                      activeOpacity={0.5}
-                      onPress={() => console.log('push')}
-                      style={[styles.lesson, { backgroundColor: hour.lesson.subject.color || THEME.colors.primary, height: 75 * hour.lesson.duration, zIndex: 99 }]}
-                    >
-                      <View style={styles.lessonHeader}>
-                        <Text style={styles.subject}>{hour.time} - {hour.lesson.subject.slug}</Text>
-                        <Text style={styles.group}>{`${hour.lesson.students.length}/${hour.lesson.capacity} Élèves`}</Text>
-                      </View>
-                      <View>
-                        <Text numberOfLines={3} style={styles.description}>{hour.lesson.teacher_subject.description}</Text>
-                      </View>
-                    </TouchableOpacity>
+              {hour.lesson ?
+                <View style={[styles.hourRight, { height: 75, backgroundColor: THEME.colors.bg }]}>
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => navigation.push(Routes.Colab, { id: hour.lesson.id })}
+                    style={[styles.lesson, { backgroundColor: hour.lesson.subject.color || THEME.colors.primary, height: 75 * hour.lesson.duration, zIndex: 99 }]}
+                  >
+                    <View style={styles.lessonHeader}>
+                      <Text style={styles.subject}>{hour.time} - {hour.lesson.subject.slug}</Text>
+                      <Text style={styles.group}>{`${hour.lesson.students.length}/${hour.lesson.capacity} Élèves`}</Text>
+                    </View>
+                    <View>
+                      <Text numberOfLines={3} style={styles.description}>{hour.lesson.teacher_subject.description}</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                :
+                hour.disabled ?
+                  <View style={[styles.hourRight, { height: 75, backgroundColor: THEME.colors.lightGray }]}>
+                    <Text style={styles.disabledText}>{t('teacher.notavailable')}</Text>
                   </View>
                   :
-                  hour.disabled ?
-                    <View style={[styles.hourRight, { height: 75, backgroundColor: THEME.colors.lightGray }]}>
-                      <Text style={styles.disabledText}>Non disponible</Text>
-                    </View>
-                    :
-                    <View style={[styles.hourRight, { height: 75, borderTopWidth: 1, borderColor: THEME.colors.lightGray }]}></View>
-                }
+                  <View style={[styles.hourRight, { height: 75, borderTopWidth: 1, borderColor: THEME.colors.lightGray }]}></View>
+              }
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -167,8 +168,10 @@ export const TeacherScreen = ({ route, navigation }) => {
   const displayReviews = () => teacher.reviews.map((item, idx) => <ReviewCard key={idx} item={item} />)
 
 
-  const toggleModal = () => {
-    setCurrentSchedule(null)
+  const toggleModal = (isLoading) => {
+    if (!isLoading) {
+      setCurrentSchedule(null)
+    }
   }
 
   return (
@@ -221,7 +224,7 @@ export const TeacherScreen = ({ route, navigation }) => {
             onPress={() => setIsOpinion(false)}
             style={[styles.tab, { borderColor: isOpinion ? THEME.colors.white : THEME.colors.primary }]}
           >
-            <Text style={[styles.tabTitle, { color: isOpinion ? THEME.colors.blueGray : THEME.colors.primary }]}>Calendar</Text>
+            <Text style={[styles.tabTitle, { color: isOpinion ? THEME.colors.blueGray : THEME.colors.primary }]}>{t('teacher.calendar')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setIsOpinion(true)}
@@ -229,7 +232,7 @@ export const TeacherScreen = ({ route, navigation }) => {
             activeOpacity={0.5}
             style={[styles.tab, { borderColor: isOpinion ? THEME.colors.primary : THEME.colors.white }]}
           >
-            <Text style={[styles.tabTitle, { color: isOpinion ? THEME.colors.primary : THEME.colors.blueGray }]}>Avis</Text>
+            <Text style={[styles.tabTitle, { color: isOpinion ? THEME.colors.primary : THEME.colors.blueGray }]}>{t('teacher.reviews')}</Text>
           </TouchableOpacity>
         </View>
         {isOpinion ?
@@ -323,7 +326,7 @@ const styles = StyleSheet.create({
   lesson: {
     borderRadius: 5,
     padding: 8,
-    width:'100%'
+    width: '100%'
   },
   lessonHeader: {
     flexDirection: 'row',
@@ -336,8 +339,8 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.colors.white,
     color: THEME.colors.darkGray,
     fontSize: 11,
-    borderRadius:25,
-    paddingHorizontal:10
+    borderRadius: 25,
+    paddingHorizontal: 10
   },
   description: {
     color: THEME.colors.white,

@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity, RefreshControl } from 'react-native'
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { LanguageButton } from '../components/LanguageButton';
 import { getCalendar } from '../queries/CalendarQuery';
@@ -9,23 +9,25 @@ import { THEME } from '../styles/theme.style';
 import { ChevronLeftIcon } from '../components/svgs/ChevronLeft';
 import { ChevronRightIcon } from '../components/svgs/ChevronRight';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
-import { cancelLesson, getLesson } from '../queries/LessonQuery';
+import { cancelLesson, getLesson, joinLesson } from '../queries/LessonQuery';
 import { LinearButton } from '../components/LinearButton';
 import { CODES } from '../constants/global';
 
-export const LessonScreen = ({ route, navigation }) => {
+export const ColabScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { id } = route.params;
   const [lesson, setLesson] = useState({})
-  const [refreshing, setRefreshing] = useState(false);
-
+  const { user } = useSelector(s => s.user);
+  const [isInLesson, setIsInLesson] = useState(false)
+// console.log('user', user)
   const fetchLesson = async () => {
-    setRefreshing(true)
     const response = await getLesson(id)
     if (response) {
       setLesson(response)
-      setRefreshing(false)
+      if(response.students.findIndex(item => item.id === user.id) > -1){
+        setIsInLesson(true)
+      }
     }
   }
   // console.log('lesson', JSON.stringify(lesson))
@@ -33,29 +35,16 @@ export const LessonScreen = ({ route, navigation }) => {
     fetchLesson()
   }, [id])
 
-  const handleCancel = async (id) => {
-    const response = await cancelLesson(id)
+  const handleSubscribe = async (id) => {
+    const response = await joinLesson(id)
     if (response) {
+      console.log('response', response)
       fetchLesson()
     }
   }
 
-  const onRefresh = useCallback(() => {
-    fetchLesson()
-  }, [])
-
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-      }
-      scrollEnabled={false}
-      contentContainerStyle={{ flexGrow: 1 }}
-      style={styles.contain}
-    >
+    <ScrollView scrollEnabled={false} contentContainerStyle={{ flexGrow: 1 }} style={styles.contain}>
       <View style={styles.topSection}>
         <TouchableOpacity
           activeOpacity={0.5}
@@ -90,55 +79,19 @@ export const LessonScreen = ({ route, navigation }) => {
             <Text style={styles.subTitle}>{t('lessons.type')} :</Text>
             <Text style={styles.text}>Vidéo Zoom</Text>
           </View>
-          <Text style={styles.subTitle}>{t('lessons.students')}:</Text>
-          <View style={styles.header}>
-            <View style={styles.col}>
-              <Text style={styles.rowTitle}>{t('lessons.firstname')}</Text>
-            </View>
-            <View style={styles.col}>
-              <Text style={styles.rowTitle}>{t('lessons.lastname')}</Text>
-            </View>
-            <View style={styles.col}>
-              <Text style={styles.rowTitle}>{t('lessons.status')}</Text>
-            </View>
+          <View style={styles.infosRow}>
+            <Text style={styles.subTitle}>{t('lessons.students')}:</Text>
+            <Text style={styles.text}>{`${lesson?.students?.length} / ${lesson?.capacity} ${t('lessons.students')}`}</Text>
           </View>
-          {lesson?.students?.map((item, index) => (
-            <View key={index} style={styles.row}>
-              <View style={styles.col}>
-                <Text style={styles.rowText}>{item.firstname}</Text>
-              </View>
-              <View style={styles.col}>
-                <Text style={styles.rowText}>{item.lastname}</Text>
-              </View>
-              <View style={styles.col}>
-                <Text style={[styles.status, { backgroundColor: CODES[item?.pivot?.status?.code], color: item.pivot.status.code === 'unconfirmed' ? THEME.colors.blueGray : THEME.colors.white }]}>{item?.pivot?.status?.code}</Text>
-              </View>
-            </View>
-          ))
-          }
+
         </View>
-        {lesson?.status?.code !== 'cancelled' &&
-          <View style={styles.btnArea}>
-            <LinearButton
-              primary={THEME.colors.white}
-              secondary={THEME.colors.white}
-              color={THEME.colors.primary}
-              title={'Annuler le cours'}
-              width='50%'
-              rounded={false}
-              marginBottom={0}
-              fontSize={17}
-              onPress={() => handleCancel(lesson.id)}
-            />
-            <LinearButton
-              title='Rejoindre le cours'
-              width='50%'
-              rounded={false}
-              marginBottom={0}
-              fontSize={17}
-            />
-          </View>
-        }
+      </View>
+      <View style={styles.btnArea}>
+        <LinearButton
+          textTransform='uppercase'
+          title={`S\`inscrire pour ${lesson?.amount} ${lesson?.currency}`}
+          onPress={()=> handleSubscribe(lesson?.id)}
+        />
       </View>
     </ScrollView>
   )
@@ -193,11 +146,8 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize'
   },
   btnArea: {
-    flexDirection: 'row',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0
+    paddingHorizontal: '8%',
+    marginBottom: 15
   },
   text: {
     color: THEME.colors.gray

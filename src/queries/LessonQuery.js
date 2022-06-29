@@ -1,5 +1,6 @@
 import { env } from "../../app.config";
 import { apiClient } from "../utils/axiosClient.";
+import { toastError, toastSuccess } from "../utils/toastUtils";
 
 export const getUpcomingLessons = async (page) => {
   try {
@@ -56,6 +57,11 @@ export const cancelLesson = async (id) => {
       url: `${env.API.BASE_URL}/lessons/${id}`
     })
     if (res) {
+      if(res.status === 200){
+        toastSuccess('Le cours a bien été annulé')
+      } else {
+        toastError('error')
+      }
       return res.data
     } else {
       throw new Error('Impossible d\'annuler le cours');
@@ -73,9 +79,38 @@ export const bookLesson = async (data) => {
       data
     })
     if (res) {
+      console.log('res', res.status)
+      if(res.status === 201){
+        toastSuccess('Le cours a bien été rejoins')
+      } else if(res.status === 409){
+        toastError('You do not have any payment method')
+      } else {
+        toastError('error')
+      }
       return res.data
     } else {
       throw new Error('Impossible de reserver le cours');
+    }
+  } catch (e) {
+    throw e
+  }
+}
+
+export const joinLesson = async (id) => {
+  try {
+    const res = await apiClient({
+      method: 'POST',
+      url: `${env.API.BASE_URL}/lessons/join/${id}`
+    })
+    if (res) {
+      if(res.status === 200){
+        toastSuccess('Le cours a bien été rejoins')
+      } else {
+        toastError('error')
+      }
+      return res.data
+    } else {
+      throw new Error('Impossible de rejoindre le cours');
     }
   } catch (e) {
     throw e

@@ -13,5 +13,9 @@ export const Routes = {
   PaymentMethods: 'PaymentMethods',
   PaymentHistory: 'PaymentHistory',
   NewCard: 'NewCard',
-  Teacher: 'Teacher'
+  Teacher: 'Teacher',
+  Colab:'Colab',
+  Forgot: 'Forgot',
+  Chat: 'Chat',
+  Room: 'Room'
 }

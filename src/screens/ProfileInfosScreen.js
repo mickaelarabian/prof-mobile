@@ -16,13 +16,16 @@ import { LockIcon } from '../components/svgs/Lock';
 import { Select } from '../components/Select';
 import { updateCurrentUser } from '../queries/UserQuery';
 import { Title } from '../components/Title';
+import { getCurrentUser } from '../queries/AuthQuery';
+import { setUserAction } from '../redux/user';
 
 export const ProfileInfosScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { i18n, t } = useTranslation();
   const { lang } = useSelector(s => s.app);
-  const { user } = useSelector(s => s.user);
+  const { user, token } = useSelector(s => s.user);
   const [form, setForm] = useState(user)
+  const [image, setImage] = useState(null)
   const [isOpen, setIsOpen] = useState(false)
 
   const handleSelectGender = (sexe) => {
@@ -37,19 +40,28 @@ export const ProfileInfosScreen = ({ navigation }) => {
     launchImageLibrary({ noData: true }, (response) => {
       // console.log(response);
       if (response) {
-        setForm({
-          ...form,
-          image: response.assets[0].uri
-        })
+        setImage(response.assets[0].uri)
       }
     });
   };
-  console.log('rac', form.image)
+  console.log('image', image)
 
   const handleSubmit = async () => {
     const response = await updateCurrentUser(form)
     if(response){
-      console.log('response',response)
+      console.log(user)
+      const user = await getCurrentUser(token)
+      if(user){
+        const data = {
+          user,
+          token
+        }
+        dispatch(setUserAction({ ...data, hasAddress: true }))
+        setForm(current => {
+          const {password, repeat_password, ...form} = current;
+          return form;
+        })
+      }
     }
   }
 
@@ -65,7 +77,7 @@ export const ProfileInfosScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.bottomSection}>
-        <Title title='Mon profil' />
+        <Title title={t('profile.title')} />
         <TouchableOpacity
           activeOpacity={0.5}
           onPress={handleChoosePhoto}
@@ -131,7 +143,7 @@ export const ProfileInfosScreen = ({ navigation }) => {
           <LockIcon size={20} />
         </Input>
         <LinearButton
-          title='Sauvegarder'
+          title={t('profile.save')}
           onPress={handleSubmit}
         />
       </View>

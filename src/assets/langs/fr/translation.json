@@ -12,7 +12,8 @@
     "title": "Connexion",
     "subTitle": "Connectez-vous pour continuer",
     "button": "Connexion",
-    "infos": "Pas encore de compte ?"
+    "infos": "Pas encore de compte ?",
+    "forgot": "Mot de passe oublié ?"
   },
   "register": {
     "title": "Inscription",
@@ -30,12 +31,17 @@
       "repeat": "Répétez votre mot de passe"
     }
   },
+  "reset": {
+    "title": "Réinitialisez votre mot de passe",
+    "subTitle": "Saisissez votre email"
+  },
   "profile": {
     "profile": "Afficher mon profil",
     "methods": "Méthodes de paiement",
     "payments": "Historique de paiement",
-    "reset": "Réinitialiser mon mot de passe",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "title": "Mon profil",
+    "save": "Sauvegarder"
   },
   "subject": {
     "maths": "Mathématiques",
@@ -44,5 +50,37 @@
     "french": "Français",
     "law": "Droit",
     "physics": "Physique"
+  },
+  "lessons": {
+    "title": "Mes cours",
+    "upcoming": "À venir",
+    "history": "Historique",
+    "teacher": "Professeur",
+    "subject": "Matière",
+    "schedule": "Prévu le",
+    "status": "Statut",
+    "nodata": "Aucun cours",
+    "description": "Déscription",
+    "duration": "Durée",
+    "students": "Étudiants",
+    "lastname": "Nom",
+    "firstname": "Prénom",
+    "type": "Type"
+  },
+  "newcard": {
+    "title": "Nouvelle carte",
+    "holder": "Titulaire de la carte"
+  },
+  "payment": {
+    "title": "Méthodes de paiement",
+    "add": "Ajouter une carte"
+  },
+  "teacher": {
+    "notavailable": "Non disponible",
+    "calendar": "Calendrier",
+    "reviews": "Avis"
+  },
+  "calendar": {
+    "title": "Mon calendrier"
   }
 }

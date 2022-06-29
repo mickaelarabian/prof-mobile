@@ -21,6 +21,7 @@ export const BookModal = ({
   const [selectedHour, setSelectedHour] = useState(1)
   const [selectedTeacher, setSelectedTeacher] = useState(teacher)
   const { width, height } = Dimensions.get('window')
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSelectSubject = (subject) => {
     setSelectedSubject(subject)
@@ -33,14 +34,17 @@ export const BookModal = ({
   }
 
   const handleSubmit = async () => {
-    if(schedule && selectedHour, selectedSubject){
+    if (schedule && selectedHour, selectedSubject) {
+      setIsLoading(true)
       const response = await bookLesson({
         "teacher_id": selectedTeacher,
         "scheduled_at": schedule,
         "duration": selectedHour,
         "subject_id": subjects.find(item => item.value === selectedSubject)?.id
       })
-      if(response){
+      if (response) {
+        setIsLoading(false)
+        toggleModal(false)
         console.log('response', response)
       }
     }
@@ -64,9 +68,9 @@ export const BookModal = ({
       }}
       coverScreen
       isVisible={true}
-      backdropColor="rgba(0, 0, 0, 0.7)"
+      backdropColor="rgba(0, 0, 0, 0.6)"
       statusBarTranslucent
-      onBackdropPress={toggleModal}
+      onBackdropPress={() => toggleModal(isLoading)}
     >
       <View style={styles.modal}>
         <Text style={styles.description}>Pour réserver un cours avec Mohamed le {schedule} vous devez préalablement choisir la matière à étudier ainsi que la durée du cours.</Text>
@@ -86,9 +90,24 @@ export const BookModal = ({
           defaultValue={'Durée'}
           options={hours}
         />
+        {isLoading &&
+          <ActivityIndicator
+            style={{
+              position: 'absolute',
+              alignItems: 'center',
+              justifyContent: 'center',
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0
+            }}
+            size={'large'} color={THEME.colors.primary}
+          />
+        }
         <LinearButton
           title='Confirmer'
           onPress={handleSubmit}
+          disabled={isLoading}
         />
         <LinearButton
           title='Annuler'
@@ -96,7 +115,8 @@ export const BookModal = ({
           secondary={THEME.colors.white}
           color={THEME.colors.primary}
           marginBottom={0}
-          onPress={toggleModal}
+          onPress={()=>toggleModal(isLoading)}
+          disabled={isLoading}
         />
       </View>
     </Modal>
@@ -118,8 +138,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 25
   },
-  description:{
-    color: THEME.colors.darkGray
+  description: {
+    color: THEME.colors.darkGray,
+    textAlign: 'center'
   }
 })
 

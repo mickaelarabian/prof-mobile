@@ -14,11 +14,12 @@ export const Input = ({
   returnKeyType,
   onChangeText,
   keyboardType = 'default',
-  inputRef
+  inputRef,
+  width = '100%'
 }) => {
 
   return (
-    <View style={styles.completeInput}>
+    <View style={[styles.completeInput, {width}]}>
       <View style={styles.icon}>
         {children}
       </View>
@@ -59,6 +60,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     paddingHorizontal: 8,
     paddingVertical: 8,
-    width: '95%'
+    flex:1
   },
 })

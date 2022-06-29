@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import React, { createRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { StripeProvider } from '@stripe/stripe-react-native'
 import { useTranslation } from 'react-i18next';
 import { setLanguageAction } from '../redux/app';
 import { OfflineRouter } from './OfflineRouter';
@@ -9,6 +10,10 @@ import { OnlineRouter } from './OnlineRouter';
 import { setUserAction } from '../redux/user';
 import { apiClient } from '../utils/axiosClient.';
 import { getCurrentUser } from '../queries/AuthQuery';
+import { env } from '../../app.config'
+import { getMyRooms } from '../queries/ChatQuery';
+import { setRoomsAction } from '../redux/chat';
+import SocketProvider from '../contexts/SocketProvider';
 
 export const AppRouter = ({ theme }) => {
   const navigationRef = createRef();
@@ -26,7 +31,7 @@ export const AppRouter = ({ theme }) => {
 
   const fetchUser = async (token) => {
     const user = await getCurrentUser(token)
-    if(user){
+    if (user) {
       console.log(user)
       if (user.error) {
         // AsyncStorage.removeItem('user_token')
@@ -38,10 +43,14 @@ export const AppRouter = ({ theme }) => {
         }
         apiClient.defaults.headers.common.Authorization = `Bearer ${token}`;
         dispatch(setUserAction({ ...data, hasAddress: true }))
+        const rooms = await getMyRooms()
+        if (rooms) {
+          dispatch(setRoomsAction(rooms))
+        }
       }
     }
   }
-  
+
   const reloadUser = async () => {
     const token = await AsyncStorage.getItem('user_token');
     if (token) {
@@ -57,7 +66,9 @@ export const AppRouter = ({ theme }) => {
   return (
     <NavigationContainer theme={theme} ref={navigationRef} >
       {user.isAuthenticated ?
-        <OnlineRouter />
+        <SocketProvider>
+          <OnlineRouter />
+        </SocketProvider>
         :
         <OfflineRouter />
       }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -8,17 +8,25 @@ import { resetUserAction } from '../redux/user';
 import { THEME } from '../styles/theme.style';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Routes } from '../constants/routes';
+import { toastSuccess } from '../utils/toastUtils';
+import { resetAction } from '../redux/chat';
+import { useSocket } from '../hooks/useSocket';
 
 export const ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { user } = useSelector(s => s.user);
+  const { closeSocket } = useSocket()
 
+  
   const handleLogout = () => {
     AsyncStorage.removeItem('user_token')
     dispatch(resetUserAction())
+    dispatch(resetAction())
+    closeSocket()
+    toastSuccess('Vous êtes bien déconnecté')
   }
-  console.log('azer', user)
+
   return (
     <View style={styles.contain}>
       <View style={styles.topSection}>
@@ -26,10 +34,10 @@ export const ProfileScreen = ({ navigation }) => {
       </View>
       <View style={styles.bottomSection}>
         <Image
-          source={{ uri: user.image }}
+          source={{ uri: user?.image }}
           style={styles.img}
         />
-        <Text style={styles.title}>{user.firstname} {user.lastname}</Text>
+        <Text style={styles.title}>{user?.firstname} {user?.lastname}</Text>
         <LinearButton
           primary={THEME.colors.white}
           secondary={THEME.colors.white}
@@ -50,12 +58,6 @@ export const ProfileScreen = ({ navigation }) => {
           color={THEME.colors.primary}
           title={t('profile.payments')}
           onPress={() => navigation.push(Routes.PaymentHistory)}
-        />
-        <LinearButton
-          primary={THEME.colors.white}
-          secondary={THEME.colors.white}
-          color={THEME.colors.primary}
-          title={t('profile.reset')}
         />
         <LinearButton
           title={t('profile.logout')}

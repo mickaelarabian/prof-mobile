@@ -12,7 +12,8 @@
     "title":"Login",
     "subTitle":"Please sign in to continue",
     "button": "Login",
-    "infos": "Don't have an account ?"
+    "infos": "Don't have an account ?",
+    "forgot": "Forgot your password ?"
   },
   "register":{
     "title":"Create Account",
@@ -29,12 +30,17 @@
       "password": "Password",
       "repeat": "Repeat password"    }
   },
+  "reset": {
+    "title": "Reset your password",
+    "subTitle": "Please enter your email"
+  },
   "profile": {
     "profile": "View my profile",
     "methods": "Payment methods",
     "payments": "Payment history",
-    "reset": "Reset my password",
-    "logout": "Logout"
+    "logout": "Logout",
+    "title": "My profile",
+    "save": "Save profile"
   },
   "subject": {
     "maths": "Maths",
@@ -43,5 +49,37 @@
     "french": "French",
     "law": "Law",
     "physics": "Physics"
+  },
+  "lessons": {
+    "title": "My lessons",
+    "upcoming": "Upcoming",
+    "history": "History",
+    "teacher": "Teacher",
+    "subject": "Subject",
+    "schedule": "Scheduled At",
+    "status": "Status",
+    "nodata": "No lessons",
+    "description": "Description",
+    "duration": "Duration",
+    "students": "Students",
+    "lastname": "Lastname",
+    "firstname": "Firstname",
+    "type": "Type"
+  },
+  "newcard": {
+    "title": "New card",
+    "holder": "Card holder"
+  },
+  "payment": {
+    "title": "Payment methods",
+    "add": "Add new card"
+  },
+  "teacher": {
+    "notavailable": "Not available",
+    "calendar": "Calendar",
+    "reviews": "Reviews"
+  },
+  "calendar": {
+    "title": "My calendar"
   }
 }

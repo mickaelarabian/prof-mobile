@@ -5,6 +5,7 @@ import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import { AuthScreen } from '../screens/AuthScreen';
 import { LanguageScreen } from '../screens/LanguageScreen';
+import { ForgotScreen } from '../screens/ForgotScreen';
 
 export const OfflineRouter = () => {
 
@@ -20,20 +21,25 @@ export const OfflineRouter = () => {
         name={Routes.Auth}
         component={AuthScreen}
       />
-       <AuthStack.Screen
+      <AuthStack.Screen
         headerMode='none'
         name={Routes.Login}
         component={LoginScreen}
       />
-       <AuthStack.Screen
+      <AuthStack.Screen
         headerMode='none'
         name={Routes.Register}
         component={RegisterScreen}
       />
-       <AuthStack.Screen
+      <AuthStack.Screen
         headerMode='none'
         name={Routes.Language}
         component={LanguageScreen}
+      />
+      <AuthStack.Screen
+        headerMode='none'
+        name={Routes.Forgot}
+        component={ForgotScreen}
       />
     </AuthStack.Navigator>
   )

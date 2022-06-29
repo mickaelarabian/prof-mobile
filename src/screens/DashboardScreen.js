@@ -8,12 +8,15 @@ import { THEME } from '../styles/theme.style';
 import { ChevronLeftIcon } from '../components/svgs/ChevronLeft';
 import { ChevronRightIcon } from '../components/svgs/ChevronRight';
 import { Routes } from '../constants/routes';
+import { Title } from '../components/Title';
+import { useTranslation } from 'react-i18next';
 
 export const DashboardScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [calendar, setCalendar] = useState({})
   const [currentIndex, setCurrentIndex] = useState(0)
   const [refreshing, setRefreshing] = useState(false);
+  const { t } = useTranslation();
 
   const { width, height } = Dimensions.get('window')
 
@@ -29,7 +32,7 @@ export const DashboardScreen = ({ navigation }) => {
   useEffect(() => {
     fetchCalendar()
   }, [])
-  console.log('ca', JSON.stringify(calendar))
+  // console.log('ca', JSON.stringify(calendar))
 
   const onRefresh = useCallback(() => {
     fetchCalendar()
@@ -120,6 +123,7 @@ export const DashboardScreen = ({ navigation }) => {
         <LanguageButton />
       </View>
       <View style={styles.bottomSection}>
+        <Title title={t('calendar.title')} />
         <Swiper onScroll={(index) => handleScroll(index)} index={currentIndex} loop={false} showsButtons={false}>
           {displayCalendar()}
         </Swiper>
@@ -134,7 +138,8 @@ const styles = StyleSheet.create({
   },
   topSection: {
     padding: '8%',
-    paddingTop: '10%'
+    paddingTop: '10%',
+    paddingBottom:'7%'
   },
   bottomSection: {
     flex: 1

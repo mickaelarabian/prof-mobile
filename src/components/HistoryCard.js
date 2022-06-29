@@ -6,29 +6,28 @@ import { Routes } from '../constants/routes';
 import { useTranslation } from 'react-i18next';
 import { CODES } from '../constants/global';
 
-export const LessonCard = (props) => {
+export const HistoryCard = (props) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
-  const { id, scheduled_at, relative_status, subject, teacher} = props.item
+  const { id, amount, currency, status, created} = props.item
 
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.push(Routes.Lesson, { id })}
+      // onPress={() => navigation.push(Routes.Lesson, { id })}
       activeOpacity={0.5}
     >
-      <View style={styles.col3}>
-        <Text style={styles.text}>{`${teacher.firstname.charAt(0)}.${teacher.lastname}`}</Text>
-      </View>
-      <View style={styles.col3}>
-        <Text style={[styles.subject, { borderRadius: 5, backgroundColor: subject.color || THEME.colors.primary }]}>{t(subject.libelle)}</Text>
-      </View>
-      <View style={styles.col3}>
-        <Text style={styles.text}>{scheduled_at}</Text>
+      <View style={styles.col}>
+        <Text style={styles.text}>{`${amount} ${currency.toUpperCase()}`}</Text>
       </View>
       <View style={styles.col}>
-        <View style={[styles.status, { backgroundColor: CODES[relative_status.code] }]}></View>
+        <Text style={styles.text}>{created}</Text>
+      </View>
+      <View style={styles.col}>
+        <View style={[styles.status, { backgroundColor: CODES[status] }]}>
+          <Text>{status}</Text>
+        </View>
       </View>
     </TouchableOpacity>
   )

@@ -21,6 +21,7 @@ export const LoginScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <LoginForm />
+        
       <View style={styles.bottomSection}>
         <Text style={styles.infos}>{t('login.infos')}</Text>
         <TouchableOpacity
