@@ -6,6 +6,7 @@ import { RegisterScreen } from '../screens/RegisterScreen';
 import { AuthScreen } from '../screens/AuthScreen';
 import { LanguageScreen } from '../screens/LanguageScreen';
 import { ForgotScreen } from '../screens/ForgotScreen';
+import { horizontalAnimation } from '../constants/global';
 
 export const OfflineRouter = () => {
 
@@ -25,21 +26,25 @@ export const OfflineRouter = () => {
         headerMode='none'
         name={Routes.Login}
         component={LoginScreen}
+        options={horizontalAnimation}
       />
       <AuthStack.Screen
         headerMode='none'
         name={Routes.Register}
         component={RegisterScreen}
+        options={horizontalAnimation}
       />
       <AuthStack.Screen
         headerMode='none'
         name={Routes.Language}
         component={LanguageScreen}
+        options={horizontalAnimation}
       />
       <AuthStack.Screen
         headerMode='none'
         name={Routes.Forgot}
         component={ForgotScreen}
+        options={horizontalAnimation}
       />
     </AuthStack.Navigator>
   )

@@ -186,7 +186,7 @@ export const TeacherScreen = ({ route, navigation }) => {
           onPress={() => navigation.goBack()}
           style={styles.back}
         >
-          <ArrowLeftIcon size={35} color={THEME.colors.black} />
+          <ArrowLeftIcon size={35} color={THEME.colors.gray} />
         </TouchableOpacity>
       </View>
       <View style={styles.bottomSection}>
@@ -359,7 +359,8 @@ const styles = StyleSheet.create({
   img: {
     width: 80,
     height: 80,
-    borderRadius: 5
+    borderRadius: 5,
+    backgroundColor: THEME.colors.noPic
   },
   sectionFlex: {
     flexDirection: 'row'

@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, RefreshControl, Text } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, FlatList, RefreshControl, Text, Alert } from 'react-native'
 import { useTranslation } from 'react-i18next';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
 import { THEME } from '../styles/theme.style';
-import { addPaymentDefault, getPayments } from '../queries/PaymentQuery';
+import { addPaymentDefault, getPayments, removePaymentMethod } from '../queries/PaymentQuery';
 import { LinearButton } from '../components/LinearButton';
 import { Routes } from '../constants/routes';
 import { Title } from '../components/Title';
@@ -39,12 +39,23 @@ export const PaymentMethodsScreen = ({ navigation }) => {
   const handlePress = async (id) => {
     console.log('is', id)
     const res = await addPaymentDefault(id, true)
-    if(res.data){
+    if (res.data) {
       fetchPayments()
     }
   }
 
-  const renderPaymentMethod = ({ item, index }) => <CreditCard key={index} item={item} default={defaultPm} handlePress={handlePress} />
+  const renderPaymentMethod = ({ item, index }) => <CreditCard key={index} item={item} default={defaultPm} handlePress={handlePress} removeCard={removeCard} />
+
+  const removeCard = async (id) => {
+    setRefreshing(true)
+    const res = await removePaymentMethod(id)
+    if (res) {
+      setRefreshing(false)
+      if (res.data) {
+        fetchPayments()
+      }
+    }
+  }
 
   return (
     <View style={styles.contain}>
@@ -54,14 +65,14 @@ export const PaymentMethodsScreen = ({ navigation }) => {
           onPress={() => navigation.goBack()}
           style={styles.back}
         >
-          <ArrowLeftIcon size={35} color={THEME.colors.black} />
+          <ArrowLeftIcon size={35} color={THEME.colors.gray} />
         </TouchableOpacity>
       </View>
       <View style={styles.bottomSection}>
         <Title title={t('payment.title')} />
         <FlatList
           data={payments}
-          style={{marginBottom:15}}
+          style={{ marginBottom: 15 }}
           renderItem={renderPaymentMethod}
           keyExtractor={keyExtractor}
           refreshControl={
@@ -89,17 +100,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   topSection: {
-    flex: 1
+    // flex: 1
   },
   bottomSection: {
-    flex: 7,
+    flex: 1,
     paddingHorizontal: '8%',
     // paddingTop:20,
-    paddingBottom: '10%'
+    paddingBottom: '5%'
   },
   back: {
     width: '25%',
     padding: '8%',
+    paddingBottom: '3%',
     paddingTop: '10%',
   },
   noDatas: {

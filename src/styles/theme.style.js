@@ -17,6 +17,7 @@ export const THEME = {
     cancelled: '#ffaa00',
     done: '#00d68f',
     confirmed: '#806bff',
-    unconfirmed: "#edf1f6"
+    unconfirmed: "#edf1f6",
+    noPic: '#f2f2f2'
   },
 };

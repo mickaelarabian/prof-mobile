@@ -19,6 +19,7 @@ export const LessonsScreen = ({ navigation }) => {
     setRefreshing(true)
     const response = await getUpcomingLessons(page)
     if (response) {
+      console.log('object', response)
       const data = page === 1 ? response.data : [...lessons, ...response.data]
       setLastPage(response.lastPage)
       setLessons(data)
@@ -30,6 +31,7 @@ export const LessonsScreen = ({ navigation }) => {
     setRefreshing(true)
     const response = await getHistoryLessons(page)
     if (response) {
+      console.log('object', response)
       const data = page === 1 ? response.data : [...lessons, ...response.data]
       setLastPage(response.lastPage)
       setLessons(data)
@@ -73,7 +75,7 @@ export const LessonsScreen = ({ navigation }) => {
     setIsHistory(isHistory)
     setPage(1)
   }
-
+console.log('lessons', lessons)
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.topSection}>

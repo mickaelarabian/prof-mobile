@@ -1,8 +1,8 @@
 export const env = {
   API: {
-    BASE_URL: 'http://192.168.0.146:8000/api',
-    CHAT_URL: 'http://192.168.0.146:3000',
-    SOCKET_URL: 'http://192.168.0.146:3005',
+    BASE_URL: 'http://192.168.1.186:8000/api',
+    CHAT_URL: 'http://192.168.1.186:3000',
+    SOCKET_URL: 'http://192.168.1.186:3005',
     MAP_BOX: 'https://api.mapbox.com/geocoding/v5/mapbox.places/',
     STRIPE_URL: 'https://api.stripe.com/v1'
   },

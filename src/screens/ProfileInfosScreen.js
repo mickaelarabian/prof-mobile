@@ -21,8 +21,7 @@ import { setUserAction } from '../redux/user';
 
 export const ProfileInfosScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { i18n, t } = useTranslation();
-  const { lang } = useSelector(s => s.app);
+  const { t } = useTranslation();
   const { user, token } = useSelector(s => s.user);
   const [form, setForm] = useState(user)
   const [image, setImage] = useState(null)
@@ -73,7 +72,7 @@ export const ProfileInfosScreen = ({ navigation }) => {
           onPress={() => navigation.goBack()}
           style={styles.back}
         >
-          <ArrowLeftIcon size={35} color={THEME.colors.black} />
+          <ArrowLeftIcon size={35} color={THEME.colors.gray} />
         </TouchableOpacity>
       </View>
       <View style={styles.bottomSection}>
@@ -192,6 +191,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     alignSelf: 'center',
-    borderRadius:100
+    borderRadius:100,
+    backgroundColor: THEME.colors.noPic
   }
 })

@@ -6,7 +6,7 @@ export const chatStateSlice = createSlice({
     rooms: [],
     room: {},
     messages: [],
-    notifications: false
+    notifications: 0
   },
 
   reducers: {
@@ -19,7 +19,7 @@ export const chatStateSlice = createSlice({
       state.rooms = []
       state.room = {}
       state.messages = []
-      state.notifications = false
+      state.notifications = 0
     },
     //Set current room
     setCurrentRoomAction: (state, action) => {
@@ -31,14 +31,25 @@ export const chatStateSlice = createSlice({
     },
     //set new message
     setNewMessageAction: (state, action) => {
-      state.notifications = true
+      state.notifications = state.notifications + 1
       state.messages = [action.payload, ...state.messages]
-      // state.rooms = action.payload
+      state.room.last_message = action.payload
+      const idx = state.rooms.findIndex(item => item.id === action.payload.roomId)
+      console.log('idx', idx)
+      if(idx > -1){
+        console.log('action.payload.content')
+        state.rooms[idx].last_message = action.payload
+      }
     },
     //Reset notifications
     resetNotificationsAction: (state) => {
-      state.notifications = false
+      state.notifications = 0
     },
+    //set new room
+    setNewRoomAction: (state, action) => {
+      state.rooms = [action.payload, ...state.rooms]
+      state.notifications = state.notifications + 1
+    }
   },
 });
 
@@ -48,6 +59,7 @@ export const {
   setCurrentRoomAction,
   setCurrentMessagesAction,
   setNewMessageAction,
-  resetNotificationsAction
+  resetNotificationsAction,
+  setNewRoomAction
 } = chatStateSlice.actions;
 export default chatStateSlice.reducer;

@@ -5,6 +5,7 @@ import { THEME } from '../styles/theme.style';
 import { Routes } from '../constants/routes';
 import { useTranslation } from 'react-i18next';
 import { CODES } from '../constants/global';
+import { formatdate } from '../utils/generalUtils';
 
 export const LessonCard = (props) => {
   const navigation = useNavigation();
@@ -25,7 +26,7 @@ export const LessonCard = (props) => {
         <Text style={[styles.subject, { borderRadius: 5, backgroundColor: subject.color || THEME.colors.primary }]}>{t(subject.libelle)}</Text>
       </View>
       <View style={styles.col3}>
-        <Text style={styles.text}>{scheduled_at}</Text>
+        <Text style={styles.text}>{formatdate(scheduled_at)}</Text>
       </View>
       <View style={styles.col}>
         <View style={[styles.status, { backgroundColor: CODES[relative_status.code] }]}></View>

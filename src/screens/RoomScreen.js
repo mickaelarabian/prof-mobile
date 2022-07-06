@@ -44,12 +44,12 @@ export const RoomScreen = ({ route, navigation }) => {
 
   const keyExtractor = useCallback(({ id }) => `message-${id}`, []);
 
-  const renderMessage = ({ item, index }) => <Message key={index} item={item} isMe={user.id === item.userId} firstname={room.users && room.users.find(user => user.id === item.userId)?.firstname} lastname={room.users && room.users.find(user => user.id === item.userId)?.lastname} />
+  const renderMessage = ({ item, index }) => <Message key={index} item={item} isMe={user.id === item.userId} firstname={room.users && room.users.find(user => user.id === item.userId)?.firstname} lastname={room.users && room.users.find(user => user.id === item.userId)?.lastname} avatar={room.users && room.users.find(user => user.id === item.userId)?.avatar} />
 
   const handleChange = (value) => {
     setContent(value)
   }
-
+console.log(room)
   const handleSubmit = () => {
     if (content.length > 0) {
       const res = emitNewMessage(content, room.id, user.id)
@@ -67,10 +67,10 @@ export const RoomScreen = ({ route, navigation }) => {
           onPress={() => navigation.goBack()}
           style={styles.back}
         >
-          <ArrowLeftIcon size={35} color={THEME.colors.black} />
+          <ArrowLeftIcon size={35} color={THEME.colors.gray} />
         </TouchableOpacity>
+        <Text style={styles.roomName}>{room.name}</Text>
       </View>
-      <Title title={'Conv'} white />
       <View style={styles.bottomSection}>
         <FlatList
           data={messages}
@@ -80,6 +80,9 @@ export const RoomScreen = ({ route, navigation }) => {
           inverted
         //contentContainerStyle={{ flexDirection: 'column-reverse' }}
         />
+        {messages.length === 0 &&
+          <Text style={styles.noDatas}>Aucun message</Text>
+        }
         <View style={styles.messageArea}>
           <View style={styles.completeInput}>
             <TextInput
@@ -112,18 +115,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   topSection: {
-    flex: 1,
-    backgroundColor: THEME.colors.white
+    // flex: 1,
+    backgroundColor: THEME.colors.white,
+    flexDirection:'row'
   },
   bottomSection: {
     borderTopWidth: 1,
     borderColor: THEME.colors.lightGray,
-    flex: 8,
-    // paddingHorizontal: '8%'
+    flex: 9
   },
   back: {
     width: '25%',
     padding: '8%',
+    paddingBottom:'3%',
     paddingTop: '10%',
     backgroundColor: THEME.colors.white
   },
@@ -156,5 +160,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  roomName: {
+    color: THEME.colors.gray,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textTransform:'capitalize',
+    paddingTop: '11%',
+  },
+  noDatas: {
+    color: THEME.colors.darkGray,
+    position: 'absolute',
+    alignSelf: 'center',
+    top: 70
   }
 })

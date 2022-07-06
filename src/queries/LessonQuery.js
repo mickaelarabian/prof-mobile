@@ -6,7 +6,7 @@ export const getUpcomingLessons = async (page) => {
   try {
     const res = await apiClient({
       method: 'GET',
-      url: `${env.API.BASE_URL}/lessons?page=${page}`
+      url: `${env.API.BASE_URL}/lessons?status_id=null&page=${page}&date=null&subject_id=null`
     })
     if (res) {
       return res.data
@@ -22,7 +22,7 @@ export const getHistoryLessons = async (page) => {
   try {
     const res = await apiClient({
       method: 'GET',
-      url: `${env.API.BASE_URL}/lessons/history?page=${page}`
+      url: `${env.API.BASE_URL}/lessons/history?status_id=null&page=${page}&date=null&subject_id=null`
     })
     if (res) {
       return res.data
@@ -81,11 +81,11 @@ export const bookLesson = async (data) => {
     if (res) {
       console.log('res', res.status)
       if(res.status === 201){
-        toastSuccess('Le cours a bien été rejoins')
+        toastSuccess('Le cours a bien été réservé')
       } else if(res.status === 409){
         toastError('You do not have any payment method')
       } else {
-        toastError('error')
+        toastError('Impossible de réserver le cours')
       }
       return res.data
     } else {
@@ -106,7 +106,7 @@ export const joinLesson = async (id) => {
       if(res.status === 200){
         toastSuccess('Le cours a bien été rejoins')
       } else {
-        toastError('error')
+        toastError('Impossible de rejoindre le cours collectif')
       }
       return res.data
     } else {

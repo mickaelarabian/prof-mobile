@@ -69,7 +69,8 @@ const styles = StyleSheet.create({
   img: {
     width: 80,
     height: 80,
-    borderRadius: 5
+    borderRadius: 5,
+    backgroundColor: THEME.colors.noPic
   },
   section: {
     // flex:1

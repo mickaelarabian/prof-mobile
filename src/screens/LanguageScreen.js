@@ -44,7 +44,7 @@ export const LanguageScreen = ({ navigation }) => {
           onPress={() => navigation.goBack()}
           style={styles.back}
         >
-          <ArrowLeftIcon size={35} color={THEME.colors.black} />
+          <ArrowLeftIcon size={35} color={THEME.colors.gray} />
         </TouchableOpacity>
       </View>
       <View style={styles.bottomSection}>

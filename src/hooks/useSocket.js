@@ -3,7 +3,7 @@ import socketIO from 'socket.io-client'
 import { env } from "../../app.config"
 import { useSelector, useDispatch } from 'react-redux';
 import SocketContext from "../contexts/SocketContext";
-import { setNewMessageAction } from "../redux/chat";
+import { setNewMessageAction, setNewRoomAction } from "../redux/chat";
 
 const useSocket = () => useContext(SocketContext);
 
@@ -40,6 +40,10 @@ const useSocketProvider = () => {
       dispatch(setNewMessageAction(data))
     })
 
+    socket.on('new_room', (data) => {
+      console.log('new_room', data)
+      dispatch(setNewRoomAction(data))
+    })
 
   }, [])
 

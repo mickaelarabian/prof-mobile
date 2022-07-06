@@ -1,23 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, Image } from 'react-native'
 import { THEME } from '../styles/theme.style';
-import { Routes } from '../constants/routes';
-import { PositionIcon } from './svgs/Position';
-import { StarIcon } from './svgs/Star';
 import { StarFullIcon } from './svgs/review/StarFull';
 import { StarEmptyIcon } from './svgs/review/StarEmpty';
 import { StarMiddleIcon } from './svgs/review/StarMiddle';
 
 export const ReviewCard = (props) => {
-  const navigation = useNavigation();
   const { note, comment, author, date } = props.item
 
   const displayStars = (note) => {
     let stars = []
     for (let index = 1; index < 6; index++) {
-      // const element = array[index];
-      console.log(index)
       if(note > index){
         stars = [...stars, <StarFullIcon key={index}/>]
       } else if(note + 0.5 === index){
@@ -67,7 +60,8 @@ const styles = StyleSheet.create({
   img: {
     width: 60,
     height: 60,
-    borderRadius: 50
+    borderRadius: 50,
+    backgroundColor: THEME.colors.noPic
   },
   section: {
     // flex:1

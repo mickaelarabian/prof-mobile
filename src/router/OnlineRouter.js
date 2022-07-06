@@ -19,6 +19,7 @@ import { TeacherScreen } from '../screens/TeacherScreen';
 import { ColabScreen } from '../screens/ColabScreen';
 import { ChatScreen } from '../screens/ChatScreen'
 import { RoomScreen } from '../screens/RoomScreen';
+import { horizontalAnimation } from '../constants/global';
 
 export const OnlineRouter = () => {
   const user = useSelector(s => s.user);
@@ -49,16 +50,16 @@ export const OnlineRouter = () => {
           screenOptions={{ headerShown: false }}
           initialRouteName={Routes.Home}
         >
-          <AppStack.Screen name={Routes.Home} component={DashboardNavigator} />
-          <AppStack.Screen name={Routes.Language} component={LanguageScreen} />
-          <AppStack.Screen name={Routes.Lesson} component={LessonScreen} />
-          <AppStack.Screen name={Routes.Colab} component={ColabScreen} />
-          <AppStack.Screen name={Routes.ProfileInfos} component={ProfileInfosScreen} />
-          <AppStack.Screen name={Routes.PaymentMethods} component={PaymentMethodsScreen} />
-          <AppStack.Screen name={Routes.PaymentHistory} component={PaymentHistoryScreen} />
-          <AppStack.Screen name={Routes.NewCard} component={NewCardScreen} />
-          <AppStack.Screen name={Routes.Teacher} component={TeacherScreen} />
-          <AppStack.Screen name={Routes.Room} component={RoomScreen} />
+          <AppStack.Screen name={Routes.Home} component={DashboardNavigator} options={horizontalAnimation} />
+          <AppStack.Screen name={Routes.Language} component={LanguageScreen} options={horizontalAnimation} />
+          <AppStack.Screen name={Routes.Lesson} component={LessonScreen} options={horizontalAnimation} />
+          <AppStack.Screen name={Routes.Colab} component={ColabScreen} options={horizontalAnimation} />
+          <AppStack.Screen name={Routes.ProfileInfos} component={ProfileInfosScreen} options={horizontalAnimation} />
+          <AppStack.Screen name={Routes.PaymentMethods} component={PaymentMethodsScreen} options={horizontalAnimation} />
+          <AppStack.Screen name={Routes.PaymentHistory} component={PaymentHistoryScreen} options={horizontalAnimation} />
+          <AppStack.Screen name={Routes.NewCard} component={NewCardScreen} options={horizontalAnimation} />
+          <AppStack.Screen name={Routes.Teacher} component={TeacherScreen} options={horizontalAnimation} />
+          <AppStack.Screen name={Routes.Room} component={RoomScreen} options={horizontalAnimation} />
         </AppStack.Navigator>
         :
         <AppStack.Navigator

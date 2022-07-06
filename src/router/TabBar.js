@@ -52,8 +52,10 @@ console.log('notifs', notifications)
       >
         {getIcon(color, index)}
         <Text style={[styles.title, { color: isFocused ? THEME.colors.primary : THEME.colors.gray }]}>{item.name}</Text>
-        {index === 3 && notifications &&
-          <View style={styles.badge}/>
+        {index === 3 && notifications > 0 &&
+          <View style={styles.badge}>
+            <Text style={styles.number}>{notifications}</Text>
+          </View>
         }
       </TouchableOpacity>
     )
@@ -91,12 +93,17 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   badge: {
-    width:7,
-    height:7,
+    width:12,
+    height:12,
     backgroundColor: 'red',
     position:'absolute',
-    top:'20%',
-    right:'35%',
+    top:'15%',
+    right:'30%',
     borderRadius:25
+  },
+  number: {
+    color: THEME.colors.white,
+    fontSize:8,
+    alignSelf:'center'
   }
 })

@@ -64,24 +64,23 @@ export const NewCardScreen = ({ route, navigation }) => {
           onPress={() => navigation.goBack()}
           style={styles.back}
         >
-          <ArrowLeftIcon size={35} color={THEME.colors.black} />
+          <ArrowLeftIcon size={35} color={THEME.colors.gray} />
         </TouchableOpacity>
       </View>
       <View style={styles.bottomSection}>
         <Title title={t('newcard.title')} />
         <View style={styles.cardField}>
-          <Input
-            placeholder={t('newcard.holder')}
-            onChangeText={(name) => setName(name)}
-          >
-            <ProfileIcon size={20} />
-          </Input>
           <View style={styles.cardInput}>
             <CardField
+              placeholder={{
+                number: '4242 4242 4242 4242'
+              }}
               cardStyle={{
-                backgroundColor: THEME.colors.bg,
+                backgroundColor:THEME.colors.bg,
                 borderColor: '#E8E8E8',
                 borderWidth: 0,
+                textErrorColor:'red',
+                cursorColor:'red',
                 textColor: THEME.colors.gray,
                 placeholderColor: THEME.colors.gray,
                 fontSize: 14,
@@ -94,6 +93,12 @@ export const NewCardScreen = ({ route, navigation }) => {
               onCardChange={(cardDetails) => setTypedCard(cardDetails)}
             />
           </View>
+          <Input
+            placeholder={t('newcard.holder')}
+            onChangeText={(name) => setName(name)}
+          >
+            <ProfileIcon size={20} />
+          </Input>
           <LinearButton
             title='Ajouter'
             onPress={handleSubmit}
@@ -148,6 +153,7 @@ const styles = StyleSheet.create({
   cardInput: {
     borderBottomWidth: 1,
     borderColor: THEME.colors.middleGray,
-    marginBottom: 20
+    marginBottom: 10,
+    backgroundColor:THEME.colors.white
   }
 })

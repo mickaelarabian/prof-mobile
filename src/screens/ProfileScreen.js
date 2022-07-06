@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     marginBottom: 10,
-    borderRadius: 100
+    borderRadius: 100,
+    backgroundColor: THEME.colors.noPic
   }
 })

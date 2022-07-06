@@ -29,14 +29,14 @@ export const addPaymentDefault = async (default_pm, isDefault) => {
     })
     if (res) {
       if (res.status === 200) {
-        if(isDefault){
+        if (isDefault) {
           toastSuccess('Carte séléctionné par defaut')
         } else {
           toastSuccess('La carte a bien été ajouté')
         }
         return { "data": true }
       } else {
-        if(isDefault){
+        if (isDefault) {
           toastError('Impossible de définir la carte par defaut')
         } else {
           toastError('Impossible d\'ajouter la carte')
@@ -77,6 +77,31 @@ export const getPaymentsCharges = async () => {
       return res.data
     } else {
       throw new Error('Impossible de récupérer les paiements');
+    }
+  } catch (e) {
+    throw e
+  }
+}
+
+export const removePaymentMethod = async (pm_id) => {
+  try {
+    const res = await apiClient({
+      method: 'POST',
+      url: `${env.API.BASE_URL}/payments/detach`,
+      data: {
+        pm_id
+      }
+    })
+    if (res) {
+      if (res.status === 200) {
+        toastSuccess('La carte a bien été supprimé')
+        return { "data": true }
+      } else {
+        toastError('Impossible de supprimer la carte')
+        return { "data": false }
+      }
+    } else {
+      throw new Error('Impossible de supprimer la carte');
     }
   } catch (e) {
     throw e

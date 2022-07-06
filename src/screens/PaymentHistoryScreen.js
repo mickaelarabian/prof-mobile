@@ -11,6 +11,15 @@ export const PaymentHistoryScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const [history, setHistory] = useState([])
   const [refreshing, setRefreshing] = useState(false);
+  const [openedCard, setOpenedCard] = useState(null)
+
+  const handleSetOpenedCard = (id) => {
+    if (openedCard === id) {
+      setOpenedCard(null)
+    } else {
+      setOpenedCard(id)
+    }
+  }
 
   const fetchHistory = async () => {
     setRefreshing(true)
@@ -31,9 +40,9 @@ export const PaymentHistoryScreen = ({ navigation }) => {
 
   const keyExtractor = useCallback(({ id }) => `history-${id}`, []);
 
-  const renderHistory = ({item, index}) => <HistoryCard key={index} item={item} />
+  const renderHistory = ({item, index}) => <HistoryCard key={index} item={item} openedCard={openedCard} handleSetOpenedCard={handleSetOpenedCard} />
 
-  console.log(JSON.stringify(history[0]))
+  console.log(JSON.stringify(history))
   return (
     <View style={styles.contain}>
       <View style={styles.topSection}>
@@ -42,19 +51,19 @@ export const PaymentHistoryScreen = ({ navigation }) => {
           onPress={() => navigation.goBack()}
           style={styles.back}
         >
-          <ArrowLeftIcon size={35} color={THEME.colors.black} />
+          <ArrowLeftIcon size={35} color={THEME.colors.gray} />
         </TouchableOpacity>
       </View>
       <View style={styles.bottomSection}>
         <Title title='Historique de paiement' />
         <View style={styles.header}>
-          <View style={styles.col}>
+          <View style={styles.col2}>
             <Text style={styles.headerTitle}>Montant</Text>
           </View>
-          <View style={styles.col}>
+          <View style={styles.col3}>
             <Text style={styles.headerTitle}>Date</Text>
           </View>
-          <View style={styles.col}>
+          <View style={styles.col2}>
             <Text style={styles.headerTitle}>Status</Text>
           </View>
         </View>
@@ -80,16 +89,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   topSection: {
-    flex: 1
+    // flex: 1
   },
   bottomSection: {
-    flex: 7,
+    flex: 1,
     paddingHorizontal: '5%'
   },
   back: {
     width: '25%',
     padding: '8%',
     paddingTop: '10%',
+    paddingBottom:'3%',
   },
   header: {
     flexDirection: 'row',
@@ -101,11 +111,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 11
   },
-  col: {
-    flex: 1,
+  col2: {
+    flex: 2,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     justifyContent: 'center'
   },
-
+  col3: {
+    flex: 3,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    justifyContent: 'center'
+  },
 })

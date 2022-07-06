@@ -17,14 +17,15 @@ export const LinearButton = ({
   color = THEME.colors.white,
   rounded = true,
   marginBottom = 10,
-  fontSize = 14
+  fontSize = 14,
+  flex = 0
 }) => {
 
   return (
     <TouchableOpacity
       disabled={disabled}
       activeOpacity={activeOpacity}
-      style={{ width, alignSelf }}
+      style={{ width, alignSelf, flex }}
       onPress={onPress}
     >
       <LinearGradient colors={[primary, secondary]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.button, { borderRadius: rounded ? 25 : 0, marginBottom }]}>

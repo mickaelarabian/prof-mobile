@@ -1,30 +1,77 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import { THEME } from '../styles/theme.style';
 import { Routes } from '../constants/routes';
 import { useTranslation } from 'react-i18next';
 import { CODES } from '../constants/global';
 import LinearGradient from 'react-native-linear-gradient';
 import { CheckCircleIcon } from './svgs/CheckCircle';
+import { removePaymentMethod } from '../queries/PaymentQuery';
 
 export const CreditCard = (props) => {
   const { t } = useTranslation();
 
   const { id, billing_details, card } = props.item
 
+  const showConfirmRemove = () => {
+    return Alert.alert(
+      "Are your sure?",
+      "Are you sure you want to remove this payment method ?",
+      [
+        // The "Yes" button
+        {
+          text: "Remove",
+          onPress: async () => {
+            props.removeCard(id)
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "Cancel",
+        },
+      ]
+    );
+  };
+
+  const showConfirmDefault = () => {
+    if (props.default !== id) {
+      return Alert.alert(
+        "Are your sure?",
+        "Are you sure you want to set this payment method by default ?",
+        [
+          // The "Yes" button
+          {
+            text: "Set",
+            onPress: async () => {
+              props.handlePress(id)
+            },
+          },
+          // The "No" button
+          // Does nothing but dismiss the dialog when tapped
+          {
+            text: "Cancel",
+          },
+        ]
+      );
+    }
+  };
+
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => props.handlePress(id)}
+      onPress={showConfirmDefault}
+      onLongPress={showConfirmRemove}
       activeOpacity={0.5}
+    // disabled={props.default === id}
     >
       <LinearGradient
-      colors={['#6bcbe0', '#6e8de7']}
-      start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-      style={{
-        padding:15,
-        borderRadius: 10,
-      }}
+        colors={['#d52f6c', '#9d2c5d']}
+        start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+        style={{
+          padding: 15,
+          borderRadius: 10,
+        }}
       >
 
         <View style={styles.sectionFlex}>
@@ -33,7 +80,7 @@ export const CreditCard = (props) => {
           </View>
           <View>
             {props.default === id &&
-              <CheckCircleIcon/>
+              <CheckCircleIcon />
             }
           </View>
         </View>
@@ -58,7 +105,7 @@ export const CreditCard = (props) => {
 
 const styles = StyleSheet.create({
   card: {
-    // backgroundColor: 'blue',
+    backgroundColor: '#6e8de7',
     borderRadius: 10,
     marginBottom: 10
   },
@@ -80,9 +127,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textTransform: 'uppercase'
   },
-  brand:{
+  brand: {
     color: THEME.colors.white,
-    fontWeight:'bold',
-    fontSize:22
+    fontWeight: 'bold',
+    fontSize: 22
   }
 })

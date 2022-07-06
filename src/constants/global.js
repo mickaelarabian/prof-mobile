@@ -35,3 +35,22 @@ export const CODES = {
   "cancelled": THEME.colors.cancelled,
   "unconfirmed": THEME.colors.unconfirmed,
 }
+
+export const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+export const horizontalAnimation = {
+  cardStyleInterpolator: ({ current, layouts }) => {
+    return {
+      cardStyle: {
+        transform: [
+          {
+            translateX: current.progress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [layouts.screen.width, 0],
+            }),
+          },
+        ],
+      },
+    };
+  },
+};

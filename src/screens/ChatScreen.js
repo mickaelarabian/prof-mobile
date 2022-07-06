@@ -1,26 +1,36 @@
-import React, { useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Image, FlatList } from 'react-native'
+import React, { useState, useCallback } from 'react';
+import { View, StyleSheet, RefreshControl, FlatList } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { LanguageButton } from '../components/LanguageButton';
-import { LinearButton } from '../components/LinearButton';
 import { THEME } from '../styles/theme.style';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Routes } from '../constants/routes';
-import { toastSuccess } from '../utils/toastUtils';
 import { Title } from '../components/Title';
 import { RoomCard } from '../components/RoomCard';
-import { resetNotificationsAction } from '../redux/chat';
+import { setRoomsAction } from '../redux/chat';
+import { getMyRooms } from '../queries/ChatQuery';
 
 export const ChatScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const [refreshing, setRefreshing] = useState(false);
   const { rooms, notifications } = useSelector(s => s.chat);
-  console.log('rooms', rooms)
-
+// console.log('rooms', rooms)
   const keyExtractor = useCallback(({ id }) => `room-${id}`, []);
 
-  const renderRoom = ({item, index}) => <RoomCard key={index} item={item} />  
+  const renderRoom = ({ item, index }) => <RoomCard key={index} item={item} />
+
+  const fetchRooms = async () => {
+    setRefreshing(true)
+    const response = await getMyRooms()
+    if (response) {
+      dispatch(setRoomsAction(response))
+      setRefreshing(false)
+    }
+  }
+
+  const onRefresh = useCallback(() => {
+    fetchRooms()
+  }, []);
 
   return (
     <View style={styles.contain}>
@@ -28,11 +38,17 @@ export const ChatScreen = ({ navigation }) => {
         <LanguageButton />
       </View>
       <View style={styles.bottomSection}>
-        <Title title='Chat' />
+        <Title title='Discussions' />
         <FlatList
           data={rooms}
           renderItem={renderRoom}
           keyExtractor={keyExtractor}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
         />
       </View>
     </View>
@@ -41,8 +57,9 @@ export const ChatScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   contain: {
-    padding: '8%',
-    paddingTop: '10%',
+    // padding: '8%',
+    // paddingTop: '10%',
+    //paddingBottom: '0%',
     flex: 1
   },
   title: {
@@ -53,10 +70,13 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize'
   },
   topSection: {
-    flex: 1
+    //flex: 1,
+    padding: '8%',
+    paddingBottom:'7%',
+    paddingTop: '10%',
   },
   bottomSection: {
-    flex: 7,
+    flex: 1,
     // alignItems: 'center',
     // justifyContent: 'center'
   },

@@ -30,6 +30,22 @@ export const toastSuccess = (
     });
 };
 
+export const toastInfos = (
+  message,
+  duration = 1000,
+  position = -125
+) => {
+  message &&
+    Toast.show(message, {
+      position,
+      duration,
+      backgroundColor: '#edf1f6',
+      textColor: '#7a7c82',
+      opacity: 1,
+      shadow: false
+    });
+};
+
 export const toastWarning = (
   message,
   duration = 1000,
