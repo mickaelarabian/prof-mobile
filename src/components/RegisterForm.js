@@ -15,6 +15,8 @@ import { register } from '../queries/AuthQuery';
 import { Input } from './Input';
 import { Select } from './Select';
 import { toastError, toastSuccess } from '../utils/toastUtils';
+import DatePicker from 'react-native-date-picker'
+import { formatdate } from '../utils/generalUtils';
 
 export const RegisterForm = () => {
   const { t } = useTranslation();
@@ -23,6 +25,7 @@ export const RegisterForm = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [open, setOpen] = useState(false)
   const [form, setForm] = useState({
     type: 'student'
   })
@@ -32,7 +35,7 @@ export const RegisterForm = () => {
   )
 
   const onSubmit = async () => {
-    if (form.lastname && form.firstname && form.sexe && form.email && form.password && form.repeat_password) {
+    if (form.lastname && form.firstname && form.sexe && form.date && form.email && form.password && form.repeat_password) {
       setIsLoading(true)
       const result = await register(form)
       if (result) {
@@ -43,7 +46,7 @@ export const RegisterForm = () => {
           dispatch(setUserAction({ ...result, hasAddress: false }))
         } else {
           setResponse(result)
-          if(response.error){
+          if (response.error) {
             toastError(response.error)
           }
         }
@@ -113,6 +116,18 @@ export const RegisterForm = () => {
       {(response.sexe) &&
         <Text style={styles.error}>{response.sexe}</Text>
       }
+      <TouchableOpacity
+        activeOpacity={0.5}
+        onPress={() => setOpen(true)}
+      >
+        <Input
+          editable={false}
+          defaultValue={form.date && formatdate(form.date)}
+          placeholder='DD/MM/YYYY'
+        >
+          <LockIcon size={20} />
+        </Input>
+      </TouchableOpacity>
       <Input
         placeholder={t('register.form.email')}
         defaultValue={form.email}
@@ -157,6 +172,18 @@ export const RegisterForm = () => {
       {(response.repeat_password) &&
         <Text style={styles.error}>{response.repeat_password}</Text>
       }
+      <DatePicker
+        modal
+        open={open}
+        date={form.date || new Date()}
+        onConfirm={(date) => {
+          setOpen(false)
+          setForm({ ...form, date })
+        }}
+        onCancel={() => {
+          setOpen(false)
+        }}
+      />
       <View style={styles.btnArea}>
         {isLoading &&
           <ActivityIndicator size={'large'} color={THEME.colors.primary} />

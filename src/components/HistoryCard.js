@@ -5,7 +5,7 @@ import { THEME } from '../styles/theme.style';
 import { Routes } from '../constants/routes';
 import { useTranslation } from 'react-i18next';
 import { CODES } from '../constants/global';
-import { formatdate } from '../utils/generalUtils';
+import { formatdateTime } from '../utils/generalUtils';
 import { FileIcon } from './svgs/File';
 
 export const HistoryCard = (props) => {
@@ -25,7 +25,7 @@ export const HistoryCard = (props) => {
           <Text style={styles.text}>{`${amount / 100} ${currency.toUpperCase()}`}</Text>
         </View>
         <View style={styles.col3}>
-          <Text style={styles.text}>{formatdate(created, true)}</Text>
+          <Text style={styles.text}>{formatdateTime(created, true)}</Text>
         </View>
         <View style={styles.col2}>
           <Text style={[styles.status, { backgroundColor: 'red' }]}>{status}</Text>

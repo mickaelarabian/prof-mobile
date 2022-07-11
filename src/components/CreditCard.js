@@ -66,7 +66,7 @@ export const CreditCard = (props) => {
     // disabled={props.default === id}
     >
       <LinearGradient
-        colors={['#d52f6c', '#9d2c5d']}
+        colors={['#fff', '#fff']}
         start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
         style={{
           padding: 15,
@@ -80,7 +80,7 @@ export const CreditCard = (props) => {
           </View>
           <View>
             {props.default === id &&
-              <CheckCircleIcon />
+              <CheckCircleIcon color={THEME.colors.primary} />
             }
           </View>
         </View>
@@ -105,9 +105,18 @@ export const CreditCard = (props) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#6e8de7',
+    backgroundColor: THEME.colors.middleGray,
     borderRadius: 10,
-    marginBottom: 10
+    marginBottom: 10,
+    shadowColor: "#aaa",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.36,
+    shadowRadius: 6.68,
+    elevation: 5,
+    marginHorizontal: '8%'
   },
   section: {
     marginBottom: 10
@@ -118,17 +127,17 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   title: {
-    color: THEME.colors.white,
+    color: THEME.colors.primary,
     fontSize: 10
   },
   value: {
-    color: THEME.colors.white,
+    color: THEME.colors.primary,
     fontSize: 13,
     fontWeight: '700',
     textTransform: 'uppercase'
   },
   brand: {
-    color: THEME.colors.white,
+    color: THEME.colors.primary,
     fontWeight: 'bold',
     fontSize: 22
   }

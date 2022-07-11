@@ -28,7 +28,7 @@ export const LinearButton = ({
       style={{ width, alignSelf, flex }}
       onPress={onPress}
     >
-      <LinearGradient colors={[primary, secondary]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.button, { borderRadius: rounded ? 25 : 0, marginBottom }]}>
+      <LinearGradient colors={[secondary, primary]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.button, { borderRadius: rounded ? 25 : 0, marginBottom }]}>
         <Text style={[styles.title, { textTransform, color, fontSize }]}>{title}</Text>
         <View style={styles.icon}>
           {children}
@@ -46,7 +46,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignSelf: 'center',
     backgroundColor: '#fff',
-    elevation: 2,
+    shadowColor: "#aaa",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.36,
+    shadowRadius: 6.68,
+    elevation: 3,
     flexDirection: 'row',
     justifyContent: 'center'
   },

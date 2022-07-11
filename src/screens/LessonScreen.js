@@ -12,7 +12,7 @@ import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
 import { cancelLesson, getLesson } from '../queries/LessonQuery';
 import { LinearButton } from '../components/LinearButton';
 import { CODES } from '../constants/global';
-import { addDuration, formatdate } from '../utils/generalUtils';
+import { addDuration, formatdateTime } from '../utils/generalUtils';
 
 export const LessonScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -108,7 +108,7 @@ export const LessonScreen = ({ route, navigation }) => {
               <Text style={[styles.text, { marginBottom: 15 }]}>{lesson?.teacher_subject?.description}</Text>
               <View style={styles.infosRow}>
                 <Text style={styles.subTitle}>{t('lessons.schedule')} :</Text>
-                <Text style={styles.text}>{formatdate(lesson?.scheduled_at, true)}</Text>
+                <Text style={styles.text}>{formatdateTime(lesson?.scheduled_at, true)}</Text>
               </View>
               <View style={styles.infosRow}>
                 <Text style={styles.subTitle}>{t('lessons.duration')} :</Text>

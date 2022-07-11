@@ -20,6 +20,7 @@ export const TeacherScreen = ({ route, navigation }) => {
   const { t } = useTranslation();
   const [calendar, setCalendar] = useState({})
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [safeIndex, setSafeIndex] = useState(0)
   const [teacher, setTeacher] = useState({})
   const [isOpinion, setIsOpinion] = useState(false)
   const [refreshing, setRefreshing] = useState(false);
@@ -54,19 +55,28 @@ export const TeacherScreen = ({ route, navigation }) => {
           }]
         })
         setSubjects(datas)
-        let hours = []
-        for (let index = 1; index < 11; index++) {
-          hours = [...hours, {
-            label: `${index}h`,
-            value: index
-          }]
-        }
-        setHours(hours)
       }
     }
   }
 
-  const handleSelectSchedule = (schedule) => {
+  const handleSelectSchedule = (schedule, hours, idx) => {
+    setSafeIndex(currentIndex)
+    let durations = []
+    let index = idx
+    let val = 1
+    while (!hours[index].disabled) {
+      durations = [...durations, {
+        label: `${val}h`,
+        value: val
+      }]
+      if(index === hours.length -1){
+        break;
+      } else {
+        index += 1
+        val += 1
+      }
+    }
+    setHours(durations)
     setCurrentSchedule(schedule)
   }
 
@@ -78,8 +88,8 @@ export const TeacherScreen = ({ route, navigation }) => {
   const onRefresh = useCallback(() => {
     fetchCalendar()
   }, []);
-  // console.log('t', JSON.stringify(teacher))
-  // console.log('t', JSON.stringify(calendar))
+  //console.log('t', JSON.stringify(teacher))
+  //console.log('t', JSON.stringify(calendar))
   const displayCalendar = () => {
     let displayedDays = []
     Object.values(calendar).forEach((item, index) => {
@@ -120,7 +130,7 @@ export const TeacherScreen = ({ route, navigation }) => {
               key={`${index}-${idx}`} style={styles.hour}
               activeOpacity={0.5}
               disabled={hour.disabled}
-              onPress={() => handleSelectSchedule(`${item.date.full} ${hour.time}`)}
+              onPress={() => handleSelectSchedule(`${item.date.full} ${hour.time}`, item.hours, idx)}
             >
               <View style={styles.hourLeft}>
                 <Text style={styles.time}>{hour.time}</Text>
@@ -164,15 +174,20 @@ export const TeacherScreen = ({ route, navigation }) => {
       setCurrentIndex(result)
     }
   }
-  // console.log(teacher.reviews)
+
   const displayReviews = () => teacher.reviews.map((item, idx) => <ReviewCard key={idx} item={item} />)
 
 
   const toggleModal = (isLoading) => {
     if (!isLoading) {
       setCurrentSchedule(null)
+      setCurrentIndex(safeIndex)
     }
   }
+
+  const displaySubjects = () => teacher?.teacher_subjects?.map((item, idx) => (
+    <Text key={idx} style={[styles.subject, { backgroundColor: item.subject.color }]}>{t(item.subject.libelle)}</Text>
+  ))
 
   return (
     <ScrollView
@@ -206,15 +221,20 @@ export const TeacherScreen = ({ route, navigation }) => {
               </View>
               <View style={styles.sectionFlex} >
                 <PositionIcon color={THEME.colors.darkGray} size={18} />
-                <Text style={styles.text}>{teacher?.address?.city}</Text>
+                <Text style={[styles.text, { marginLeft: 5 }]}>{teacher?.address?.city}</Text>
               </View>
-              <View>
-                <Text style={styles.text}>{teacher.text}</Text>
+              <View style={{ flexDirection: 'row' }}>
+                <View style={{ flex: 2 }}>
+                  <Text style={styles.text}>{teacher?.teacher_profil?.description}</Text>
+                </View>
+                <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                  <Text style={[styles.text, { textTransform: 'uppercase', fontWeight: 'bold' }]}>{teacher?.teacher_profil?.currency} {teacher?.teacher_profil?.rate} / h</Text>
+                </View>
               </View>
             </View>
           </View>
-          <View>
-            {/* MATIERES */}
+          <View style={styles.subjects}>
+            {displaySubjects()}
           </View>
         </View>
         <View style={styles.tabArea}>
@@ -245,7 +265,7 @@ export const TeacherScreen = ({ route, navigation }) => {
               {displayCalendar()}
             </Swiper>
             {currentSchedule &&
-              <BookModal toggleModal={toggleModal} subjects={subjects} hours={hours} currentSchedule={currentSchedule} teacher={teacher.id} />
+              <BookModal toggleModal={toggleModal} subjects={subjects} hours={hours} currentSchedule={currentSchedule} teacher={teacher.id} rate={teacher?.teacher_profil?.rate} currency={teacher?.teacher_profil?.currency} />
             }
           </>
         }
@@ -267,7 +287,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   tabCalendar: {
-    height: '83%',
+    height: '68%',
     margin: '5%',
     marginBottom: '20%'
   },
@@ -333,7 +353,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   subject: {
-    color: THEME.colors.white
+    color: THEME.colors.white,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    fontSize: 10,
+    marginRight: 5,
+    marginBottom: 5
   },
   group: {
     backgroundColor: THEME.colors.white,
@@ -381,5 +407,12 @@ const styles = StyleSheet.create({
   teacherContain: {
     flex: 1,
     paddingLeft: 10
-  }
+  },
+  subjects: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    paddingVertical: 5
+  },
 })

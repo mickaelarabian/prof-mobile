@@ -6,7 +6,7 @@ export const addDuration = (numOfHours, date = new Date()) => {
   return dateCopy;
 }
 
-export const formatdate = (time, isFull) => {
+export const formatdateTime = (time, isFull) => {
   const date = new Date(time)
   const month = date.getMonth()
   const year = date.getFullYear()
@@ -17,4 +17,12 @@ export const formatdate = (time, isFull) => {
   hours = hours % 12;
   hours = hours ? hours : 12;
   return `${MONTHS[month].substring(0, 3)} ${days}${isFull ? ' '+year : ''}, ${hours}:${minutes < 10 ? '0' + minutes : minutes} ${unit}`
+}
+
+export const formatdate = (time) => {
+  const date = new Date(time)
+  const month = date.getMonth()
+  const year = date.getFullYear()
+  const days = date.getDate()
+  return `${MONTHS[month].substring(0, 3)} ${days}, ${year}`
 }

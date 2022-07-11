@@ -32,7 +32,7 @@ export const DashboardScreen = ({ navigation }) => {
   useEffect(() => {
     fetchCalendar()
   }, [])
-  // console.log('ca', JSON.stringify(calendar))
+  console.log('ca', JSON.stringify(calendar))
 
   const onRefresh = useCallback(() => {
     fetchCalendar()
@@ -42,7 +42,7 @@ export const DashboardScreen = ({ navigation }) => {
     let displayedDays = []
     Object.values(calendar).forEach((item, index) => {
       displayedDays = [...displayedDays,
-      <View key={index} style={styles.tabCalendar}>
+      <View key={index} style={[styles.tabCalendar, { marginBottom:50}]}>
         <View style={styles.day}>
           <TouchableOpacity
             style={styles.chevron}
@@ -145,9 +145,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   tabCalendar: {
-    height: '83%',
-    margin: '5%',
-    marginBottom: '20%'
+    height: '77%',
+    margin: '5%'
   },
   day: {
     flexDirection: 'row',

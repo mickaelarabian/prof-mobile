@@ -82,13 +82,15 @@ export const PaymentMethodsScreen = ({ navigation }) => {
             />
           }
         />
-        {payments.length === 0 &&
+        {payments.length === 0 && !refreshing &&
           <Text style={styles.noDatas}>Aucune carte</Text>
         }
+        <View style={styles.btnArea}>
         <LinearButton
           title={t('payment.add')}
           onPress={() => navigation.push(Routes.NewCard, { fetchPayments })}
-        />
+          />
+          </View>
       </View>
     </View>
   )
@@ -104,8 +106,6 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     flex: 1,
-    paddingHorizontal: '8%',
-    // paddingTop:20,
     paddingBottom: '5%'
   },
   back: {
@@ -119,5 +119,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     top: 70
+  },
+  btnArea: {
+    paddingHorizontal:'8%'
   }
 })

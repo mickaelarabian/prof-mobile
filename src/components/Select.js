@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native'
 import { THEME } from '../styles/theme.style';
 import { useTranslation } from 'react-i18next';
 import { ChevronBottomIcon } from './svgs/ChevronBottom';
@@ -15,16 +15,18 @@ export const Select = ({
 }) => {
   const { t } = useTranslation();
 
-  const displayOptions = () => options.map((item, index) => (
+  const keyExtractor = useCallback((item, index) => `option-${index}`, []);
+
+  const renderOption = ({ item, index }) => (
     <TouchableOpacity
       key={index}
-      style={{ padding: 10 }}
+      style={{ padding: 10, backgroundColor: THEME.colors.white }}
       activeOpacity={0.5}
       onPress={() => handleSelect(item.value)}
     >
       <Text style={styles.option}>{t(item.label)}</Text>
     </TouchableOpacity>
-  ))
+  )
 
   return (
     <View>
@@ -42,9 +44,12 @@ export const Select = ({
         </View>
       </TouchableOpacity>
       {isOpen &&
-        <View style={styles.options}>
-         {displayOptions()}
-        </View>
+        <FlatList
+          style={styles.options}
+          data={options}
+          renderItem={renderOption}
+          keyExtractor={keyExtractor}
+        />
       }
     </View>
   )
@@ -82,6 +87,7 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.colors.white,
     borderRadius: 5,
     width: '100%',
+    maxHeight:200,
     top: 37,
     zIndex: 99,
     shadowColor: "#bbb",

@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native'
+import CheckBox from '@react-native-community/checkbox';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native'
 import Modal from 'react-native-modal'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { bookLesson } from '../queries/LessonQuery';
 import { THEME } from '../styles/theme.style';
+import { toastError } from '../utils/toastUtils';
 import { LinearButton } from './LinearButton';
 import { Select } from './Select';
 
@@ -12,7 +14,9 @@ export const BookModal = ({
   subjects,
   hours,
   teacher,
-  currentSchedule
+  currentSchedule,
+  rate,
+  currency
 }) => {
   const [isSubjectOpen, setIsSubjectOpen] = useState(false)
   const [isHourOpen, setIsHourOpen] = useState(false)
@@ -20,8 +24,9 @@ export const BookModal = ({
   const [selectedSubject, setSelectedSubject] = useState('')
   const [selectedHour, setSelectedHour] = useState(1)
   const [selectedTeacher, setSelectedTeacher] = useState(teacher)
-  const { width, height } = Dimensions.get('window')
   const [isLoading, setIsLoading] = useState(false)
+  const [isSelected, setSelection] = useState(false);
+  const { width, height } = Dimensions.get('window')
 
   const handleSelectSubject = (subject) => {
     setSelectedSubject(subject)
@@ -40,13 +45,16 @@ export const BookModal = ({
         "teacher_id": selectedTeacher,
         "scheduled_at": schedule,
         "duration": selectedHour,
-        "subject_id": subjects.find(item => item.value === selectedSubject)?.id
+        "subject_id": subjects.find(item => item.value === selectedSubject)?.id,
+        "at_home": isSelected
       })
       if (response) {
         setIsLoading(false)
         toggleModal(false)
         console.log('response', response)
       }
+    } else {
+      toastError('Tous les champs doivent être complété')
     }
   }
 
@@ -55,7 +63,7 @@ export const BookModal = ({
       useNativeDriverForBackdrop
       hasBackdrop
       deviceWidth={width}
-      deviceHeight={height}
+      deviceHeight={height + 50}
       useNativeDriver
       animationInTiming={100}
       animationOutTiming={100}
@@ -64,7 +72,7 @@ export const BookModal = ({
         margin: 0,
         justifyContent: 'center',
         alignContent: 'center',
-        alignItems: 'center',
+        alignItems: 'center'
       }}
       coverScreen
       isVisible={true}
@@ -73,7 +81,7 @@ export const BookModal = ({
       onBackdropPress={() => toggleModal(isLoading)}
     >
       <View style={styles.modal}>
-        <Text style={styles.description}>Pour réserver un cours avec Mohamed le {schedule} vous devez préalablement choisir la matière à étudier ainsi que la durée du cours.</Text>
+        <Text style={styles.description}>Réserver un cours avec Mohamed le {schedule}.</Text>
         <Select
           isOpen={isSubjectOpen}
           setIsOpen={setIsSubjectOpen}
@@ -90,6 +98,23 @@ export const BookModal = ({
           defaultValue={'Durée'}
           options={hours}
         />
+        <TouchableOpacity
+          onPress={() => setSelection(!isSelected)}
+          activeOpacity={0.5}
+          style={styles.checkboxArea}
+        >
+          <CheckBox
+            tintColor={THEME.colors.primary}
+            tintColors={{ true: THEME.colors.primary, false: THEME.colors.primary }}
+            onFillColor={THEME.colors.primary}
+            onTintColor={THEME.colors.primary}
+            value={isSelected}
+            onValueChange={setSelection}
+            style={styles.checkbox}
+          />
+          <Text style={styles.checkText}>Cours à domicile</Text>
+        </TouchableOpacity>
+        <Text style={styles.price}>Total : {rate * selectedHour} {currency.toUpperCase()}</Text>
         {isLoading &&
           <ActivityIndicator
             style={{
@@ -115,7 +140,7 @@ export const BookModal = ({
           secondary={THEME.colors.white}
           color={THEME.colors.primary}
           marginBottom={0}
-          onPress={()=>toggleModal(isLoading)}
+          onPress={() => toggleModal(isLoading)}
           disabled={isLoading}
         />
       </View>
@@ -125,7 +150,7 @@ export const BookModal = ({
 
 const styles = StyleSheet.create({
   modal: {
-    maxHeight: hp('50%'),
+    maxHeight: hp('70%'),
     width: wp('85%'),
     shadowOpacity: 0.5,
     shadowRadius: 3,
@@ -139,8 +164,28 @@ const styles = StyleSheet.create({
     padding: 25
   },
   description: {
+    color: THEME.colors.gray,
+    textAlign: 'center',
+    fontWeight: '700',
+    fontSize: 17,
+    marginBottom: 5
+  },
+  price: {
+    fontWeight: 'bold',
     color: THEME.colors.darkGray,
-    textAlign: 'center'
+    marginBottom: 10,
+    alignSelf:'flex-end'
+  },
+  checkboxArea: {
+    flexDirection: 'row',
+    justifyContent:'flex-start',
+    alignItems: 'center'
+  },
+  checkbox: {
+
+  },
+  checkText: {
+    color: THEME.colors.darkGray
   }
 })
 
