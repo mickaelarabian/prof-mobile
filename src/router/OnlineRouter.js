@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes } from '../constants/routes'
 import { DashboardScreen } from '../screens/DashboardScreen';
 import { ExploreScreen } from '../screens/ExploreScreen';
@@ -6,7 +6,7 @@ import { ProfileScreen } from '../screens/ProfileScreen';
 import { LessonsScreen } from '../screens/LessonsScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { TabBar } from './TabBar';
 import { LanguageScreen } from '../screens/LanguageScreen';
 import { AddressScreen } from '../screens/AddressScreen';
@@ -20,11 +20,57 @@ import { ColabScreen } from '../screens/ColabScreen';
 import { ChatScreen } from '../screens/ChatScreen'
 import { RoomScreen } from '../screens/RoomScreen';
 import { horizontalAnimation } from '../constants/global';
+import { sendNotificationsToken } from '../queries/UserQuery';
+import PushNotification from "react-native-push-notification";
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import { useNavigation } from '@react-navigation/native';
+import { setNewNotification } from '../redux/chat';
 
 export const OnlineRouter = () => {
   const user = useSelector(s => s.user);
   const AppTab = createBottomTabNavigator()
   const AppStack = createStackNavigator()
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    PushNotification.configure({
+      // (optional) Called when Token is generated (iOS and Android)
+      onRegister: async function (token) {
+        console.log("TOKEN:", token);
+        const res = await sendNotificationsToken(token.token)
+        console.log('tok', res)
+      },
+      // (required) Called when a remote or local notification is opened or received
+      onNotification: function (notification) {
+        console.log("NOTIFICATION:", notification);
+        // process the notification here
+        if (notification.data) {
+          if (notification.data.code === 'tchat.new_message' && notification.data.room) {
+            if (!notification.foreground) {
+              navigation.navigate(Routes.Room, { id: notification.data.room })
+            } else {
+              dispatch(setNewNotification())
+            }
+          }
+        }
+
+        // required on iOS only
+
+        notification.finish(PushNotificationIOS.FetchResult.NoData);
+      },
+      // Android only
+      senderID: "835228624620",
+      // iOS only
+      permissions: {
+        alert: true,
+        badge: true,
+        sound: true
+      },
+      popInitialNotification: true,
+      requestPermissions: true
+    });
+  }, [])
 
   const DashboardNavigator = () => {
     return (

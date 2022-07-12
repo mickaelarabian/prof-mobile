@@ -31,7 +31,6 @@ export const chatStateSlice = createSlice({
     },
     //set new message
     setNewMessageAction: (state, action) => {
-      state.notifications = state.notifications + 1
       state.messages = [action.payload, ...state.messages]
       state.room.last_message = action.payload
       const idx = state.rooms.findIndex(item => item.id === action.payload.roomId)
@@ -40,6 +39,9 @@ export const chatStateSlice = createSlice({
         console.log('action.payload.content')
         state.rooms[idx].last_message = action.payload
       }
+    },
+    setNewNotification: (state) => {
+      state.notifications = state.notifications + 1
     },
     //Reset notifications
     resetNotificationsAction: (state) => {
@@ -60,6 +62,7 @@ export const {
   setCurrentMessagesAction,
   setNewMessageAction,
   resetNotificationsAction,
-  setNewRoomAction
+  setNewRoomAction,
+  setNewNotification
 } = chatStateSlice.actions;
 export default chatStateSlice.reducer;

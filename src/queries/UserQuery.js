@@ -30,3 +30,22 @@ export const updateCurrentUser = async (data) => {
     throw e
   }
 }
+
+export const sendNotificationsToken = async (token) => {
+  try {
+    const res = await apiClient({
+      method: 'POST',
+      url: `${env.API.BASE_URL}/users/fcm`,
+      data:{
+        token
+      }
+    })
+    if (res) {
+      return res.data
+    } else {
+      throw new Error('Impossible de récupérer les matières');
+    }
+  } catch (e) {
+    throw e
+  }
+}
