@@ -40,7 +40,7 @@ export const PaymentHistoryScreen = ({ navigation }) => {
 
   const keyExtractor = useCallback(({ id }) => `history-${id}`, []);
 
-  const renderHistory = ({item, index}) => <HistoryCard key={index} item={item} openedCard={openedCard} handleSetOpenedCard={handleSetOpenedCard} />
+  const renderHistory = ({ item, index }) => <HistoryCard key={index} item={item} openedCard={openedCard} handleSetOpenedCard={handleSetOpenedCard} />
 
   console.log(JSON.stringify(history))
   return (
@@ -56,17 +56,21 @@ export const PaymentHistoryScreen = ({ navigation }) => {
       </View>
       <View style={styles.bottomSection}>
         <Title title='Historique de paiement' />
-        <View style={styles.header}>
-          <View style={styles.col2}>
-            <Text style={styles.headerTitle}>Montant</Text>
+        {history && history.length > 0 ?
+          <View style={styles.header}>
+            <View style={styles.col2}>
+              <Text style={styles.headerTitle}>Montant</Text>
+            </View>
+            <View style={styles.col3}>
+              <Text style={styles.headerTitle}>Date</Text>
+            </View>
+            <View style={styles.col2}>
+              <Text style={styles.headerTitle}>Status</Text>
+            </View>
           </View>
-          <View style={styles.col3}>
-            <Text style={styles.headerTitle}>Date</Text>
-          </View>
-          <View style={styles.col2}>
-            <Text style={styles.headerTitle}>Status</Text>
-          </View>
-        </View>
+          :
+          <Text style={styles.noDatas}>{'Aucun paiment'}</Text>
+        }
         <FlatList
           data={history}
           renderItem={renderHistory}
@@ -99,7 +103,7 @@ const styles = StyleSheet.create({
     width: '25%',
     padding: '8%',
     paddingTop: '10%',
-    paddingBottom:'3%',
+    paddingBottom: '3%',
   },
   header: {
     flexDirection: 'row',
@@ -123,4 +127,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center'
   },
+  noDatas: {
+    color: THEME.colors.darkGray,
+    position: 'absolute',
+    alignSelf: 'center',
+    top: 70
+  }
 })

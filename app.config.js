@@ -1,8 +1,8 @@
 export const env = {
   API: {
-    BASE_URL: 'http://192.168.1.186:8000/api',
-    CHAT_URL: 'http://192.168.1.186:3000',
-    SOCKET_URL: 'http://192.168.1.186:3005',
+    BASE_URL: 'https://api-dev.master-classroom.com/api',
+    CHAT_URL: 'https://api-tchat-dev.master-classroom.com',
+    SOCKET_URL: 'https://socket.master-classroom.com',
     MAP_BOX: 'https://api.mapbox.com/geocoding/v5/mapbox.places/',
     STRIPE_URL: 'https://api.stripe.com/v1'
   },

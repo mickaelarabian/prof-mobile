@@ -3,7 +3,6 @@ import { apiClient } from "../utils/axiosClient.";
 import { toastError, toastSuccess } from "../utils/toastUtils";
 
 export const updateCurrentUser = async (data) => {
-  console.log(data)
   try {
     const res = await apiClient({
       method: 'put',
@@ -44,6 +43,30 @@ export const sendNotificationsToken = async (token) => {
       return res.data
     } else {
       throw new Error('Impossible de récupérer les matières');
+    }
+  } catch (e) {
+    throw e
+  }
+}
+
+export const updateAvatar = async (avatar) => {
+  try {
+    const res = await apiClient({
+      method: 'post',
+      url: `${env.API.BASE_URL}/users/avatar`,
+      data :{
+        avatar
+      }
+    })
+    if (res) {
+      if(res.status === 200){
+        toastSuccess('Avatar mis à jour')
+      } else {
+        toastError('Impossible de mettre à jour l\'avatar')
+      }
+      return res.data
+    } else {
+      throw new Error('Impossible de modifier l\'avatar');
     }
   } catch (e) {
     throw e

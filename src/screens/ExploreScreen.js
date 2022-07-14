@@ -53,8 +53,10 @@ export const ExploreScreen = ({ navigation }) => {
   ))
 
   const handleSearch = async () => {
+    setRefreshing(true)
     const response = await getTeachers(selectedSubject)
     if (response) {
+      setRefreshing(false)
       setTeachers(response.data)
     }
   }
@@ -99,6 +101,9 @@ export const ExploreScreen = ({ navigation }) => {
           title={'GO'}
           onPress={handleSearch}
         />
+        {teachers.length === 0 && !refreshing &&
+          <Text style={styles.noDatas}>Aucun professeur</Text>
+        }
         <FlatList
           data={teachers}
           renderItem={renderTeacher}
@@ -164,5 +169,11 @@ const styles = StyleSheet.create({
   suggestion: {
     color: THEME.colors.gray,
     padding: 5
-  }
+  },
+  noDatas: {
+    color: THEME.colors.darkGray,
+    // position: 'absolute',
+    alignSelf: 'center',
+    // top: 70
+  },
 })

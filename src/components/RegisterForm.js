@@ -9,14 +9,15 @@ import { ProfileIcon } from './svgs/Profile';
 import { LockIcon } from './svgs/Lock';
 import { EmailIcon } from './svgs/Email';
 import { LinearButton } from './LinearButton';
-import { ChevronBottomIcon } from './svgs/ChevronBottom';
-import { GENDER, GENDER_OPTIONS } from '../constants/global';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GENDER_OPTIONS } from '../constants/global';
 import { register } from '../queries/AuthQuery';
 import { Input } from './Input';
 import { Select } from './Select';
 import { toastError, toastSuccess } from '../utils/toastUtils';
 import DatePicker from 'react-native-date-picker'
 import { formatdate } from '../utils/generalUtils';
+import { apiClient } from '../utils/axiosClient.';
 
 export const RegisterForm = () => {
   const { t } = useTranslation();
@@ -35,13 +36,14 @@ export const RegisterForm = () => {
   )
 
   const onSubmit = async () => {
-    if (form.lastname && form.firstname && form.sexe && form.date && form.email && form.password && form.repeat_password) {
+    if (form.lastname && form.firstname && form.sexe && form.birth && form.email && form.password && form.repeat_password) {
       setIsLoading(true)
       const result = await register(form)
       if (result) {
         setIsLoading(false)
         if (result.token) {
-          console.log('oui')
+          AsyncStorage.setItem('user_token', result.token)
+          apiClient.defaults.headers.common.Authorization = `Bearer ${result.token}`;
           toastSuccess('Vous vous êtes bien inscrit !')
           dispatch(setUserAction({ ...result, hasAddress: false }))
         } else {
@@ -63,6 +65,12 @@ export const RegisterForm = () => {
     })
     setIsOpen(false)
   }
+
+  const today = new Date()
+  console.log(today)
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  console.log(yesterday)
 
   return (
     <View style={styles.form}>
@@ -122,12 +130,15 @@ export const RegisterForm = () => {
       >
         <Input
           editable={false}
-          defaultValue={form.date && formatdate(form.date)}
-          placeholder='DD/MM/YYYY'
+          defaultValue={form.birth && formatdate(form.birth)}
+          placeholder={t('register.form.birth')}
         >
           <LockIcon size={20} />
         </Input>
       </TouchableOpacity>
+      {(response.birth) &&
+        <Text style={styles.error}>{response.birth}</Text>
+      }
       <Input
         placeholder={t('register.form.email')}
         defaultValue={form.email}
@@ -175,10 +186,12 @@ export const RegisterForm = () => {
       <DatePicker
         modal
         open={open}
-        date={form.date || new Date()}
-        onConfirm={(date) => {
+        date={form.birth || new Date()}
+        mode='date'
+        maximumDate={yesterday}
+        onConfirm={(birth) => {
           setOpen(false)
-          setForm({ ...form, date })
+          setForm({ ...form, birth })
         }}
         onCancel={() => {
           setOpen(false)

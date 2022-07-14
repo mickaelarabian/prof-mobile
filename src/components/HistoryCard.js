@@ -12,8 +12,9 @@ export const HistoryCard = (props) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
-  const { id, amount, currency, status, created, receipt_url, description } = props.item
+  const { id, amount, currency, refunded, disputed, created, receipt_url, description } = props.item
   const { openedCard, handleSetOpenedCard } = props
+
   return (
     <>
       <TouchableOpacity
@@ -28,7 +29,7 @@ export const HistoryCard = (props) => {
           <Text style={styles.text}>{formatdateTime(created, true)}</Text>
         </View>
         <View style={styles.col2}>
-          <Text style={[styles.status, { backgroundColor: 'red' }]}>{status}</Text>
+          <Text style={[styles.status, { backgroundColor: CODES[refunded ? 'refunded' : disputed ? 'disputed': 'paied'] }]}>{t(refunded ? 'status.refunded' : disputed ? 'status.disputed': 'status.paied')}</Text>
         </View>
       </TouchableOpacity>
       {openedCard === id &&

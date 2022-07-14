@@ -18,17 +18,17 @@ export const CreditCard = (props) => {
       "Are your sure?",
       "Are you sure you want to remove this payment method ?",
       [
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "Cancel",
+        },
         // The "Yes" button
         {
           text: "Remove",
           onPress: async () => {
             props.removeCard(id)
           },
-        },
-        // The "No" button
-        // Does nothing but dismiss the dialog when tapped
-        {
-          text: "Cancel",
         },
       ]
     );
@@ -40,17 +40,17 @@ export const CreditCard = (props) => {
         "Are your sure?",
         "Are you sure you want to set this payment method by default ?",
         [
+          // The "No" button
+          // Does nothing but dismiss the dialog when tapped
+          {
+            text: "Cancel",
+          },
           // The "Yes" button
           {
             text: "Set",
             onPress: async () => {
               props.handlePress(id)
             },
-          },
-          // The "No" button
-          // Does nothing but dismiss the dialog when tapped
-          {
-            text: "Cancel",
           },
         ]
       );

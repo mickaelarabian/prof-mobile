@@ -27,6 +27,7 @@
       "male": "Homme",
       "female": "Femme",
       "email": "Email",
+      "birth": "Date de naissance",
       "password": "Mot de passe",
       "repeat": "Répétez votre mot de passe"
     }
@@ -82,5 +83,10 @@
   },
   "calendar": {
     "title": "Mon calendrier"
+  },
+  "status": {
+    "refunded": "remboursé",
+    "disputed": "Litige en cour",
+    "paied": "terminé"
   }
 }

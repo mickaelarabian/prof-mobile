@@ -38,8 +38,10 @@ export const PaymentMethodsScreen = ({ navigation }) => {
 
   const handlePress = async (id) => {
     console.log('is', id)
+    setRefreshing(true)
     const res = await addPaymentDefault(id, true)
     if (res.data) {
+      setRefreshing(false)
       fetchPayments()
     }
   }

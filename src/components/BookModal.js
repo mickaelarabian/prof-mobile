@@ -27,7 +27,7 @@ export const BookModal = ({
   const [isLoading, setIsLoading] = useState(false)
   const [isSelected, setSelection] = useState(false);
   const { width, height } = Dimensions.get('window')
-
+console.log('currentSchedule', currentSchedule)
   const handleSelectSubject = (subject) => {
     setSelectedSubject(subject)
     setIsSubjectOpen(false)

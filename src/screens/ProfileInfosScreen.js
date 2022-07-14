@@ -14,7 +14,7 @@ import { Input } from '../components/Input';
 import { ProfileIcon } from '../components/svgs/Profile';
 import { LockIcon } from '../components/svgs/Lock';
 import { Select } from '../components/Select';
-import { updateCurrentUser } from '../queries/UserQuery';
+import { updateAvatar, updateCurrentUser } from '../queries/UserQuery';
 import { Title } from '../components/Title';
 import { getCurrentUser } from '../queries/AuthQuery';
 import { setUserAction } from '../redux/user';
@@ -36,10 +36,15 @@ export const ProfileInfosScreen = ({ navigation }) => {
   }
 
   const handleChoosePhoto = () => {
-    launchImageLibrary({ noData: true }, (response) => {
-      // console.log(response);
-      if (response) {
-        setImage(response.assets[0].uri)
+    launchImageLibrary({ mediaType:'photo' }, async (response) => {
+      if (response.assets) {
+        console.log(response);
+        const res = await updateAvatar(response.assets[0])
+        if(res){
+          console.log('netoyage', res)
+        }
+        //ca part direct, j'affiche le taost puis je fetch en comun
+        // setImage(response.assets[0].uri)
       }
     });
   };
@@ -192,6 +197,8 @@ const styles = StyleSheet.create({
     height: 100,
     alignSelf: 'center',
     borderRadius:100,
-    backgroundColor: THEME.colors.noPic
+    backgroundColor: THEME.colors.noPic,
+    borderWidth:1,
+    borderColor: THEME.colors.primary
   }
 })

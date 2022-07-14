@@ -10,6 +10,7 @@ import { ChevronRightIcon } from '../components/svgs/ChevronRight';
 import { Routes } from '../constants/routes';
 import { Title } from '../components/Title';
 import { useTranslation } from 'react-i18next';
+import { CODES } from '../constants/global';
 
 export const DashboardScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -42,7 +43,7 @@ export const DashboardScreen = ({ navigation }) => {
     let displayedDays = []
     Object.values(calendar).forEach((item, index) => {
       displayedDays = [...displayedDays,
-      <View key={index} style={[styles.tabCalendar, { marginBottom:50}]}>
+      <View key={index} style={[styles.tabCalendar, { marginBottom: 50 }]}>
         <View style={styles.day}>
           <TouchableOpacity
             style={styles.chevron}
@@ -66,12 +67,12 @@ export const DashboardScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        }
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
         >
           {item.hours.map((hour, idx) => (
             <View key={`${index}-${idx}`} style={styles.hour}>
@@ -86,11 +87,14 @@ export const DashboardScreen = ({ navigation }) => {
                     style={[styles.lesson, { backgroundColor: hour.lesson.subject.color || THEME.colors.primary, height: 75 * hour.lesson.duration, justifyContent: 'space-between', zIndex: 99 }]}
                   >
                     <View style={styles.lessonHeader}>
-                      <Text style={styles.subject}>{hour.time} - {hour.lesson.subject.slug}</Text>
-                      <Text style={styles.teacher}>{hour.lesson.teacher.firstname} {hour.lesson.teacher.lastname}</Text>
+                      <Text style={styles.subject}>{hour.time} - {t(`subject.${hour.lesson.subject.slug}`)}</Text>
+                      <Text style={[styles.status, { backgroundColor: CODES[hour.lesson.relative_status.code], color: hour.lesson.relative_status.code === 'unconfirmed' ? THEME.colors.blueGray : THEME.colors.white }]}>{hour.lesson.relative_status.code}</Text>
                     </View>
-                    <View>
-                      <Text numberOfLines={3} style={styles.description}>{hour.lesson.teacher_subject.description}</Text>
+                    <View style={styles.lessonFooter}>
+                      <View style={styles.lessonLetters}>
+                        <Text style={styles.letters}>{hour.lesson.teacher.firstname.charAt(0)}{hour.lesson.teacher.lastname.charAt(0)}</Text>
+                      </View>
+                      <Text style={styles.teacher}>{hour.lesson.teacher.firstname} {hour.lesson.teacher.lastname}</Text>
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -139,7 +143,7 @@ const styles = StyleSheet.create({
   topSection: {
     padding: '8%',
     paddingTop: '10%',
-    paddingBottom:'7%'
+    paddingBottom: '7%'
   },
   bottomSection: {
     flex: 1
@@ -178,7 +182,7 @@ const styles = StyleSheet.create({
   },
   hourLeft: {
     flex: 1,
-    padding:5,
+    padding: 5,
     height: 75
   },
   hourRight: {
@@ -205,5 +209,33 @@ const styles = StyleSheet.create({
   description: {
     color: THEME.colors.white,
     fontSize: 12
+  },
+  status: {
+    backgroundColor: THEME.colors.primary,
+    color: THEME.colors.white,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 25,
+    fontWeight: '700',
+    textTransform: "capitalize",
+    fontSize: 10
+  },
+  lessonFooter: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  lessonLetters: {
+    borderWidth: 1,
+    borderColor: THEME.colors.white,
+    borderRadius: 25,
+    width: 22,
+    height: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 5
+  },
+  letters: {
+    color: THEME.colors.white,
+    fontSize: 10,
   }
 })

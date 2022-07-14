@@ -34,6 +34,9 @@ export const CODES = {
   "confirmed": THEME.colors.confirmed,
   "cancelled": THEME.colors.cancelled,
   "unconfirmed": THEME.colors.unconfirmed,
+  "refunded": THEME.colors.refunded,
+  "disputed": THEME.colors.disputed,
+  "paied": THEME.colors.paied
 }
 
 export const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

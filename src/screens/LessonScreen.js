@@ -35,8 +35,10 @@ export const LessonScreen = ({ route, navigation }) => {
   }, [id])
 
   const handleCancel = async (id) => {
+    setRefreshing(true)
     const response = await cancelLesson(id)
     if (response) {
+      setRefreshing(false)
       fetchLesson()
     }
   }
@@ -50,18 +52,18 @@ export const LessonScreen = ({ route, navigation }) => {
       "Are your sure?",
       "Are you sure you want to cancel this lesson ?",
       [
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "No",
+        },
         // The "Yes" button
         {
           text: "Yes",
           onPress: async () => {
             handleCancel(lesson.id)
           },
-        },
-        // The "No" button
-        // Does nothing but dismiss the dialog when tapped
-        {
-          text: "No",
-        },
+        }
       ]
     );
   };
@@ -152,9 +154,9 @@ export const LessonScreen = ({ route, navigation }) => {
                   secondary={THEME.colors.white}
                   color={THEME.colors.primary}
                   title={'Annuler le cours'}
-                  width='auto'
-                  rounded={false}
-                  marginBottom={0}
+                  // width='auto'
+                  // rounded={false}
+                  // marginBottom={0}
                   fontSize={17}
                   onPress={showConfirmCancel}
                   flex={1}
@@ -162,9 +164,9 @@ export const LessonScreen = ({ route, navigation }) => {
                 {lesson.status.code === 'confirmed' &&
                   <LinearButton
                     title='Rejoindre le cours'
-                    width='auto'
-                    rounded={false}
-                    marginBottom={0}
+                    // width='auto'
+                    // rounded={false}
+                    // marginBottom={0}
                     fontSize={17}
                     flex={1}
                   />
@@ -228,11 +230,12 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize'
   },
   btnArea: {
-    flexDirection: 'row',
     position: 'absolute',
     bottom: 0,
     left: 0,
-    right: 0
+    right: 0,
+    paddingHorizontal: '8%',
+    paddingBottom:'8%'
   },
   text: {
     color: THEME.colors.gray

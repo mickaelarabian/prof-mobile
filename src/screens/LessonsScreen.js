@@ -19,11 +19,11 @@ export const LessonsScreen = ({ navigation }) => {
     setRefreshing(true)
     const response = await getUpcomingLessons(page)
     if (response) {
+      setRefreshing(false)
       console.log('object', response)
       const data = page === 1 ? response.data : [...lessons, ...response.data]
       setLastPage(response.lastPage)
       setLessons(data)
-      setRefreshing(false)
     }
   }
 
@@ -31,11 +31,11 @@ export const LessonsScreen = ({ navigation }) => {
     setRefreshing(true)
     const response = await getHistoryLessons(page)
     if (response) {
+      setRefreshing(false)
       console.log('object', response)
       const data = page === 1 ? response.data : [...lessons, ...response.data]
       setLastPage(response.lastPage)
       setLessons(data)
-      setRefreshing(false)
     }
   }
 
@@ -75,7 +75,7 @@ export const LessonsScreen = ({ navigation }) => {
     setIsHistory(isHistory)
     setPage(1)
   }
-console.log('lessons', lessons)
+  console.log('lessons', lessons)
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.topSection}>
@@ -103,37 +103,36 @@ console.log('lessons', lessons)
         </View>
         <View style={styles.bottomContain}>
           {lessons && lessons.length > 0 ?
-            <>
-              <View style={styles.header}>
-                <View style={styles.col3}>
-                  <Text style={styles.headerTitle}>{t('lessons.teacher')}</Text>
-                </View>
-                <View style={styles.col3}>
-                  <Text style={styles.headerTitle}>{t('lessons.subject')}</Text>
-                </View>
-                <View style={styles.col3}>
-                  <Text style={styles.headerTitle}>{t('lessons.schedule')}</Text>
-                </View>
-                <View style={styles.col}>
-                  <Text style={styles.headerTitle}>{t('lessons.status')}</Text>
-                </View>
+            <View style={styles.header}>
+              <View style={styles.col3}>
+                <Text style={styles.headerTitle}>{t('lessons.teacher')}</Text>
               </View>
-            </>
+              <View style={styles.col3}>
+                <Text style={styles.headerTitle}>{t('lessons.subject')}</Text>
+              </View>
+              <View style={styles.col3}>
+                <Text style={styles.headerTitle}>{t('lessons.schedule')}</Text>
+              </View>
+              <View style={styles.col}>
+                <Text style={styles.headerTitle}>{t('lessons.status')}</Text>
+              </View>
+            </View>
             :
-            <Text style={styles.noDatas}>{t('lessons.nodata')}</Text>}
-            <FlatList
-              data={lessons}
-              renderItem={renderLesson}
-              keyExtractor={keyExtractor}
-              onEndReached={handleLoadMore}
-              onEndReachedThreshold={0.4}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={() => onRefresh(isHistory)}
-                />
-              }
-            />
+            <Text style={styles.noDatas}>{t('lessons.nodata')}</Text>
+          }
+          <FlatList
+            data={lessons}
+            renderItem={renderLesson}
+            keyExtractor={keyExtractor}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.4}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => onRefresh(isHistory)}
+              />
+            }
+          />
         </View>
       </View>
     </View>
@@ -191,7 +190,7 @@ const styles = StyleSheet.create({
   tabTitle: {
     fontSize: 15
   },
-  noDatas:{
+  noDatas: {
     color: THEME.colors.darkGray,
     position: 'absolute',
     alignSelf: 'center',

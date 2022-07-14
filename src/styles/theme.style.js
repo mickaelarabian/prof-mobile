@@ -18,6 +18,9 @@ export const THEME = {
     done: '#45aca0',
     confirmed: '#45aca0',
     unconfirmed: "#edf1f6",
-    noPic: '#f2f2f2'
+    noPic: '#f2f2f2',
+    refunded: '#ff3d71',
+    disputed: '#ffaa00',
+    paied: '#45aca0'
   },
 };

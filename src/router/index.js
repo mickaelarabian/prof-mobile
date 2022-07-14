@@ -1,8 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
-import React, { createRef, useEffect } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StripeProvider } from '@stripe/stripe-react-native'
 import { useTranslation } from 'react-i18next';
 import { setLanguageAction } from '../redux/app';
 import { OfflineRouter } from './OfflineRouter';
@@ -14,12 +13,15 @@ import { env } from '../../app.config'
 import { getMyRooms } from '../queries/ChatQuery';
 import { setRoomsAction } from '../redux/chat';
 import SocketProvider from '../contexts/SocketProvider';
+import { ActivityIndicator } from 'react-native';
+import { THEME } from '../styles/theme.style';
 
 export const AppRouter = ({ theme }) => {
   const navigationRef = createRef();
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
   const user = useSelector(s => s.user);
+  const [isLoading, setIsLoading] = useState(false)
 
   const reloadLang = async () => {
     const lang = await AsyncStorage.getItem('current_lng');
@@ -32,6 +34,7 @@ export const AppRouter = ({ theme }) => {
   const fetchUser = async (token) => {
     const user = await getCurrentUser(token)
     if (user) {
+      setIsLoading(false)
       console.log(user)
       if (user.error) {
         // AsyncStorage.removeItem('user_token')
@@ -54,6 +57,7 @@ export const AppRouter = ({ theme }) => {
   const reloadUser = async () => {
     const token = await AsyncStorage.getItem('user_token');
     if (token) {
+      setIsLoading(true)
       fetchUser(token)
     }
   }
@@ -71,6 +75,20 @@ export const AppRouter = ({ theme }) => {
         </SocketProvider>
         :
         <OfflineRouter />
+      }
+      {isLoading &&
+        <ActivityIndicator
+          style={{
+            position: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0
+          }}
+          size={'large'} color={THEME.colors.primary}
+        />
       }
     </NavigationContainer>
   )

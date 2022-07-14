@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, RefreshControl, FlatList } from 'react-native'
+import { View, StyleSheet, RefreshControl, FlatList, Text } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { LanguageButton } from '../components/LanguageButton';
@@ -14,7 +14,7 @@ export const ChatScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
   const { rooms, notifications } = useSelector(s => s.chat);
-// console.log('rooms', rooms)
+
   const keyExtractor = useCallback(({ id }) => `room-${id}`, []);
 
   const renderRoom = ({ item, index }) => <RoomCard key={index} item={item} />
@@ -50,6 +50,9 @@ export const ChatScreen = ({ navigation }) => {
             />
           }
         />
+         {rooms.length === 0 && !refreshing &&
+          <Text style={styles.noDatas}>Aucune discussions</Text>
+        }
       </View>
     </View>
   )
@@ -79,5 +82,11 @@ const styles = StyleSheet.create({
     flex: 1,
     // alignItems: 'center',
     // justifyContent: 'center'
+  },
+  noDatas: {
+    color: THEME.colors.darkGray,
+    position: 'absolute',
+    alignSelf: 'center',
+    top: 70
   },
 })

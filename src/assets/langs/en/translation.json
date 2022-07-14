@@ -27,6 +27,7 @@
       "male": "Male",
       "female": "Female",
       "email": "Email",
+      "birth": "Date of birth",
       "password": "Password",
       "repeat": "Repeat password"    }
   },
@@ -81,5 +82,10 @@
   },
   "calendar": {
     "title": "My calendar"
+  },
+  "status": {
+    "refunded": "refunded",
+    "disputed": "disputed",
+    "paied": "paied"
   }
 }
