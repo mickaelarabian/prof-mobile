@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native'
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { LanguageButton } from '../components/LanguageButton';
 import { getCalendar } from '../queries/CalendarQuery';
 import Swiper from 'react-native-swiper';
@@ -11,13 +11,14 @@ import { Routes } from '../constants/routes';
 import { Title } from '../components/Title';
 import { useTranslation } from 'react-i18next';
 import { CODES } from '../constants/global';
+import { setCalendarAction } from '../redux/calendar';
 
 export const DashboardScreen = ({ navigation }) => {
-  const dispatch = useDispatch();
-  const [calendar, setCalendar] = useState({})
   const [currentIndex, setCurrentIndex] = useState(0)
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const { calendar } = useSelector(s => s.calendar);
 
   const { width, height } = Dimensions.get('window')
 
@@ -25,15 +26,14 @@ export const DashboardScreen = ({ navigation }) => {
     setRefreshing(true)
     const response = await getCalendar()
     if (response) {
-      setCalendar(response)
       setRefreshing(false)
+      dispatch(setCalendarAction(response))
     }
   }
 
   useEffect(() => {
     fetchCalendar()
   }, [])
-  console.log('ca', JSON.stringify(calendar))
 
   const onRefresh = useCallback(() => {
     fetchCalendar()

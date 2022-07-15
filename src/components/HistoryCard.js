@@ -40,7 +40,7 @@ export const HistoryCard = (props) => {
             style={styles.billBtn}
             onPress={() => Linking.openURL(receipt_url)}
           >
-            <Text style={styles.billText}>Open Bill</Text>
+            <Text style={styles.billText}>{t('history.open')}</Text>
             <FileIcon size={18} color={THEME.colors.white} />
           </TouchableOpacity>
         </View>

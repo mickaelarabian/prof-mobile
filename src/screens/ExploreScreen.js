@@ -75,7 +75,7 @@ export const ExploreScreen = ({ navigation }) => {
         <LanguageButton />
       </View>
       <View style={styles.bottomSection}>
-        <Title title='Explorer' />
+        <Title title={t('explore.title')} />
         <View>
           <View style={styles.completeInput}>
             <View style={styles.icon}>
@@ -84,7 +84,7 @@ export const ExploreScreen = ({ navigation }) => {
             <TextInput
               style={styles.input}
               autoCapitalize="sentences"
-              placeholder={'Search a place, a teacher ...'}
+              placeholder={t('explore.search')}
               defaultValue={t(subjects.find(item => item.id === selectedSubject)?.libelle) || selectedSubject}
               placeholderTextColor="#666666"
               onChangeText={(subject) => handleChangeText(subject)}
@@ -98,11 +98,11 @@ export const ExploreScreen = ({ navigation }) => {
           }
         </View>
         <LinearButton
-          title={'GO'}
+          title={t('explore.research')}
           onPress={handleSearch}
         />
         {teachers.length === 0 && !refreshing &&
-          <Text style={styles.noDatas}>Aucun professeur</Text>
+          <Text style={styles.noDatas}>{t('explore.no')}</Text>
         }
         <FlatList
           data={teachers}

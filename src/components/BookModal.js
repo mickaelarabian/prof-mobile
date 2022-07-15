@@ -3,11 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native'
 import Modal from 'react-native-modal'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
+import { getCalendar } from '../queries/CalendarQuery';
 import { bookLesson } from '../queries/LessonQuery';
+import { setCalendarAction } from '../redux/calendar';
 import { THEME } from '../styles/theme.style';
 import { toastError } from '../utils/toastUtils';
 import { LinearButton } from './LinearButton';
 import { Select } from './Select';
+import { useDispatch } from 'react-redux';
 
 export const BookModal = ({
   toggleModal,
@@ -27,7 +30,8 @@ export const BookModal = ({
   const [isLoading, setIsLoading] = useState(false)
   const [isSelected, setSelection] = useState(false);
   const { width, height } = Dimensions.get('window')
-console.log('currentSchedule', currentSchedule)
+  const dispatch = useDispatch();
+
   const handleSelectSubject = (subject) => {
     setSelectedSubject(subject)
     setIsSubjectOpen(false)
@@ -36,6 +40,13 @@ console.log('currentSchedule', currentSchedule)
   const handleSelectHour = (hour) => {
     setSelectedHour(hour)
     setIsHourOpen(false)
+  }
+
+  const fetchCalendar = async () => {
+    const response = await getCalendar()
+    if (response) {
+      dispatch(setCalendarAction(response))
+    }
   }
 
   const handleSubmit = async () => {
@@ -51,7 +62,7 @@ console.log('currentSchedule', currentSchedule)
       if (response) {
         setIsLoading(false)
         toggleModal(false)
-        console.log('response', response)
+        fetchCalendar()
       }
     } else {
       toastError('Tous les champs doivent être complété')

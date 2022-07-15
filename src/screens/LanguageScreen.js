@@ -14,7 +14,6 @@ export const LanguageScreen = ({ navigation }) => {
   const { lang } = useSelector(s => s.app);
 
   const handleSelectLanguage = (lang) => {
-    console.log('lang', lang)
     i18n.changeLanguage(lang)
     dispatch(setLanguageAction(lang))
     AsyncStorage.setItem('current_lng', lang)

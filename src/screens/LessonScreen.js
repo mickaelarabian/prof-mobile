@@ -13,6 +13,7 @@ import { cancelLesson, getLesson } from '../queries/LessonQuery';
 import { LinearButton } from '../components/LinearButton';
 import { CODES } from '../constants/global';
 import { addDuration, formatdateTime } from '../utils/generalUtils';
+import { setCalendarAction } from '../redux/calendar';
 
 export const LessonScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -29,7 +30,14 @@ export const LessonScreen = ({ route, navigation }) => {
       setRefreshing(false)
     }
   }
-  // console.log('lesson', JSON.stringify(lesson))
+
+  const fetchCalendar = async () => {
+    const response = await getCalendar()
+    if (response) {
+      dispatch(setCalendarAction(response))
+    }
+  }
+
   useEffect(() => {
     fetchLesson()
   }, [id])
@@ -40,6 +48,7 @@ export const LessonScreen = ({ route, navigation }) => {
     if (response) {
       setRefreshing(false)
       fetchLesson()
+      fetchCalendar()
     }
   }
 
@@ -153,20 +162,14 @@ export const LessonScreen = ({ route, navigation }) => {
                   primary={THEME.colors.white}
                   secondary={THEME.colors.white}
                   color={THEME.colors.primary}
-                  title={'Annuler le cours'}
-                  // width='auto'
-                  // rounded={false}
-                  // marginBottom={0}
+                  title={t('lessons.cancel')}
                   fontSize={17}
                   onPress={showConfirmCancel}
                   flex={1}
                 />
                 {lesson.status.code === 'confirmed' &&
                   <LinearButton
-                    title='Rejoindre le cours'
-                    // width='auto'
-                    // rounded={false}
-                    // marginBottom={0}
+                    title={t('lessons.join')}
                     fontSize={17}
                     flex={1}
                   />

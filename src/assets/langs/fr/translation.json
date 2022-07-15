@@ -66,15 +66,21 @@
     "students": "Étudiants",
     "lastname": "Nom",
     "firstname": "Prénom",
-    "type": "Type"
+    "type": "Type",
+    "cancel": "Annuler le cours",
+    "join": "Rejoindre le cours"
   },
   "newcard": {
     "title": "Nouvelle carte",
-    "holder": "Titulaire de la carte"
+    "holder": "Titulaire de la carte",
+    "add": "Ajouter"
   },
   "payment": {
     "title": "Méthodes de paiement",
-    "add": "Ajouter une carte"
+    "add": "Ajouter une carte",
+    "number": "NUMEROS DE CARTE",
+    "holder": "TITULAIRE DE LA CARTE",
+    "valid": "VALIDITÉ"
   },
   "teacher": {
     "notavailable": "Non disponible",
@@ -88,5 +94,32 @@
     "refunded": "remboursé",
     "disputed": "Litige en cour",
     "paied": "terminé"
+  },
+  "history": {
+    "title": "Historique de paiement",
+    "amount": "Montant",
+    "date": "Date",
+    "status": "Statut",
+    "no": "Aucun paiment",
+    "open": "Ouvrir la facture"
+  },
+  "chat": {
+    "title": "Discussions",
+    "no": "Aucune discussions",
+    "nomess": "Aucun message",
+    "type": "Tapez un message"
+  },
+  "explore": {
+    "title": "Rechercher",
+    "search": "Chercher un lieu, un professeur...",
+    "no": "Aucun professeur",
+    "research": "Rechercher"
+  },
+  "tab":{
+    "Dashboard": "Calendrier",
+    "Lessons": "Mes cours",
+    "Explore": "Rechercher",
+    "Chat": "Discussions",
+    "Profile": "Profil"
   }
 }

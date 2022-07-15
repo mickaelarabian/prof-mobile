@@ -38,7 +38,7 @@ export const ChatScreen = ({ navigation }) => {
         <LanguageButton />
       </View>
       <View style={styles.bottomSection}>
-        <Title title='Discussions' />
+        <Title title={t('chat.title')} />
         <FlatList
           data={rooms}
           renderItem={renderRoom}
@@ -51,7 +51,7 @@ export const ChatScreen = ({ navigation }) => {
           }
         />
          {rooms.length === 0 && !refreshing &&
-          <Text style={styles.noDatas}>Aucune discussions</Text>
+          <Text style={styles.noDatas}>{t('chat.no')}</Text>
         }
       </View>
     </View>
@@ -60,9 +60,6 @@ export const ChatScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   contain: {
-    // padding: '8%',
-    // paddingTop: '10%',
-    //paddingBottom: '0%',
     flex: 1
   },
   title: {
@@ -73,15 +70,12 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize'
   },
   topSection: {
-    //flex: 1,
     padding: '8%',
     paddingBottom:'7%',
     paddingTop: '10%',
   },
   bottomSection: {
-    flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center'
+    flex: 1
   },
   noDatas: {
     color: THEME.colors.darkGray,

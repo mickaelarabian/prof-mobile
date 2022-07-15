@@ -2,21 +2,23 @@ import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { CalendarIcon } from '../components/svgs/Calendar'
 import { ChatIcon } from '../components/svgs/Chat'
-import { HomeIcon } from '../components/svgs/Home'
+import { LessonIcon } from '../components/svgs/Home'
 import { ProfileIcon } from '../components/svgs/Profile'
 import { SearchIcon } from '../components/svgs/Search'
 import { THEME } from '../styles/theme.style'
 import { useSelector, useDispatch } from 'react-redux';
 import { resetNotificationsAction } from '../redux/chat'
+import { useTranslation } from 'react-i18next';
 
 export const TabBar = ({ state, navigation }) => {
   const { notifications } = useSelector(s => s.chat);
   const dispatch = useDispatch();
-console.log('notifs', notifications)
+  const { t } = useTranslation();
+
   const getIcon = (color, index) => {
     const icons = [
-      <HomeIcon color={color} />,
       <CalendarIcon color={color} />,
+      <LessonIcon color={color} />,
       <SearchIcon color={color} />,
       <ChatIcon color={color} />,
       <ProfileIcon color={color} />
@@ -43,6 +45,7 @@ console.log('notifs', notifications)
 
     }
     const color = isFocused ? THEME.colors.primary : THEME.colors.gray
+
     return (
       <TouchableOpacity
         key={index}
@@ -51,7 +54,7 @@ console.log('notifs', notifications)
         style={styles.tab}
       >
         {getIcon(color, index)}
-        <Text style={[styles.title, { color: isFocused ? THEME.colors.primary : THEME.colors.gray }]}>{item.name}</Text>
+        <Text style={[styles.title, { color: isFocused ? THEME.colors.primary : THEME.colors.gray }]}>{t(`tab.${item.name}`)}</Text>
         {index === 3 && notifications > 0 &&
           <View style={styles.badge}>
             <Text style={styles.number}>{notifications}</Text>

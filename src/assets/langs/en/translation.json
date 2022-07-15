@@ -65,15 +65,21 @@
     "students": "Students",
     "lastname": "Lastname",
     "firstname": "Firstname",
-    "type": "Type"
+    "type": "Type",
+    "cancel": "Cancel this course",
+    "join": "Join the course"
   },
   "newcard": {
     "title": "New card",
-    "holder": "Card holder"
+    "holder": "Card holder",
+    "add": "Add"
   },
   "payment": {
     "title": "Payment methods",
-    "add": "Add new card"
+    "add": "Add new card",
+    "number": "CARD NUMBER",
+    "holder": "CARD HOLDER",
+    "valid": "VALID"
   },
   "teacher": {
     "notavailable": "Not available",
@@ -87,5 +93,32 @@
     "refunded": "refunded",
     "disputed": "disputed",
     "paied": "paied"
+  },
+  "history": {
+    "title": "Payment history",
+    "amount": "Amount",
+    "date": "Date",
+    "status": "Status",
+    "no": "No paiment",
+    "open": "Open Bill"
+  },
+  "chat": {
+    "title": "Chat",
+    "no": "No discussion",
+    "nomess": "No message",
+    "type": "Type a message"
+  },
+  "explore": {
+    "title": "Explore",
+    "search": "Search a place, a teacher...",
+    "no": "No teacher",
+    "research": "Research"
+  },
+  "tab": {
+    "Dashboard": "Calendar",
+    "Lessons": "Lessons",
+    "Explore": "Explore",
+    "Chat": "Chat",
+    "Profile": "Profile"
   }
 }

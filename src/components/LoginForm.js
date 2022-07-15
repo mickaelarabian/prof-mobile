@@ -34,10 +34,8 @@ export const LoginForm = () => {
   const onSubmit = async () => {
     if(form.email && form.password){
       setIsLoading(true)
-      console.log('rec')
       const result = await login(form)
       if (result) {
-        console.log('ok')
         console.log(result)
         setIsLoading(false)
         if (result.token) {

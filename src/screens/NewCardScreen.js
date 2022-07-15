@@ -33,7 +33,7 @@ export const NewCardScreen = ({ route, navigation }) => {
       const billingDetails = {
         name
       }
-      console.log(intent)
+
       const { setupIntent, error: setupIntentError } = await confirmSetupIntent(intent.client_secret, {
         type: 'Card',
         billingDetails,
@@ -100,7 +100,7 @@ export const NewCardScreen = ({ route, navigation }) => {
             <ProfileIcon size={20} />
           </Input>
           <LinearButton
-            title='Ajouter'
+            title={t('newcard.add')}
             onPress={handleSubmit}
             disabled={isLoading}
           />

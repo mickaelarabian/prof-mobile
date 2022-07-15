@@ -79,7 +79,6 @@ export const bookLesson = async (data) => {
       data
     })
     if (res) {
-      console.log('res', res.status)
       if(res.status === 201){
         toastSuccess('Le cours a bien été réservé')
       } else if(res.status === 409){

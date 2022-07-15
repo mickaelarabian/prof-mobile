@@ -11,7 +11,7 @@ export const ReviewCard = (props) => {
   const displayStars = (note) => {
     let stars = []
     for (let index = 1; index < 6; index++) {
-      if(note > index){
+      if(Math.trunc(note) > index-1){
         stars = [...stars, <StarFullIcon key={index}/>]
       } else if(note + 0.5 === index){
         stars = [...stars, <StarMiddleIcon key={index}/>]

@@ -32,7 +32,7 @@ export const RoomCard = (props) => {
       <View style={styles.content}>
         <Text style={styles.author}>{last_message ? users && users.find(user => user.id === last_message.userId)?.firstname : name} {last_message && users && users.find(user => user.id === last_message.userId)?.lastname}</Text>
         <View style={styles.sectionFlex}>
-          <Text style={styles.message}>{last_message ? last_message.content : 'Aucun message'}</Text>
+          <Text style={styles.message}>{last_message ? last_message.content : t('chat.nomess')}</Text>
           <Text style={styles.date}>{last_message && format}</Text>
         </View>
       </View>

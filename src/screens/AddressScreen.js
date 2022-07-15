@@ -24,7 +24,6 @@ export const AddressScreen = ({ navigation }) => {
   const search = async () => {
     const response = await searchAddress(address)
     if (response) {
-      // console.log(JSON.stringify(response))
       setSuggestions(response.features)
     }
   }
@@ -79,7 +78,6 @@ export const AddressScreen = ({ navigation }) => {
       const response = await attachAddress(data)
       if (response) {
         setIsLoading(false)
-        console.log('response', response)
         dispatch(setUserAddress())
       }
     } else {

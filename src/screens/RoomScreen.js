@@ -49,7 +49,7 @@ export const RoomScreen = ({ route, navigation }) => {
   const handleChange = (value) => {
     setContent(value)
   }
-console.log(room)
+
   const handleSubmit = () => {
     if (content.length > 0) {
       const res = emitNewMessage(content, room.id, user.id)
@@ -81,13 +81,13 @@ console.log(room)
         //contentContainerStyle={{ flexDirection: 'column-reverse' }}
         />
         {messages.length === 0 &&
-          <Text style={styles.noDatas}>Aucun message</Text>
+          <Text style={styles.noDatas}>{t('chat.nomess')}</Text>
         }
         <View style={styles.messageArea}>
           <View style={styles.completeInput}>
             <TextInput
               style={styles.input}
-              placeholder='Type a message'
+              placeholder={t('chat.type')}
               defaultValue={content}
               placeholderTextColor={THEME.colors.gray}
               onChangeText={(value) => handleChange(value)}

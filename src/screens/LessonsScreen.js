@@ -20,7 +20,6 @@ export const LessonsScreen = ({ navigation }) => {
     const response = await getUpcomingLessons(page)
     if (response) {
       setRefreshing(false)
-      console.log('object', response)
       const data = page === 1 ? response.data : [...lessons, ...response.data]
       setLastPage(response.lastPage)
       setLessons(data)
@@ -32,7 +31,6 @@ export const LessonsScreen = ({ navigation }) => {
     const response = await getHistoryLessons(page)
     if (response) {
       setRefreshing(false)
-      console.log('object', response)
       const data = page === 1 ? response.data : [...lessons, ...response.data]
       setLastPage(response.lastPage)
       setLessons(data)

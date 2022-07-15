@@ -39,7 +39,6 @@ export const OnlineRouter = () => {
       onRegister: async function (token) {
         console.log("TOKEN:", token);
         const res = await sendNotificationsToken(token.token)
-        console.log('tok', res)
       },
       // (required) Called when a remote or local notification is opened or received
       onNotification: function (notification) {

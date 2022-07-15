@@ -42,7 +42,6 @@ export const PaymentHistoryScreen = ({ navigation }) => {
 
   const renderHistory = ({ item, index }) => <HistoryCard key={index} item={item} openedCard={openedCard} handleSetOpenedCard={handleSetOpenedCard} />
 
-  console.log(JSON.stringify(history))
   return (
     <View style={styles.contain}>
       <View style={styles.topSection}>
@@ -55,21 +54,22 @@ export const PaymentHistoryScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.bottomSection}>
-        <Title title='Historique de paiement' />
+        <Title title={t('history.title')} />
         {history && history.length > 0 ?
           <View style={styles.header}>
             <View style={styles.col2}>
-              <Text style={styles.headerTitle}>Montant</Text>
+              <Text style={styles.headerTitle}>{t('history.amount')}</Text>
             </View>
             <View style={styles.col3}>
-              <Text style={styles.headerTitle}>Date</Text>
+              <Text style={styles.headerTitle}>{t('history.date')}</Text>
             </View>
             <View style={styles.col2}>
-              <Text style={styles.headerTitle}>Status</Text>
+              <Text style={styles.headerTitle}>{t('history.status')}</Text>
             </View>
           </View>
           :
-          <Text style={styles.noDatas}>{'Aucun paiment'}</Text>
+          !refreshing &&
+          <Text style={styles.noDatas}>{t('history.no')}</Text>
         }
         <FlatList
           data={history}

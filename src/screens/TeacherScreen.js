@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity, RefreshControl, ActivityIndicator, Image } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity, RefreshControl, Image } from 'react-native'
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { getTeacherCalendar } from '../queries/CalendarQuery';
@@ -9,11 +9,13 @@ import { ChevronLeftIcon } from '../components/svgs/ChevronLeft';
 import { ChevronRightIcon } from '../components/svgs/ChevronRight';
 import { Routes } from '../constants/routes';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
-import { getTeacher } from '../queries/TeacherQuery';
+import { canReview, getTeacher } from '../queries/TeacherQuery';
 import { BookModal } from '../components/BookModal';
 import { ReviewCard } from '../components/ReviewCard';
 import { StarIcon } from '../components/svgs/Star';
 import { PositionIcon } from '../components/svgs/Position';
+import { LinearButton } from '../components/LinearButton';
+import { ReviewModal } from '../components/ReviewModal';
 
 export const TeacherScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -27,6 +29,8 @@ export const TeacherScreen = ({ route, navigation }) => {
   const [currentSchedule, setCurrentSchedule] = useState(null);
   const [subjects, setSubjects] = useState([])
   const [hours, setHours] = useState([])
+  const [canPostReview, setCanPostReview] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   const { id } = route.params;
 
@@ -59,6 +63,13 @@ export const TeacherScreen = ({ route, navigation }) => {
     }
   }
 
+  const fetchCanReview = async () => {
+    const res = await canReview(id)
+    if (res) {
+      setCanPostReview(res)
+    }
+  }
+
   const handleSelectSchedule = (schedule, hours, idx) => {
     setSafeIndex(currentIndex)
     let durations = []
@@ -69,7 +80,7 @@ export const TeacherScreen = ({ route, navigation }) => {
         label: `${val}h`,
         value: val
       }]
-      if(index === hours.length -1){
+      if (index === hours.length - 1) {
         break;
       } else {
         index += 1
@@ -83,13 +94,13 @@ export const TeacherScreen = ({ route, navigation }) => {
   useEffect(() => {
     fetchCalendar()
     fetchTeacher()
+    fetchCanReview()
   }, [])
 
   const onRefresh = useCallback(() => {
     fetchCalendar()
   }, []);
-  //console.log('t', JSON.stringify(teacher))
-  //console.log('t', JSON.stringify(calendar))
+
   const displayCalendar = () => {
     let displayedDays = []
     Object.values(calendar).forEach((item, index) => {
@@ -177,7 +188,6 @@ export const TeacherScreen = ({ route, navigation }) => {
 
   const displayReviews = () => teacher.reviews.map((item, idx) => <ReviewCard key={idx} item={item} />)
 
-
   const toggleModal = (isLoading) => {
     if (!isLoading) {
       setCurrentSchedule(null)
@@ -257,6 +267,18 @@ export const TeacherScreen = ({ route, navigation }) => {
         </View>
         {isOpinion ?
           <View>
+            {canPostReview &&
+              <View style={styles.reviewBtn}>
+                <LinearButton
+                  title='Ajouter un commentaire'
+                  marginBottom={0}
+                  onPress={() => setIsOpen(true)}
+                />
+              </View>
+            }
+            {isOpen &&
+              <ReviewModal toggleModal={() => setIsOpen(false)} teacher={teacher.id} setCanPostReview={setCanPostReview} fetchTeacher={fetchTeacher} />
+            }
             {displayReviews()}
           </View>
           :
@@ -415,4 +437,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingVertical: 5
   },
+  reviewBtn: {
+    paddingHorizontal: '8%',
+    paddingVertical: '5%'
+  }
 })

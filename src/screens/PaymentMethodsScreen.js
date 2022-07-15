@@ -25,7 +25,7 @@ export const PaymentMethodsScreen = ({ navigation }) => {
       setRefreshing(false)
     }
   }
-  // console.log(JSON.stringify(payments))
+
   useEffect(() => {
     fetchPayments()
   }, [])
@@ -37,7 +37,6 @@ export const PaymentMethodsScreen = ({ navigation }) => {
   const keyExtractor = useCallback(({ id }) => `payment-${id}`, []);
 
   const handlePress = async (id) => {
-    console.log('is', id)
     setRefreshing(true)
     const res = await addPaymentDefault(id, true)
     if (res.data) {

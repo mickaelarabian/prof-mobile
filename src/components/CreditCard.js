@@ -85,16 +85,16 @@ export const CreditCard = (props) => {
           </View>
         </View>
         <View style={styles.section}>
-          <Text style={styles.title}>CARD NUMBER</Text>
+          <Text style={styles.title}>{t('payment.number')}</Text>
           <Text style={styles.value}>{`**** **** **** ${card.last4}`}</Text>
         </View>
         <View style={styles.sectionFlex}>
           <View>
-            <Text style={styles.title}>CARD HOLDER </Text>
+            <Text style={styles.title}>{t('payment.holder')}</Text>
             <Text style={styles.value}>{billing_details.name}</Text>
           </View>
           <View>
-            <Text style={styles.title}>VALID </Text>
+            <Text style={styles.title}>{t('payment.valid')}</Text>
             <Text style={styles.value}>{`${card.exp_month} / ${card.exp_year}`}</Text>
           </View>
         </View>

@@ -67,10 +67,8 @@ export const RegisterForm = () => {
   }
 
   const today = new Date()
-  console.log(today)
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
-  console.log(yesterday)
 
   return (
     <View style={styles.form}>

@@ -17,7 +17,6 @@ export const ForgotScreen = ({ navigation }) => {
   const handleSubmit = async () => {
     if(email){
       setIsLoading(true)
-      console.log("boom")
       const res = await resetpassword(email)
       if(res){
         console.log('res',res)
