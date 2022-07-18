@@ -116,6 +116,7 @@ export const LessonsScreen = ({ navigation }) => {
               </View>
             </View>
             :
+            !refreshing &&
             <Text style={styles.noDatas}>{t('lessons.nodata')}</Text>
           }
           <FlatList

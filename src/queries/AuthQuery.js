@@ -64,6 +64,7 @@ export const resetpassword = async (email) => {
       }
     })
     if (res) {
+      console.log('ress', res)
       if(res.status === 200){
         toastSuccess('Email envoyé avec succé')
         return {"data": true}

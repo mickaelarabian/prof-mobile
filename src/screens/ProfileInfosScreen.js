@@ -18,6 +18,7 @@ import { updateAvatar, updateCurrentUser } from '../queries/UserQuery';
 import { Title } from '../components/Title';
 import { getCurrentUser } from '../queries/AuthQuery';
 import { setUserAction } from '../redux/user';
+import { Buffer } from 'buffer'
 
 export const ProfileInfosScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -36,14 +37,14 @@ export const ProfileInfosScreen = ({ navigation }) => {
   }
 
   const handleChoosePhoto = () => {
-    launchImageLibrary({ mediaType:'photo' }, async (response) => {
+    launchImageLibrary({ mediaType:'photo', includeBase64:true }, async (response) => {
       if (response.assets) {
-        console.log(response);
-        const res = await updateAvatar(response.assets[0])
+        const buffer = Buffer.from(response.assets[0].base64, 'base64')
+        const res = await updateAvatar(buffer)
         if(res){
           console.log('netoyage', res)
         }
-        //ca part direct, j'affiche le taost puis je fetch en comun
+        // ca part direct, j'affiche le taost puis je fetch en comun
         // setImage(response.assets[0].uri)
       }
     });

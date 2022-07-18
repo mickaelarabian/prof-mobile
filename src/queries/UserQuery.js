@@ -59,6 +59,7 @@ export const updateAvatar = async (avatar) => {
       }
     })
     if (res) {
+      console.log('res', res)
       if(res.status === 200){
         toastSuccess('Avatar mis à jour')
       } else {

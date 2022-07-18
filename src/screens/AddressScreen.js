@@ -10,7 +10,7 @@ import { LANGS } from '../constants/global'
 import { LinearButton } from '../components/LinearButton';
 import { PositionIcon } from '../components/svgs/Position';
 import { setUserAddress } from '../redux/user';
-import { attachAddress, searchAddress } from '../queries/AddressQuery';
+import { attachAddress, getMapToken, searchAddress } from '../queries/AddressQuery';
 
 export const AddressScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -20,13 +20,38 @@ export const AddressScreen = ({ navigation }) => {
   const [selectedAddress, setSelectedAddress] = useState(null)
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [mapToken, setMapToken] = useState({
+    token: '',
+    date: null
+  })
+
+  const getToken = async () => {
+    const res = await getMapToken()
+    if(res){
+      setMapToken({
+        token: res.accessToken, 
+        date: new Date()
+      })
+    }
+  } 
 
   const search = async () => {
-    const response = await searchAddress(address)
-    if (response) {
-      setSuggestions(response.features)
+    const date = new Date()
+    const minutes = (date - mapToken.date)/1000
+    if(minutes > 1200){
+      getToken()
+    } else {
+      const response = await searchAddress(address, mapToken.token)
+      if (response) {
+        console.log('res', JSON.stringify(response))
+        setSuggestions(response.results)
+      }
     }
   }
+
+  useEffect(() => {
+    getToken()
+  }, [])
 
   useEffect(() => {
     if (address.length > 0) {
@@ -53,7 +78,7 @@ export const AddressScreen = ({ navigation }) => {
       activeOpacity={0.5}
       onPress={() => handleSelectAddress(item)}
     >
-      <Text style={styles.suggestion}>{item.place_name}</Text>
+      <Text style={styles.suggestion}>{item.name}</Text>
     </TouchableOpacity>
   ))
 
@@ -66,13 +91,13 @@ export const AddressScreen = ({ navigation }) => {
       setIsLoading(true)
       // console.log('good', JSON.stringify(selectedAddress))
       const data = {
-        address: selectedAddress.place_name,
-        lat: selectedAddress.center[0],
-        lng: selectedAddress.center[1],
-        country: selectedAddress.context.find(el => el.id.includes("country"))?.text,
-        city: selectedAddress.context.find(el => el.id.includes("place"))?.text,
-        local: selectedAddress.context.find(el => el.id.includes("region"))?.text,
-        postcode: selectedAddress.context.find(el => el.id.includes("postcode"))?.text,
+        address: selectedAddress.name,
+        lat: selectedAddress.coordinate.latitude,
+        lng: selectedAddress.coordinate.longitude,
+        country: selectedAddress.country,
+        city: selectedAddress.structuredAddress.locality,
+        local: selectedAddress.structuredAddress.thoroughfare,
+        postcode: '00000',
       }
       console.log('data', data)
       const response = await attachAddress(data)
@@ -97,7 +122,7 @@ export const AddressScreen = ({ navigation }) => {
             style={styles.input}
             autoCapitalize="sentences"
             placeholder={t('address.title')}
-            defaultValue={selectedAddress?.place_name || address}
+            defaultValue={selectedAddress?.name || address}
             placeholderTextColor="#666666"
             onChangeText={(address) => setAddress(address)}
           />

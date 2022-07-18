@@ -2,15 +2,33 @@ import { env } from "../../app.config";
 import { apiClient } from "../utils/axiosClient.";
 import { toastError, toastSuccess } from "../utils/toastUtils";
 
-export const searchAddress = async (data) => {
+export const searchAddress = async (data, token) => {
   try {
     const res = await apiClient({
       method: 'GET',
-      url: `${env.API.MAP_BOX}${data}.json?proximity=ip&types=address&access_token=${env.KEYS.MAP_BOX}`    })
+      url: `${env.API.MAP}/search?q=${data}`,
+      headers: { "Authorization": `Bearer ${token}` }
+    })
     if (res) {
       return res.data
     } else {
-      throw new Error('Impossible de s\'inscrire');
+      throw new Error('Impossible de rechercher');
+    }
+  } catch (e) {
+    throw e
+  }
+}
+
+export const getMapToken = async () => {
+  try {
+    const res = await apiClient({
+      method: 'GET',
+      url: `${env.API.CHAT_URL}/maps/token`
+    })
+    if (res) {
+      return res.data
+    } else {
+      throw new Error('Impossible de récupérer le token');
     }
   } catch (e) {
     throw e
