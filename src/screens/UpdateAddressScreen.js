@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
-import { setLanguageAction } from '../redux/app';
+import { setLanguageAction, setMapTokenAction } from '../redux/app';
 import { THEME } from '../styles/theme.style';
 import { LANGS } from '../constants/global'
 import { LinearButton } from '../components/LinearButton';
@@ -18,15 +18,12 @@ import { Autocomplete } from '../components/Autocomplete';
 export const UpdateAddressScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const { mapToken } = useSelector(s => s.app);
   const [address, setAddress] = useState('')
   const [suggestions, setSuggestions] = useState([])
   const [selectedAddress, setSelectedAddress] = useState(null)
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [mapToken, setMapToken] = useState({
-    token: '',
-    date: null
-  })
 
   const fetchAddress = async () => {
     const res = await getMyAddress()
@@ -36,25 +33,24 @@ export const UpdateAddressScreen = ({ navigation }) => {
   }
 
   const getToken = async () => {
-    const res = await getMapToken()
-    if (res) {
-      setMapToken({
-        token: res.accessToken,
-        date: new Date()
-      })
+    const date = new Date().getTime()
+    const minutes = (date - mapToken.date) / 1000
+    if (minutes > 1200) {
+      const res = await getMapToken()
+      if (res) {
+        dispatch(setMapTokenAction({
+          token: res.accessToken,
+          date: new Date().getTime()
+        }))
+      }
     }
   }
 
   const search = async () => {
-    const date = new Date()
-    const minutes = (date - mapToken.date) / 1000
-    if (minutes > 1200) {
-      getToken()
-    } else {
-      const response = await searchAddress(address, mapToken.token)
-      if (response) {
-        setSuggestions(response.results)
-      }
+    getToken()
+    const response = await searchAddress(address, mapToken.token)
+    if (response) {
+      setSuggestions(response.results)
     }
   }
 

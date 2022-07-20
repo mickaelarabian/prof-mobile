@@ -10,10 +10,11 @@ import { THEME } from '../styles/theme.style';
 import { toastError } from '../utils/toastUtils';
 import { LinearButton } from './LinearButton';
 import { Select } from './Select';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete } from './Autocomplete';
 import { PositionIcon } from './svgs/Position';
 import { getMapToken, searchAddress } from '../queries/AddressQuery';
+import { setMapTokenAction } from '../redux/app';
 
 export const BookModal = ({
   toggleModal,
@@ -36,33 +37,30 @@ export const BookModal = ({
   const [isLoading, setIsLoading] = useState(false)
   const [isSelected, setSelection] = useState(false);
   const [response, setResponse] = useState('')
-  const [mapToken, setMapToken] = useState({
-    token: '',
-    date: null
-  })
+
   const { width, height } = Dimensions.get('window')
   const dispatch = useDispatch();
+  const { mapToken } = useSelector(s => s.app);
 
   const getToken = async () => {
-    const res = await getMapToken()
-    if (res) {
-      setMapToken({
-        token: res.accessToken,
-        date: new Date()
-      })
+    const date = new Date().getTime()
+    const minutes = (date - mapToken.date) / 1000
+    if (minutes > 1200) {
+      const res = await getMapToken()
+      if (res) {
+        dispatch(setMapTokenAction({
+          token: res.accessToken,
+          date: new Date().getTime()
+        }))
+      }
     }
   }
 
   const search = async () => {
-    const date = new Date()
-    const minutes = (date - mapToken.date) / 1000
-    if (minutes > 1200) {
-      getToken()
-    } else {
-      const response = await searchAddress(address, mapToken.token)
-      if (response) {
-        setSuggestions(response.results)
-      }
+    getToken()
+    const response = await searchAddress(address, mapToken.token)
+    if (response) {
+      setSuggestions(response.results)
     }
   }
 
@@ -108,30 +106,30 @@ export const BookModal = ({
 
   const handleSubmit = async () => {
     if (schedule && selectedHour, selectedSubject) {
-      if(!isSelected || (isSelected && selectedAddress)){
+      if (!isSelected || (isSelected && selectedAddress)) {
         setIsLoading(true)
         const response = await bookLesson({
-        "teacher_id": selectedTeacher,
-        "scheduled_at": schedule,
-        "duration": selectedHour,
-        "subject_id": subjects.find(item => item.value === selectedSubject)?.id,
-        "at_home": isSelected,
-        "address": selectedAddress?.name,
-        "lat": selectedAddress?.coordinate?.latitude,
-        "lng": selectedAddress?.coordinate?.longitude,
-        "country": selectedAddress?.country,
-        "city": selectedAddress?.structuredAddress?.locality,
-        "local": selectedAddress?.structuredAddress?.thoroughfare,
-        "postcode": '00000',
-      })
-      if (response) {
-        setIsLoading(false)
-        toggleModal(false)
-        fetchCalendar()
+          "teacher_id": selectedTeacher,
+          "scheduled_at": schedule,
+          "duration": selectedHour,
+          "subject_id": subjects.find(item => item.value === selectedSubject)?.id,
+          "at_home": isSelected,
+          "address": selectedAddress?.name,
+          "lat": selectedAddress?.coordinate?.latitude,
+          "lng": selectedAddress?.coordinate?.longitude,
+          "country": selectedAddress?.country,
+          "city": selectedAddress?.structuredAddress?.locality,
+          "local": selectedAddress?.structuredAddress?.thoroughfare,
+          "postcode": '00000',
+        })
+        if (response) {
+          setIsLoading(false)
+          toggleModal(false)
+          fetchCalendar()
+        }
+      } else {
+        toastError('Entrez une adresse correcte')
       }
-    } else {
-      toastError('Entrez une adresse correcte')
-    }
 
 
     } else {
@@ -265,11 +263,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: THEME.colors.darkGray,
     marginBottom: 10,
-    alignSelf:'flex-end'
+    alignSelf: 'flex-end'
   },
   checkboxArea: {
     flexDirection: 'row',
-    justifyContent:'flex-start',
+    justifyContent: 'flex-start',
     alignItems: 'center'
   },
   checkbox: {
