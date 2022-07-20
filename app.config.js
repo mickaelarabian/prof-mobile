@@ -3,6 +3,7 @@ export const env = {
     BASE_URL: 'https://api-dev.master-classroom.com/api',
     // BASE_URL: 'http://192.168.1.73:8000/api',
     CHAT_URL: 'https://api-tchat-dev.master-classroom.com',
+    // SOCKET_URL: 'http://192.168.1.186:3005',
     SOCKET_URL: 'https://socket.master-classroom.com',
     MAP: 'https://maps-api.apple.com/v1',
     STRIPE_URL: 'https://api.stripe.com/v1'

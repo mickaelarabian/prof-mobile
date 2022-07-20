@@ -25,6 +25,7 @@ import PushNotification from "react-native-push-notification";
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { useNavigation } from '@react-navigation/native';
 import { setNewNotification } from '../redux/chat';
+import { UpdateAddressScreen } from '../screens/UpdateAddressScreen';
 
 export const OnlineRouter = () => {
   const user = useSelector(s => s.user);
@@ -105,6 +106,7 @@ export const OnlineRouter = () => {
           <AppStack.Screen name={Routes.NewCard} component={NewCardScreen} options={horizontalAnimation} />
           <AppStack.Screen name={Routes.Teacher} component={TeacherScreen} options={horizontalAnimation} />
           <AppStack.Screen name={Routes.Room} component={RoomScreen} options={horizontalAnimation} />
+          <AppStack.Screen name={Routes.NewAddress} component={UpdateAddressScreen} options={horizontalAnimation} />
         </AppStack.Navigator>
         :
         <AppStack.Navigator

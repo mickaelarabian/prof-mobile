@@ -17,5 +17,6 @@ export const Routes = {
   Colab:'Colab',
   Forgot: 'Forgot',
   Chat: 'Chat',
-  Room: 'Room'
+  Room: 'Room',
+  NewAddress: 'NewAddress'
 }

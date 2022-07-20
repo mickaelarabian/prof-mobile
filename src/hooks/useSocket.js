@@ -10,16 +10,19 @@ const useSocket = () => useContext(SocketContext);
 const useSocketProvider = () => {
   const dispatch = useDispatch();
   const [ws, setWs] = useState(null)
-  const { user } = useSelector(s => s.user);
+  const { user, token } = useSelector(s => s.user);
 
   useEffect(() => {
 
     const options = {
       transports: ['websocket'],
       secure: false,
-      rejectUnauthorized: false
+      rejectUnauthorized: false,
+      query: {
+        Authorization: `Bearer ${token}`
+      }
     }
-    console.log('lancement socket')
+
     const socket = socketIO.io(env.API.SOCKET_URL, options)
 
     socket.on('connect', () => {

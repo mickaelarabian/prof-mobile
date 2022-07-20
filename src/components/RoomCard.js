@@ -43,7 +43,7 @@ export const RoomCard = (props) => {
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    paddingVertical: 15,
+    paddingVertical: 12,
     paddingHorizontal: '8%'
   },
   user: {

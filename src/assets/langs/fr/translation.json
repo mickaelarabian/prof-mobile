@@ -6,7 +6,8 @@
     "title": "Votre adresse",
     "next": "Suivant",
     "skip": "Passer",
-    "error": "Choisissez une adresse ou passez"
+    "error": "Choisissez une adresse ou passez",
+    "update": "Modifier l'adresse"
   },
   "login": {
     "title": "Connexion",
@@ -42,7 +43,8 @@
     "payments": "Historique de paiement",
     "logout": "Déconnexion",
     "title": "Mon profil",
-    "save": "Sauvegarder"
+    "save": "Sauvegarder",
+    "address": "Modifier l'adresse"
   },
   "subject": {
     "maths": "Mathématiques",
@@ -112,7 +114,7 @@
   "explore": {
     "title": "Rechercher",
     "search": "Chercher un lieu, un professeur...",
-    "no": "Aucun professeur",
+    "no": "Aucun professeur à proximité",
     "research": "Rechercher"
   },
   "tab":{

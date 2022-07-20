@@ -11,6 +11,9 @@ import { toastError } from '../utils/toastUtils';
 import { LinearButton } from './LinearButton';
 import { Select } from './Select';
 import { useDispatch } from 'react-redux';
+import { Autocomplete } from './Autocomplete';
+import { PositionIcon } from './svgs/Position';
+import { getMapToken, searchAddress } from '../queries/AddressQuery';
 
 export const BookModal = ({
   toggleModal,
@@ -27,10 +30,64 @@ export const BookModal = ({
   const [selectedSubject, setSelectedSubject] = useState('')
   const [selectedHour, setSelectedHour] = useState(1)
   const [selectedTeacher, setSelectedTeacher] = useState(teacher)
+  const [address, setAddress] = useState('')
+  const [suggestions, setSuggestions] = useState([])
+  const [selectedAddress, setSelectedAddress] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isSelected, setSelection] = useState(false);
+  const [response, setResponse] = useState('')
+  const [mapToken, setMapToken] = useState({
+    token: '',
+    date: null
+  })
   const { width, height } = Dimensions.get('window')
   const dispatch = useDispatch();
+
+  const getToken = async () => {
+    const res = await getMapToken()
+    if (res) {
+      setMapToken({
+        token: res.accessToken,
+        date: new Date()
+      })
+    }
+  }
+
+  const search = async () => {
+    const date = new Date()
+    const minutes = (date - mapToken.date) / 1000
+    if (minutes > 1200) {
+      getToken()
+    } else {
+      const response = await searchAddress(address, mapToken.token)
+      if (response) {
+        setSuggestions(response.results)
+      }
+    }
+  }
+
+  useEffect(() => {
+    getToken()
+  }, [])
+
+  useEffect(() => {
+    if (address.length > 0) {
+      if (response.length > 0) {
+        setResponse('')
+      }
+      search()
+    } else {
+      setSuggestions([])
+    }
+    if (selectedAddress) {
+      setSelectedAddress(null)
+    }
+  }, [address])
+
+  const handleSelectAddress = (address) => {
+    setSelectedAddress(address)
+    setSuggestions([])
+  }
 
   const handleSelectSubject = (subject) => {
     setSelectedSubject(subject)
@@ -51,19 +108,32 @@ export const BookModal = ({
 
   const handleSubmit = async () => {
     if (schedule && selectedHour, selectedSubject) {
-      setIsLoading(true)
-      const response = await bookLesson({
+      if(!isSelected || (isSelected && selectedAddress)){
+        setIsLoading(true)
+        const response = await bookLesson({
         "teacher_id": selectedTeacher,
         "scheduled_at": schedule,
         "duration": selectedHour,
         "subject_id": subjects.find(item => item.value === selectedSubject)?.id,
-        "at_home": isSelected
+        "at_home": isSelected,
+        "address": selectedAddress?.name,
+        "lat": selectedAddress?.coordinate?.latitude,
+        "lng": selectedAddress?.coordinate?.longitude,
+        "country": selectedAddress?.country,
+        "city": selectedAddress?.structuredAddress?.locality,
+        "local": selectedAddress?.structuredAddress?.thoroughfare,
+        "postcode": '00000',
       })
       if (response) {
         setIsLoading(false)
         toggleModal(false)
         fetchCalendar()
       }
+    } else {
+      toastError('Entrez une adresse correcte')
+    }
+
+
     } else {
       toastError('Tous les champs doivent être complété')
     }
@@ -125,6 +195,16 @@ export const BookModal = ({
           />
           <Text style={styles.checkText}>Cours à domicile</Text>
         </TouchableOpacity>
+        {isSelected &&
+          <Autocomplete
+            defaultValue={selectedAddress?.name || address}
+            setValue={setAddress}
+            handleSelectValue={handleSelectAddress}
+            suggestions={suggestions}
+          >
+            <PositionIcon size={20} />
+          </Autocomplete>
+        }
         <Text style={styles.price}>Total : {rate * selectedHour} {currency.toUpperCase()}</Text>
         {isLoading &&
           <ActivityIndicator

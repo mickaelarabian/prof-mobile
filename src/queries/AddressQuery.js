@@ -45,12 +45,30 @@ export const attachAddress = async (data) => {
     if (res) {
       if(res.status === 200){
         toastSuccess('L\'addresse a bien été attaché')
+        return { "data": true }
       } else {
         toastError('Impossible d\'attacher l\'addresse')
+        return { "data": false }
       }
       return res.data
     } else {
       throw new Error('Impossible d\'attacher une adresse');
+    }
+  } catch (e) {
+    throw e
+  }
+}
+
+export const getMyAddress = async () => {
+  try {
+    const res = await apiClient({
+      method: 'GET',
+      url: `${env.API.BASE_URL}/address/my`
+    })
+    if (res) {
+      return res.data
+    } else {
+      throw new Error('Impossible de récupérer l\'adresse');
     }
   } catch (e) {
     throw e

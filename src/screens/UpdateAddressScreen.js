@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
-import { useDispatch } from 'react-redux';
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ActivityIndicator, ScrollView } from 'react-native'
+import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
+import { setLanguageAction } from '../redux/app';
 import { THEME } from '../styles/theme.style';
+import { LANGS } from '../constants/global'
 import { LinearButton } from '../components/LinearButton';
 import { PositionIcon } from '../components/svgs/Position';
 import { setUserAddress } from '../redux/user';
-import { attachAddress, getMapToken, searchAddress } from '../queries/AddressQuery';
+import { attachAddress, getMapToken, getMyAddress, searchAddress } from '../queries/AddressQuery';
 import { toastError } from '../utils/toastUtils';
+import { Title } from '../components/Title';
 import { Autocomplete } from '../components/Autocomplete';
 
-export const AddressScreen = ({ navigation }) => {
+export const UpdateAddressScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [address, setAddress] = useState('')
@@ -22,6 +27,13 @@ export const AddressScreen = ({ navigation }) => {
     token: '',
     date: null
   })
+
+  const fetchAddress = async () => {
+    const res = await getMyAddress()
+    if (res) {
+      setAddress(res.address)
+    }
+  }
 
   const getToken = async () => {
     const res = await getMapToken()
@@ -47,6 +59,7 @@ export const AddressScreen = ({ navigation }) => {
   }
 
   useEffect(() => {
+    fetchAddress()
     getToken()
   }, [])
 
@@ -69,13 +82,10 @@ export const AddressScreen = ({ navigation }) => {
     setSuggestions([])
   }
 
-  const handlePass = () => {
-    dispatch(setUserAddress())
-  }
-
-  const handleNext = async () => {
+  const handleSubmit = async () => {
     if (selectedAddress) {
       setIsLoading(true)
+      // console.log('good', JSON.stringify(selectedAddress))
       const data = {
         address: selectedAddress.name,
         lat: selectedAddress.coordinate.latitude,
@@ -85,32 +95,47 @@ export const AddressScreen = ({ navigation }) => {
         local: selectedAddress.structuredAddress.thoroughfare,
         postcode: '00000',
       }
+      console.log('data', data)
       const response = await attachAddress(data)
       if (response) {
         setIsLoading(false)
-        if (response.data) {
-          dispatch(setUserAddress())
-        }
+        dispatch(setUserAddress())
       }
     } else {
-      toastError('address.error')
+      toastError('Veuillez compléter tous les champs')
     }
   }
 
   return (
-    <View style={styles.contain}>
-      <Text style={styles.title}>{t('address.title')}</Text>
-      <Autocomplete
-        defaultValue={selectedAddress?.name || address}
-        setValue={setAddress}
-        handleSelectValue={handleSelectAddress}
-        suggestions={suggestions}
-      >
-        <PositionIcon size={20} />
-      </Autocomplete>
-      {(response.length > 0) &&
-        <Text style={styles.error}>{t(response)}</Text>
-      }
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={styles.topSection}>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => navigation.goBack()}
+          style={styles.back}
+        >
+          <ArrowLeftIcon size={35} color={THEME.colors.gray} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.bottomSection}>
+        <Title title={t('address.title')} />
+        <Autocomplete
+          setValue={setAddress}
+          defaultValue={selectedAddress?.name || address}
+          suggestions={suggestions}
+          handleSelectValue={handleSelectAddress}
+        >
+          <PositionIcon size={20} />
+        </Autocomplete>
+
+        {(response.length > 0) &&
+          <Text style={styles.error}>{t(response)}</Text>
+        }
+        <LinearButton
+          title={t('address.update')}
+          onPress={handleSubmit}
+        />
+      </View>
       {isLoading &&
         <ActivityIndicator
           style={{
@@ -125,18 +150,7 @@ export const AddressScreen = ({ navigation }) => {
           size={'large'} color={THEME.colors.primary}
         />
       }
-      <LinearButton
-        title={t('address.next')}
-        onPress={handleNext}
-      />
-      <LinearButton
-        title={t('address.skip')}
-        primary={THEME.colors.white}
-        secondary={THEME.colors.white}
-        color={THEME.colors.primary}
-        onPress={handlePass}
-      />
-    </View>
+    </ScrollView>
   )
 }
 
@@ -144,7 +158,18 @@ const styles = StyleSheet.create({
   contain: {
     flex: 1,
     justifyContent: 'center',
-    padding: '8%'
+  },
+  topSection: {
+    // flex: 1
+  },
+  bottomSection: {
+    flex: 1,
+    paddingHorizontal: '8%'
+  },
+  back: {
+    width: '25%',
+    padding: '8%',
+    paddingTop: '10%',
   },
   title: {
     color: THEME.colors.black,

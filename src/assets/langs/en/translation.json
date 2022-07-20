@@ -6,7 +6,8 @@
     "title": "Your address",
     "next": "Next",
     "skip": "Skip",
-    "error": "Choose an address or skip"
+    "error": "Choose an address or skip",
+    "update": "Update address"
   },
   "login":{
     "title":"Login",
@@ -41,7 +42,8 @@
     "payments": "Payment history",
     "logout": "Logout",
     "title": "My profile",
-    "save": "Save profile"
+    "save": "Save profile",
+    "address": "Update address"
   },
   "subject": {
     "maths": "Maths",
@@ -111,7 +113,7 @@
   "explore": {
     "title": "Explore",
     "search": "Search a place, a teacher...",
-    "no": "No teacher",
+    "no": "No teacher have been found nearby",
     "research": "Research"
   },
   "tab": {

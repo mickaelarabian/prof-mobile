@@ -15,7 +15,8 @@ export const Input = ({
   onChangeText,
   keyboardType = 'default',
   inputRef,
-  width = '100%'
+  width = '100%',
+  placeholderTextColor = THEME.colors.gray
 }) => {
 
   return (
@@ -29,7 +30,7 @@ export const Input = ({
         autoCapitalize={autoCapitalize}
         placeholder={placeholder}
         defaultValue={defaultValue}
-        placeholderTextColor={THEME.colors.gray}
+        placeholderTextColor={placeholderTextColor}
         returnKeyType={returnKeyType}
         keyboardType={keyboardType}
         onSubmitEditing={onSubmitEditing}

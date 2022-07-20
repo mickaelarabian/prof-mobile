@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +19,9 @@ import { Title } from '../components/Title';
 import { getCurrentUser } from '../queries/AuthQuery';
 import { setUserAction } from '../redux/user';
 import { Buffer } from 'buffer'
+import { Routes } from '../constants/routes';
+import { getMyAddress } from '../queries/AddressQuery';
+import { PositionIcon } from '../components/svgs/Position';
 
 export const ProfileInfosScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -27,6 +30,8 @@ export const ProfileInfosScreen = ({ navigation }) => {
   const [form, setForm] = useState(user)
   const [image, setImage] = useState(null)
   const [isOpen, setIsOpen] = useState(false)
+  const [address, setAddress] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSelectGender = (sexe) => {
     setForm({
@@ -36,12 +41,25 @@ export const ProfileInfosScreen = ({ navigation }) => {
     setIsOpen(false)
   }
 
+  const fetchAddress = async () => {
+    const res = await getMyAddress()
+    if(res){
+      setAddress(res.address)
+    }
+  }
+
+  useEffect(() => {
+    fetchAddress()
+  }, [])
+
   const handleChoosePhoto = () => {
     launchImageLibrary({ mediaType:'photo', includeBase64:true }, async (response) => {
       if (response.assets) {
+        setIsLoading(true)
         const buffer = Buffer.from(response.assets[0].base64, 'base64')
         const res = await updateAvatar(buffer)
         if(res){
+          setIsLoading(false)
           console.log('netoyage', res)
         }
         // ca part direct, j'affiche le taost puis je fetch en comun
@@ -124,11 +142,18 @@ export const ProfileInfosScreen = ({ navigation }) => {
           placeholder={t('register.form.email')}
           defaultValue={form.email}
           keyboardType={'email-address'}
-          returnKeyType="next"
           editable={false}
           onChangeText={(email) => setForm({ ...form, email })}
         >
           <EmailIcon size={20} />
+        </Input>
+        <Input
+          placeholder={t('address.title')}
+          defaultValue={address}
+          editable={false}
+          placeholderTextColor={THEME.colors.blueGray}
+        >
+          <PositionIcon size={20} />
         </Input>
         <Input
           returnKeyType="next"
@@ -151,6 +176,27 @@ export const ProfileInfosScreen = ({ navigation }) => {
           title={t('profile.save')}
           onPress={handleSubmit}
         />
+        <LinearButton
+          title={t('profile.address')}
+          primary={THEME.colors.white}
+          secondary={THEME.colors.white}
+          color={THEME.colors.primary}
+          onPress={() => navigation.navigate(Routes.NewAddress)}
+        />
+         {isLoading &&
+        <ActivityIndicator
+          style={{
+            position: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0
+          }}
+          size={'large'} color={THEME.colors.primary}
+        />
+      }
       </View>
     </View>
   )
