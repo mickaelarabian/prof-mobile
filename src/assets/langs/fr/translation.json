@@ -71,7 +71,9 @@
     "type": "Type",
     "cancel": "Annuler le cours",
     "join": "Rejoindre le cours",
-    "subscribe": "S'inscrire pour"
+    "subscribe": "S'inscrire pour",
+    "address": "Adresse",
+    "online": "Cours en distanciel"
   },
   "newcard": {
     "title": "Nouvelle carte",

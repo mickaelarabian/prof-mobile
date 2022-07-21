@@ -21,7 +21,7 @@ export const LessonScreen = ({ route, navigation }) => {
   const { id } = route.params;
   const [lesson, setLesson] = useState({})
   const [refreshing, setRefreshing] = useState(false);
-
+  console.log('lesson', JSON.stringify(lesson))
   const fetchLesson = async () => {
     setRefreshing(true)
     const response = await getLesson(id)
@@ -125,10 +125,17 @@ export const LessonScreen = ({ route, navigation }) => {
                 <Text style={styles.subTitle}>{t('lessons.duration')} :</Text>
                 <Text style={styles.text}>{lesson?.duration}h</Text>
               </View>
-              <View style={styles.infosRow}>
-                <Text style={styles.subTitle}>{t('lessons.type')} :</Text>
-                <Text style={styles.text}>Vidéo Zoom</Text>
-              </View>
+              {lesson.address ?
+                <View style={{marginBottom:15}}>
+                  <Text style={styles.subTitle}>{t('lessons.address')} :</Text>
+                  <Text style={styles.text}>{lesson.address.address}</Text>
+                </View>
+                :
+                <View style={styles.infosRow}>
+                  <Text style={styles.subTitle}>{t('lessons.type')} :</Text>
+                  <Text style={styles.text}>{t('lessons.online')}</Text>
+                </View>
+              }
               <Text style={styles.subTitle}>{t('lessons.students')}:</Text>
               <View style={styles.header}>
                 <View style={styles.col}>
@@ -238,7 +245,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: '8%',
-    paddingBottom:'8%'
+    paddingBottom: '8%'
   },
   text: {
     color: THEME.colors.gray

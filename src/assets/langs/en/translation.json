@@ -70,7 +70,9 @@
     "type": "Type",
     "cancel": "Cancel this course",
     "join": "Join the course",
-    "subscribe": "Join for"
+    "subscribe": "Join for",
+    "address": "Address",
+    "online": "Online course"
   },
   "newcard": {
     "title": "New card",

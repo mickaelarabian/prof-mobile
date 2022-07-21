@@ -196,8 +196,19 @@ export const RegisterForm = () => {
         }}
       />
       <View style={styles.btnArea}>
-        {isLoading &&
-          <ActivityIndicator size={'large'} color={THEME.colors.primary} />
+      {isLoading &&
+          <ActivityIndicator
+            style={{
+              position: 'absolute',
+              alignItems: 'center',
+              justifyContent: 'center',
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0
+            }}
+            size={'large'} color={THEME.colors.primary}
+          />
         }
         <LinearButton
           disabled={isLoading}
