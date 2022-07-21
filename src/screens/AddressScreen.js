@@ -6,10 +6,11 @@ import { THEME } from '../styles/theme.style';
 import { LinearButton } from '../components/LinearButton';
 import { PositionIcon } from '../components/svgs/Position';
 import { setUserAddress } from '../redux/user';
-import { attachAddress, getMapToken, searchAddress } from '../queries/AddressQuery';
+import { attachAddress, getMapToken, searchAddress, searchAddressDetails } from '../queries/AddressQuery';
 import { toastError } from '../utils/toastUtils';
 import { Autocomplete } from '../components/Autocomplete';
 import { setMapTokenAction } from '../redux/app';
+import { joinStrings } from '../utils/generalUtils';
 
 export const AddressScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -73,24 +74,28 @@ export const AddressScreen = ({ navigation }) => {
   const handleNext = async () => {
     if (selectedAddress) {
       setIsLoading(true)
-      const data = {
-        address: selectedAddress.name,
-        lat: selectedAddress.coordinate.latitude,
-        lng: selectedAddress.coordinate.longitude,
-        country: selectedAddress.country,
-        city: selectedAddress.structuredAddress.locality,
-        local: selectedAddress.structuredAddress.thoroughfare,
-        postcode: '00000',
-      }
-      const response = await attachAddress(data)
-      if (response) {
-        setIsLoading(false)
-        if (response.data) {
-          dispatch(setUserAddress())
+      getToken(0)
+      const res = await searchAddressDetails(selectedAddress.completionUrl, mapToken.token)
+      if(res){
+        const data = {
+          address: selectedAddress.displayLines.join(''),
+          lat: selectedAddress?.location?.lat,
+          lng: selectedAddress?.location?.lng,
+          country: res.results[0]?.country,
+          city: res.results[0]?.locality,
+          local: res.results[0]?.thoroughfare,
+          postcode: '00000',
+        }
+        const response = await attachAddress(data)
+        if (response) {
+          setIsLoading(false)
+          if (response.data) {
+            dispatch(setUserAddress())
+          }
         }
       }
     } else {
-      toastError('address.error')
+      toastError(t('address.error'))
     }
   }
 
@@ -98,10 +103,12 @@ export const AddressScreen = ({ navigation }) => {
     <View style={styles.contain}>
       <Text style={styles.title}>{t('address.title')}</Text>
       <Autocomplete
-        defaultValue={selectedAddress?.name || address}
         setValue={setAddress}
-        handleSelectValue={handleSelectAddress}
+        defaultValue={selectedAddress?.displayLines.join(' ') || address}
         suggestions={suggestions}
+        handleSelectValue={handleSelectAddress}
+        traitment={joinStrings}
+          property={'displayLines'}
       >
         <PositionIcon size={20} />
       </Autocomplete>
