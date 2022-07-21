@@ -107,7 +107,22 @@ export const BookModal = ({
 
   const handleSubmit = async () => {
     if (schedule && selectedHour, selectedSubject) {
-      if (!isSelected || (isSelected && selectedAddress)) {
+      if (!isSelected) {
+        setIsLoading(true)
+        const data = {
+          "teacher_id": selectedTeacher,
+          "scheduled_at": schedule,
+          "duration": selectedHour,
+          "subject_id": subjects.find(item => item.value === selectedSubject)?.id,
+          "at_home": isSelected
+        }
+        const response = await bookLesson(data)
+        if (response) {
+          setIsLoading(false)
+          toggleModal(false)
+          fetchCalendar()
+        }
+      } else if (isSelected && selectedAddress) {
         setIsLoading(true)
         getToken()
         const res = await searchAddressDetails(selectedAddress.completionUrl, mapToken.token)

@@ -74,7 +74,7 @@ export const AddressScreen = ({ navigation }) => {
   const handleNext = async () => {
     if (selectedAddress) {
       setIsLoading(true)
-      getToken(0)
+      getToken()
       const res = await searchAddressDetails(selectedAddress.completionUrl, mapToken.token)
       if(res){
         const data = {
