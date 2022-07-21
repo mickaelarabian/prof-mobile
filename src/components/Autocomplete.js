@@ -18,6 +18,7 @@ export const Autocomplete = ({
   const displaySuggestions = () => suggestions.map((item, idx) => (
     <TouchableOpacity
       key={idx}
+      style={{paddingHorizontal:10, paddingVertical:5}}
       activeOpacity={0.5}
       onPress={() => handleSelectValue(item)}
     >

@@ -69,7 +69,8 @@
     "firstname": "Firstname",
     "type": "Type",
     "cancel": "Cancel this course",
-    "join": "Join the course"
+    "join": "Join the course",
+    "subscribe": "Join for"
   },
   "newcard": {
     "title": "New card",

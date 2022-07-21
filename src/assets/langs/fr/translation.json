@@ -70,7 +70,8 @@
     "firstname": "Prénom",
     "type": "Type",
     "cancel": "Annuler le cours",
-    "join": "Rejoindre le cours"
+    "join": "Rejoindre le cours",
+    "subscribe": "S'inscrire pour"
   },
   "newcard": {
     "title": "Nouvelle carte",

@@ -30,7 +30,7 @@ export const DashboardScreen = ({ navigation }) => {
       dispatch(setCalendarAction(response))
     }
   }
-
+  console.log('ca', JSON.stringify(calendar))
   useEffect(() => {
     fetchCalendar()
   }, [])
@@ -83,7 +83,7 @@ export const DashboardScreen = ({ navigation }) => {
                 <View style={[styles.hourRight, { height: 75, zIndex: 2 }]}>
                   <TouchableOpacity
                     activeOpacity={0.5}
-                    onPress={() => navigation.push(Routes.Lesson, { id: hour.lesson.id })}
+                    onPress={hour.lesson.capacity > 1 ? () => navigation.push(Routes.Colab, { id: hour.lesson.id }) : () => navigation.push(Routes.Lesson, { id: hour.lesson.id })}
                     style={[styles.lesson, { backgroundColor: hour.lesson.subject.color || THEME.colors.primary, height: 75 * hour.lesson.duration, justifyContent: 'space-between', zIndex: 99 }]}
                   >
                     <View style={styles.lessonHeader}>
@@ -91,10 +91,15 @@ export const DashboardScreen = ({ navigation }) => {
                       <Text style={[styles.status, { backgroundColor: CODES[hour.lesson.relative_status.code], color: hour.lesson.relative_status.code === 'unconfirmed' ? THEME.colors.blueGray : THEME.colors.white }]}>{hour.lesson.relative_status.code}</Text>
                     </View>
                     <View style={styles.lessonFooter}>
-                      <View style={styles.lessonLetters}>
-                        <Text style={styles.letters}>{hour.lesson.teacher.firstname.charAt(0)}{hour.lesson.teacher.lastname.charAt(0)}</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={styles.lessonLetters}>
+                          <Text style={styles.letters}>{hour.lesson.teacher.firstname.charAt(0)}{hour.lesson.teacher.lastname.charAt(0)}</Text>
+                        </View>
+                        <Text style={styles.teacher}>{hour.lesson.teacher.firstname} {hour.lesson.teacher.lastname}</Text>
                       </View>
-                      <Text style={styles.teacher}>{hour.lesson.teacher.firstname} {hour.lesson.teacher.lastname}</Text>
+                      {hour.lesson.capacity > 1 &&
+                        <Text style={styles.group}>{`${hour.lesson.students.length}/${hour.lesson.capacity}`}</Text>
+                      }
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -222,7 +227,8 @@ const styles = StyleSheet.create({
   },
   lessonFooter: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   lessonLetters: {
     borderWidth: 1,
@@ -237,5 +243,13 @@ const styles = StyleSheet.create({
   letters: {
     color: THEME.colors.white,
     fontSize: 10,
+  },
+  group: {
+    backgroundColor: THEME.colors.white,
+    color: THEME.colors.darkGray,
+    fontSize: 11,
+    borderRadius: 25,
+    paddingHorizontal: 10,
+    // alignSelf: 'flex-start'
   }
 })

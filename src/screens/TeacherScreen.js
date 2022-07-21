@@ -16,6 +16,7 @@ import { StarIcon } from '../components/svgs/Star';
 import { PositionIcon } from '../components/svgs/Position';
 import { LinearButton } from '../components/LinearButton';
 import { ReviewModal } from '../components/ReviewModal';
+import { CODES } from '../constants/global';
 
 export const TeacherScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -35,7 +36,7 @@ export const TeacherScreen = ({ route, navigation }) => {
   const { id } = route.params;
 
   const { width, height } = Dimensions.get('window')
-
+console.log(JSON.stringify(calendar))
   const fetchCalendar = async () => {
     setRefreshing(true)
     const response = await getTeacherCalendar(id)
@@ -153,12 +154,13 @@ export const TeacherScreen = ({ route, navigation }) => {
                     onPress={() => navigation.push(Routes.Colab, { id: hour.lesson.id })}
                     style={[styles.lesson, { backgroundColor: hour.lesson.subject.color || THEME.colors.primary, height: 75 * hour.lesson.duration, zIndex: 99 }]}
                   >
-                    <View style={styles.lessonHeader}>
-                      <Text style={styles.subject}>{hour.time} - {hour.lesson.subject.slug}</Text>
-                      <Text style={styles.group}>{`${hour.lesson.students.length}/${hour.lesson.capacity} Élèves`}</Text>
+                     <View style={styles.lessonHeader}>
+                      <Text style={styles.subj}>{hour.time} - {t(`subject.${hour.lesson.subject.slug}`)}</Text>
                     </View>
-                    <View>
-                      <Text numberOfLines={3} style={styles.description}>{hour.lesson.teacher_subject.description}</Text>
+                    <View style={styles.lessonFooter}>
+                      {hour.lesson.capacity > 1 &&
+                        <Text style={styles.group}>{`${hour.lesson.students.length}/${hour.lesson.capacity} ${t('lessons.students')}`}</Text>
+                      }
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -374,6 +376,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
+  subj: {
+    color: THEME.colors.white
+  },
   subject: {
     color: THEME.colors.white,
     paddingHorizontal: 10,
@@ -388,7 +393,8 @@ const styles = StyleSheet.create({
     color: THEME.colors.darkGray,
     fontSize: 11,
     borderRadius: 25,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
+    alignSelf:'flex-end'
   },
   description: {
     color: THEME.colors.white,
