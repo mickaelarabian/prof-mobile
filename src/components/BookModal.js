@@ -13,8 +13,9 @@ import { Select } from './Select';
 import { useDispatch, useSelector } from 'react-redux';
 import { Autocomplete } from './Autocomplete';
 import { PositionIcon } from './svgs/Position';
-import { getMapToken, searchAddress } from '../queries/AddressQuery';
+import { getMapToken, searchAddress, searchAddressDetails } from '../queries/AddressQuery';
 import { setMapTokenAction } from '../redux/app';
+import { joinStrings } from '../utils/generalUtils';
 
 export const BookModal = ({
   toggleModal,
@@ -108,24 +109,29 @@ export const BookModal = ({
     if (schedule && selectedHour, selectedSubject) {
       if (!isSelected || (isSelected && selectedAddress)) {
         setIsLoading(true)
-        const response = await bookLesson({
-          "teacher_id": selectedTeacher,
-          "scheduled_at": schedule,
-          "duration": selectedHour,
-          "subject_id": subjects.find(item => item.value === selectedSubject)?.id,
-          "at_home": isSelected,
-          "address": selectedAddress?.name,
-          "lat": selectedAddress?.coordinate?.latitude,
-          "lng": selectedAddress?.coordinate?.longitude,
-          "country": selectedAddress?.country,
-          "city": selectedAddress?.structuredAddress?.locality,
-          "local": selectedAddress?.structuredAddress?.thoroughfare,
-          "postcode": '00000',
-        })
-        if (response) {
-          setIsLoading(false)
-          toggleModal(false)
-          fetchCalendar()
+        getToken()
+        const res = await searchAddressDetails(selectedAddress.completionUrl, mapToken.token)
+        if (res) {
+          const data = {
+            "teacher_id": selectedTeacher,
+            "scheduled_at": schedule,
+            "duration": selectedHour,
+            "subject_id": subjects.find(item => item.value === selectedSubject)?.id,
+            "at_home": isSelected,
+            "address": selectedAddress.displayLines.join(' '),
+            "lat": selectedAddress?.location?.lat,
+            "lng": selectedAddress?.location?.lng,
+            "country": res.results[0]?.country,
+            "city": res.results[0]?.locality,
+            "local": res.results[0]?.thoroughfare,
+            "postcode": '00000',
+          }
+          const response = await bookLesson(data)
+          if (response) {
+            setIsLoading(false)
+            toggleModal(false)
+            fetchCalendar()
+          }
         }
       } else {
         toastError('Entrez une adresse correcte')
@@ -195,10 +201,12 @@ export const BookModal = ({
         </TouchableOpacity>
         {isSelected &&
           <Autocomplete
-            defaultValue={selectedAddress?.name || address}
             setValue={setAddress}
-            handleSelectValue={handleSelectAddress}
+            defaultValue={selectedAddress?.displayLines.join(' ') || address}
             suggestions={suggestions}
+            handleSelectValue={handleSelectAddress}
+            traitment={joinStrings}
+            property={'displayLines'}
           >
             <PositionIcon size={20} />
           </Autocomplete>

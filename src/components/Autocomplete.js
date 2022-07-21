@@ -9,7 +9,9 @@ export const Autocomplete = ({
   setValue,
   handleSelectValue,
   suggestions,
-  children
+  children,
+  property,
+  traitment
 }) => {
   const { t } = useTranslation();
 
@@ -19,7 +21,7 @@ export const Autocomplete = ({
       activeOpacity={0.5}
       onPress={() => handleSelectValue(item)}
     >
-      <Text style={styles.suggestion}>{item.name}</Text>
+      <Text numberOfLines={1} style={styles.suggestion}>{(traitment ? traitment(item[property]) : item[property])}</Text>
     </TouchableOpacity>
   ))
 
@@ -38,7 +40,7 @@ export const Autocomplete = ({
           onChangeText={(text) => setValue(text)}
         />
       </View>
-      {suggestions.length > 0 &&
+      {suggestions && suggestions.length > 0 &&
         <ScrollView style={styles.suggestions}>
           {displaySuggestions()}
         </ScrollView>

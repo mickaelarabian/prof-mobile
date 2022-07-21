@@ -5,7 +5,7 @@ export const env = {
     CHAT_URL: 'https://api-tchat-dev.master-classroom.com',
     // SOCKET_URL: 'http://192.168.1.186:3005',
     SOCKET_URL: 'https://socket.master-classroom.com',
-    MAP: 'https://maps-api.apple.com/v1',
+    MAP: 'https://api.apple-mapkit.com',
     STRIPE_URL: 'https://api.stripe.com/v1'
   },
   KEYS: {

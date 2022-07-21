@@ -10,10 +10,11 @@ import { LANGS } from '../constants/global'
 import { LinearButton } from '../components/LinearButton';
 import { PositionIcon } from '../components/svgs/Position';
 import { setUserAddress } from '../redux/user';
-import { attachAddress, getMapToken, getMyAddress, searchAddress } from '../queries/AddressQuery';
+import { attachAddress, getMapToken, getMyAddress, searchAddress, searchAddressDetails } from '../queries/AddressQuery';
 import { toastError } from '../utils/toastUtils';
 import { Title } from '../components/Title';
 import { Autocomplete } from '../components/Autocomplete';
+import { joinStrings } from '../utils/generalUtils';
 
 export const UpdateAddressScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ export const UpdateAddressScreen = ({ navigation }) => {
     getToken()
     const response = await searchAddress(address, mapToken.token)
     if (response) {
+      console.log(JSON.stringify(response))
       setSuggestions(response.results)
     }
   }
@@ -81,21 +83,23 @@ export const UpdateAddressScreen = ({ navigation }) => {
   const handleSubmit = async () => {
     if (selectedAddress) {
       setIsLoading(true)
-      // console.log('good', JSON.stringify(selectedAddress))
-      const data = {
-        address: selectedAddress.name,
-        lat: selectedAddress.coordinate.latitude,
-        lng: selectedAddress.coordinate.longitude,
-        country: selectedAddress.country,
-        city: selectedAddress.structuredAddress.locality,
-        local: selectedAddress.structuredAddress.thoroughfare,
-        postcode: '00000',
-      }
-      console.log('data', data)
-      const response = await attachAddress(data)
-      if (response) {
-        setIsLoading(false)
-        dispatch(setUserAddress())
+      getToken()
+      const res = await searchAddressDetails(selectedAddress.completionUrl, mapToken.token)
+      if(res){
+        const data = {
+          address: selectedAddress.displayLines.join(''),
+          lat: selectedAddress?.location?.lat,
+          lng: selectedAddress?.location?.lng,
+          country: res.results[0]?.country,
+          city: res.results[0]?.locality,
+          local: res.results[0]?.thoroughfare,
+          postcode: '00000',
+        }
+        const response = await attachAddress(data)
+        if (response) {
+          setIsLoading(false)
+          dispatch(setUserAddress())
+        }
       }
     } else {
       toastError('Veuillez compléter tous les champs')
@@ -117,9 +121,11 @@ export const UpdateAddressScreen = ({ navigation }) => {
         <Title title={t('address.title')} />
         <Autocomplete
           setValue={setAddress}
-          defaultValue={selectedAddress?.name || address}
+          defaultValue={selectedAddress?.displayLines.join(' ') || address}
           suggestions={suggestions}
           handleSelectValue={handleSelectAddress}
+          traitment={joinStrings}
+          property={'displayLines'}
         >
           <PositionIcon size={20} />
         </Autocomplete>
