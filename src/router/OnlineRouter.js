@@ -71,7 +71,7 @@ export const OnlineRouter = () => {
       requestPermissions: true
     });
   }, [])
-
+console.log('port',user)
   const DashboardNavigator = () => {
     return (
       <AppTab.Navigator
@@ -81,7 +81,9 @@ export const OnlineRouter = () => {
       >
         <AppTab.Screen name={Routes.Dashboard} component={DashboardScreen} />
         <AppTab.Screen name={Routes.Lessons} component={LessonsScreen} />
-        <AppTab.Screen name={Routes.Explore} component={ExploreScreen} />
+        {user?.user?.role?.slug === 'student' &&
+          <AppTab.Screen name={Routes.Explore} component={ExploreScreen} />
+        }
         <AppTab.Screen name={Routes.Chat} component={ChatScreen} />
         <AppTab.Screen name={Routes.Profile} component={ProfileScreen} />
       </AppTab.Navigator>

@@ -11,6 +11,17 @@ export const GENDER_OPTIONS = [
   }
 ]
 
+export const TYPE_OPTIONS = [
+  {
+    label: 'register.form.student',
+    value: 'student'
+  },
+  {
+    label: 'register.form.teacher',
+    value: 'teacher'
+  }
+]
+
 export const LANGS = [
   {
     label: 'English',

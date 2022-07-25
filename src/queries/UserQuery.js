@@ -7,16 +7,16 @@ export const updateCurrentUser = async (data) => {
     const res = await apiClient({
       method: 'put',
       url: `${env.API.BASE_URL}/users`,
-      data :{
+      data: {
         firstname: data.firstname,
         lastname: data.lastname,
-        sexe:data.sexe,
+        sexe: data.sexe,
         password: data.password,
         repeat_password: data.repeat_password
       }
     })
     if (res) {
-      if(res.status === 200){
+      if (res.status === 200) {
         toastSuccess('Profil mis à jour')
       } else {
         toastError('Impossible de mettre à jour le profil')
@@ -35,7 +35,7 @@ export const sendNotificationsToken = async (token) => {
     const res = await apiClient({
       method: 'POST',
       url: `${env.API.BASE_URL}/users/fcm`,
-      data:{
+      data: {
         token
       }
     })
@@ -49,18 +49,49 @@ export const sendNotificationsToken = async (token) => {
   }
 }
 
+// export const updateAvatar = async (avatar) => {
+//   try {
+//     const res = await apiClient({
+//       method: 'post',
+//       url: `${env.API.BASE_URL}/users/avatar`,
+//       data :{
+//         avatar
+//       }
+//     })
+//     if (res) {
+//       console.log('res', res)
+//       if(res.status === 200){
+//         toastSuccess('Avatar mis à jour')
+//       } else {
+//         toastError('Impossible de mettre à jour l\'avatar')
+//       }
+//       return res.data
+//     } else {
+//       throw new Error('Impossible de modifier l\'avatar');
+//     }
+//   } catch (e) {
+//     throw e
+//   }
+// }
+
 export const updateAvatar = async (avatar) => {
+  let formData = new FormData();    //formdata object
+  console.log(avatar)
+  formData.append('avatar', {
+    uri: avatar.uri,
+    type: avatar.type,
+    name: avatar.fileName,
+    data : avatar.data
+  });
   try {
     const res = await apiClient({
       method: 'post',
       url: `${env.API.BASE_URL}/users/avatar`,
-      data :{
-        avatar
-      }
+      data: formData,
+      headers: { 'content-type': 'multipart/form-data' }
     })
     if (res) {
-      console.log('res', res)
-      if(res.status === 200){
+      if (res.status === 200) {
         toastSuccess('Avatar mis à jour')
       } else {
         toastError('Impossible de mettre à jour l\'avatar')
@@ -70,6 +101,7 @@ export const updateAvatar = async (avatar) => {
       throw new Error('Impossible de modifier l\'avatar');
     }
   } catch (e) {
+    console.log(e)
     throw e
   }
 }

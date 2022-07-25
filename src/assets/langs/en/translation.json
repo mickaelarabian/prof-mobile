@@ -30,7 +30,11 @@
       "email": "Email",
       "birth": "Date of birth",
       "password": "Password",
-      "repeat": "Repeat password"    }
+      "repeat": "Repeat password",
+      "student": "Student",
+      "teacher": "Teacher",
+      "type": "Type" 
+    }
   },
   "reset": {
     "title": "Reset your password",

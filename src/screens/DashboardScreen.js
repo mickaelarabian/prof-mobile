@@ -30,7 +30,7 @@ export const DashboardScreen = ({ navigation }) => {
       dispatch(setCalendarAction(response))
     }
   }
-  console.log('ca', JSON.stringify(calendar))
+  // console.log('ca', JSON.stringify(calendar))
   useEffect(() => {
     fetchCalendar()
   }, [])

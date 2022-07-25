@@ -30,7 +30,10 @@
       "email": "Email",
       "birth": "Date de naissance",
       "password": "Mot de passe",
-      "repeat": "Répétez votre mot de passe"
+      "repeat": "Répétez votre mot de passe",
+      "student": "Étudiant",
+      "teacher": "Professeur",
+      "type": "Type" 
     }
   },
   "reset": {

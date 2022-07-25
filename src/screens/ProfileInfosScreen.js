@@ -18,7 +18,6 @@ import { updateAvatar, updateCurrentUser } from '../queries/UserQuery';
 import { Title } from '../components/Title';
 import { getCurrentUser } from '../queries/AuthQuery';
 import { setUserAction } from '../redux/user';
-import { Buffer } from 'buffer'
 import { Routes } from '../constants/routes';
 import { getMyAddress } from '../queries/AddressQuery';
 import { PositionIcon } from '../components/svgs/Position';
@@ -32,7 +31,7 @@ export const ProfileInfosScreen = ({ navigation }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [address, setAddress] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-
+console.log("user", user)
   const handleSelectGender = (sexe) => {
     setForm({
       ...form,
@@ -56,18 +55,22 @@ export const ProfileInfosScreen = ({ navigation }) => {
     launchImageLibrary({ mediaType:'photo', includeBase64:true }, async (response) => {
       if (response.assets) {
         setIsLoading(true)
-        const buffer = Buffer.from(response.assets[0].base64, 'base64')
-        const res = await updateAvatar(buffer)
+        const res = await updateAvatar(response.assets[0])
         if(res){
           setIsLoading(false)
           console.log('netoyage', res)
+          const user = await getCurrentUser(token)
+          if(user){
+            const data = {
+              user,
+              token
+            }
+            dispatch(setUserAction({ ...data, hasAddress: true }))
+          }
         }
-        // ca part direct, j'affiche le taost puis je fetch en comun
-        // setImage(response.assets[0].uri)
       }
     });
   };
-  console.log('image', image)
 
   const handleSubmit = async () => {
     const response = await updateCurrentUser(form)
@@ -106,7 +109,7 @@ export const ProfileInfosScreen = ({ navigation }) => {
           onPress={handleChoosePhoto}
         >
           <Image
-            source={{ uri: form.image }}
+            source={{ uri: user.image }}
             style={styles.img}
           />
         </TouchableOpacity>
