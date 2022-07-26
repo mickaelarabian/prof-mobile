@@ -22,6 +22,17 @@ export const TYPE_OPTIONS = [
   }
 ]
 
+export const PREFERENCE_OPTIONS = [
+  {
+    label: 'explore.athome',
+    value: true
+  },
+  {
+    label: 'explore.notathome',
+    value: false
+  }
+]
+
 export const LANGS = [
   {
     label: 'English',

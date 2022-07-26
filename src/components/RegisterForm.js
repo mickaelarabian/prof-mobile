@@ -18,6 +18,7 @@ import { toastError, toastSuccess } from '../utils/toastUtils';
 import DatePicker from 'react-native-date-picker'
 import { formatdate } from '../utils/generalUtils';
 import { apiClient } from '../utils/axiosClient.';
+import { CalendarIcon } from './svgs/Calendar';
 
 export const RegisterForm = () => {
   const { t } = useTranslation();
@@ -28,8 +29,12 @@ export const RegisterForm = () => {
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [open, setOpen] = useState(false)
-  const [form, setForm] = useState({})
-  console.log(response)
+  const [form, setForm] = useState({
+    sexe: 'm',
+    type: 'student',
+    birth: new Date('2000-01-01T14:42:00.000Z')
+  })
+
   inputRefs.current = [0, 0, 0, 0].map(
     (ref, index) => inputRefs.current[index] = createRef()
   )
@@ -163,7 +168,7 @@ export const RegisterForm = () => {
           defaultValue={form.birth && formatdate(form.birth)}
           placeholder={t('register.form.birth')}
         >
-          <LockIcon size={20} />
+          <CalendarIcon color={THEME.colors.blueGray} size={20} />
         </Input>
       </TouchableOpacity>
       {(response.birth) &&

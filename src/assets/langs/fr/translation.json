@@ -120,8 +120,15 @@
   "explore": {
     "title": "Rechercher",
     "search": "Chercher un lieu, un professeur...",
-    "no": "Aucun professeur à proximité",
-    "research": "Rechercher"
+    "no": "Aucun professeur à proximité de votre adresse",
+    "research": "Rechercher",
+    "advanced": "Recherche avancée",
+    "all": "Toutes les matières",
+    "name": "Rechercher par nom",
+    "date": "Date de lesson",
+    "reset": "Réinitialiser",
+    "athome": "À domicile",
+    "notathome": "À distance"
   },
   "tab":{
     "Dashboard": "Calendrier",

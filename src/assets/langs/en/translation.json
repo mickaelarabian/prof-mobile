@@ -120,8 +120,15 @@
   "explore": {
     "title": "Explore",
     "search": "Search a place, a teacher...",
-    "no": "No teacher have been found nearby",
-    "research": "Research"
+    "no": "No teacher have been found near your address",
+    "research": "Research",
+    "advanced": "Advanced search",
+    "all": "All subjects",
+    "name": "Search by name",
+    "date": "Lesson date",
+    "reset": "Reset",
+    "athome": "At home",
+    "notathome": "Remote"
   },
   "tab": {
     "Dashboard": "Calendar",

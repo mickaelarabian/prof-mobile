@@ -2,59 +2,46 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, RefreshControl } from 'react-native'
 import { LanguageButton } from '../components/LanguageButton';
 import { LinearButton } from '../components/LinearButton';
-import { PositionIcon } from '../components/svgs/Position';
+import { useDispatch, useSelector } from 'react-redux';
 import { getSubjects } from '../queries/SubjectQuery';
 import { THEME } from '../styles/theme.style';
 import { useTranslation } from 'react-i18next';
 import { getTeachers } from '../queries/TeacherQuery';
 import { TeacherCard } from '../components/TeacherCard';
 import { Title } from '../components/Title';
+import { FilterModal } from '../components/FilterModal';
+import { setSubjectsAction } from '../redux/app';
 
 export const ExploreScreen = ({ navigation }) => {
-  const [subjects, setSubjects] = useState([])
-  const [selectedSubject, setSelectedSubject] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [teachers, setTeachers] = useState([])
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const { selectedSubject, searchedName, selectedDate, selectedPreference } = useSelector(s => s.app);
 
   const fetchSubjects = async () => {
     const response = await getSubjects()
     if (response) {
-      setSubjects(response)
+      let subjects = []
+      response.map(item => {
+        subjects = [...subjects, {
+          label: item.libelle,
+          value: item.id
+        }]
+      })
+      dispatch(setSubjectsAction(subjects))
     }
   }
 
   useEffect(() => {
     fetchSubjects()
     handleSearch()
-  }, [])
-
-  const handleSelectSubject = (id) => {
-    setIsOpen(false)
-    setSelectedSubject(id)
-  }
-
-  const handleChangeText = (subject) => {
-    if (!isOpen) {
-      setIsOpen(true)
-    }
-    setSelectedSubject(subject)
-  }
-
-  const displaySuggestions = () => subjects.map((item, idx) => (
-    <TouchableOpacity
-      key={idx}
-      activeOpacity={0.5}
-      onPress={() => handleSelectSubject(item.id)}
-    >
-      <Text style={styles.suggestion}>{t(item.libelle)}</Text>
-    </TouchableOpacity>
-  ))
+  }, [selectedSubject, searchedName, selectedDate, selectedPreference])
 
   const handleSearch = async () => {
     setRefreshing(true)
-    const response = await getTeachers(selectedSubject)
+    const response = await getTeachers(selectedSubject, selectedPreference, JSON.parse(selectedDate), searchedName)
     if (response) {
       setRefreshing(false)
       setTeachers(response.data)
@@ -69,6 +56,10 @@ export const ExploreScreen = ({ navigation }) => {
     handleSearch()
   }, []);
 
+  const toggleModal = () => {
+    setIsOpen(false)
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.topSection}>
@@ -76,7 +67,7 @@ export const ExploreScreen = ({ navigation }) => {
       </View>
       <View style={styles.bottomSection}>
         <Title title={t('explore.title')} />
-        <View>
+        {/* <View>
           <View style={styles.completeInput}>
             <View style={styles.icon}>
               <PositionIcon size={20} />
@@ -100,7 +91,7 @@ export const ExploreScreen = ({ navigation }) => {
         <LinearButton
           title={t('explore.research')}
           onPress={handleSearch}
-        />
+        /> */}
         {teachers.length === 0 && !refreshing &&
           <Text style={styles.noDatas}>{t('explore.no')}</Text>
         }
@@ -115,6 +106,18 @@ export const ExploreScreen = ({ navigation }) => {
             />
           }
         />
+        <View style={styles.filter}>
+          <LinearButton
+            title={t('explore.advanced')}
+            // primary={THEME.colors.white}
+            // secondary={THEME.colors.white}
+            // color={THEME.colors.primary}
+            onPress={()=>setIsOpen(true)}
+          />
+        </View>
+        {isOpen &&
+          <FilterModal toggleModal={toggleModal} />
+        }
       </View>
     </View>
   )
@@ -124,10 +127,10 @@ const styles = StyleSheet.create({
   topSection: {
     paddingHorizontal: '8%',
     paddingTop: '10%',
-    flex: 1,
+    // flex: 1,
   },
   bottomSection: {
-    flex: 13,
+    flex: 1,
     paddingHorizontal: '8%'
   },
   completeInput: {
@@ -175,5 +178,11 @@ const styles = StyleSheet.create({
     // position: 'absolute',
     alignSelf: 'center',
     // top: 70
+  },
+  filter: {
+    position: 'absolute',
+    bottom: 0,
+    left: '8%',
+    right: '8%'
   },
 })

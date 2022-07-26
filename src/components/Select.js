@@ -54,7 +54,7 @@ export const Select = ({
 const styles = StyleSheet.create({
   completeInput: {
     flexDirection: 'row',
-    marginBottom: 17,
+    marginBottom: 20,
     borderBottomWidth: 1,
     borderColor: THEME.colors.middleGray,
     backgroundColor: THEME.colors.bg

@@ -2,16 +2,21 @@ import { env } from "../../app.config";
 import { apiClient } from "../utils/axiosClient.";
 import { toastError, toastSuccess } from "../utils/toastUtils";
 
-export const getTeachers = async (id) => {
+export const getTeachers = async (subject_id, at_home, date, keyword) => {
+  console.log('la date', date)
   try {
     const res = await apiClient({
       method: 'POST',
       url: `${env.API.BASE_URL}/teacher/search`,
       data:{
-        subject_id: id
+        subject_id,
+        at_home,
+        date,
+        keyword
       }
     })
     if (res) {
+      console.log('resu',JSON.stringify(res))
       return res.data
     } else {
       throw new Error('Impossible de récupérer les professeurs');

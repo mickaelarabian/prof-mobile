@@ -31,7 +31,7 @@ export const ProfileInfosScreen = ({ navigation }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [address, setAddress] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-console.log("user", user)
+  console.log("user", user)
   const handleSelectGender = (sexe) => {
     setForm({
       ...form,
@@ -42,7 +42,7 @@ console.log("user", user)
 
   const fetchAddress = async () => {
     const res = await getMyAddress()
-    if(res){
+    if (res) {
       setAddress(res.address)
     }
   }
@@ -52,15 +52,15 @@ console.log("user", user)
   }, [])
 
   const handleChoosePhoto = () => {
-    launchImageLibrary({ mediaType:'photo', includeBase64:true }, async (response) => {
+    launchImageLibrary({ mediaType: 'photo', includeBase64: true }, async (response) => {
       if (response.assets) {
         setIsLoading(true)
         const res = await updateAvatar(response.assets[0])
-        if(res){
+        if (res) {
           setIsLoading(false)
           console.log('netoyage', res)
           const user = await getCurrentUser(token)
-          if(user){
+          if (user) {
             const data = {
               user,
               token
@@ -74,17 +74,17 @@ console.log("user", user)
 
   const handleSubmit = async () => {
     const response = await updateCurrentUser(form)
-    if(response){
+    if (response) {
       console.log(user)
       const user = await getCurrentUser(token)
-      if(user){
+      if (user) {
         const data = {
           user,
           token
         }
         dispatch(setUserAction({ ...data, hasAddress: true }))
         setForm(current => {
-          const {password, repeat_password, ...form} = current;
+          const { password, repeat_password, ...form } = current;
           return form;
         })
       }
@@ -137,8 +137,8 @@ console.log("user", user)
           handleSelect={handleSelectGender}
           defaultValue={'register.form.sex'}
           options={GENDER_OPTIONS}
-          >
-          
+        >
+
           <ProfileIcon size={20} />
         </Select>
         <Input
@@ -150,14 +150,19 @@ console.log("user", user)
         >
           <EmailIcon size={20} />
         </Input>
-        <Input
-          placeholder={t('address.title')}
-          defaultValue={address}
-          editable={false}
-          placeholderTextColor={THEME.colors.blueGray}
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => navigation.navigate(Routes.NewAddress)}
         >
-          <PositionIcon size={20} />
-        </Input>
+          <Input
+            placeholder={t('address.title')}
+            defaultValue={address}
+            editable={false}
+            placeholderTextColor={THEME.colors.blueGray}
+          >
+            <PositionIcon size={20} />
+          </Input>
+        </TouchableOpacity>
         <Input
           returnKeyType="next"
           placeholder={t('register.form.password')}
@@ -186,20 +191,20 @@ console.log("user", user)
           color={THEME.colors.primary}
           onPress={() => navigation.navigate(Routes.NewAddress)}
         />
-         {isLoading &&
-        <ActivityIndicator
-          style={{
-            position: 'absolute',
-            alignItems: 'center',
-            justifyContent: 'center',
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0
-          }}
-          size={'large'} color={THEME.colors.primary}
-        />
-      }
+        {isLoading &&
+          <ActivityIndicator
+            style={{
+              position: 'absolute',
+              alignItems: 'center',
+              justifyContent: 'center',
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0
+            }}
+            size={'large'} color={THEME.colors.primary}
+          />
+        }
       </View>
     </View>
   )
@@ -246,9 +251,9 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     alignSelf: 'center',
-    borderRadius:100,
+    borderRadius: 100,
     backgroundColor: THEME.colors.noPic,
-    borderWidth:1,
+    borderWidth: 1,
     borderColor: THEME.colors.primary
   }
 })

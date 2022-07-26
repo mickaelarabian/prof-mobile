@@ -54,8 +54,8 @@ export const DashboardScreen = ({ navigation }) => {
             <ChevronLeftIcon color={currentIndex === 0 ? THEME.colors.white : THEME.colors.blueGray} size={28} />
           </TouchableOpacity>
           <View style={styles.dayInfos}>
-            <Text style={styles.number}>{item.date.day}</Text>
-            <Text style={styles.dayLabel}>{item.date.name}</Text>
+            <Text style={styles.number}>{item?.date?.day}</Text>
+            <Text style={styles.dayLabel}>{item?.date?.name}</Text>
           </View>
           <TouchableOpacity
             style={styles.chevron}
@@ -74,7 +74,7 @@ export const DashboardScreen = ({ navigation }) => {
             />
           }
         >
-          {item.hours.map((hour, idx) => (
+          {item?.hours?.map((hour, idx) => (
             <View key={`${index}-${idx}`} style={styles.hour}>
               <View style={styles.hourLeft}>
                 <Text style={styles.time}>{hour.time}</Text>
