@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { THEME } from '../styles/theme.style';
-import { Routes } from '../constants/routes';
 import { useTranslation } from 'react-i18next';
 import { CODES } from '../constants/global';
 import { formatdateTime } from '../utils/generalUtils';

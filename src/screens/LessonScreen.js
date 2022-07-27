@@ -1,19 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Alert, TouchableOpacity, RefreshControl } from 'react-native'
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import { View, Text, ScrollView, StyleSheet, Alert, TouchableOpacity, RefreshControl, Linking, Platform } from 'react-native'
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { LanguageButton } from '../components/LanguageButton';
 import { getCalendar } from '../queries/CalendarQuery';
-import Swiper from 'react-native-swiper';
 import { THEME } from '../styles/theme.style';
-import { ChevronLeftIcon } from '../components/svgs/ChevronLeft';
-import { ChevronRightIcon } from '../components/svgs/ChevronRight';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
 import { cancelLesson, getLesson } from '../queries/LessonQuery';
 import { LinearButton } from '../components/LinearButton';
 import { CODES } from '../constants/global';
 import { addDuration, formatdateTime } from '../utils/generalUtils';
 import { setCalendarAction } from '../redux/calendar';
+import { env } from '../../app.config';
 
 export const LessonScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -77,6 +74,20 @@ export const LessonScreen = ({ route, navigation }) => {
     );
   };
 
+  const handleJoin = () => {
+    if (lesson.address) {
+      const url = useMemo(() => Platform.select({
+        ios: `maps:0,0?q=${lesson.address.address}`,
+        android: `geo:0,0?q=${lesson.address.address}`
+      }), []);
+      Linking.openURL(url)
+    } else if (lesson.video_link) {
+      Linking.openURL(lesson.video_link)
+    } else {
+      Linking.openURL(`${env.URL}/classroom/${lesson.id}`)
+    }
+  }
+
   const currentDate = new Date().getTime()
   const endDate = lesson.scheduled_at ? addDuration(lesson.duration, lesson.scheduled_at) : new Date()
   const isTooLate = currentDate > endDate.getTime()
@@ -126,7 +137,7 @@ export const LessonScreen = ({ route, navigation }) => {
                 <Text style={styles.text}>{lesson?.duration}h</Text>
               </View>
               {lesson.address ?
-                <View style={{marginBottom:15}}>
+                <View style={{ marginBottom: 15 }}>
                   <Text style={styles.subTitle}>{t('lessons.address')} :</Text>
                   <Text style={styles.text}>{lesson.address.address}</Text>
                 </View>
@@ -179,6 +190,7 @@ export const LessonScreen = ({ route, navigation }) => {
                     title={t('lessons.join')}
                     fontSize={17}
                     flex={1}
+                    onPress={handleJoin}
                   />
                 }
 

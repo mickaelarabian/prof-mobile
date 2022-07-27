@@ -11,5 +11,6 @@ export const env = {
   },
   KEYS: {
     publicStripeKey : "pk_test_EgijVNj7OVzXPr5onG0G31Zo"
-  }
+  },
+  URL: 'https://dev.master-classroom.com'
 };

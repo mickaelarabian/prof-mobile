@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, RefreshControl } from 'react-native'
+import { View, Text, StyleSheet, KeyboardAvoidingView, FlatList, RefreshControl } from 'react-native'
 import { LanguageButton } from '../components/LanguageButton';
 import { LinearButton } from '../components/LinearButton';
 import { useDispatch, useSelector } from 'react-redux';
@@ -61,37 +61,12 @@ export const ExploreScreen = ({ navigation }) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <KeyboardAvoidingView behavior={'height'} style={{ flex: 1 }}>
       <View style={styles.topSection}>
         <LanguageButton />
       </View>
       <View style={styles.bottomSection}>
         <Title title={t('explore.title')} />
-        {/* <View>
-          <View style={styles.completeInput}>
-            <View style={styles.icon}>
-              <PositionIcon size={20} />
-            </View>
-            <TextInput
-              style={styles.input}
-              autoCapitalize="sentences"
-              placeholder={t('explore.search')}
-              defaultValue={t(subjects.find(item => item.id === selectedSubject)?.libelle) || selectedSubject}
-              placeholderTextColor="#666666"
-              onChangeText={(subject) => handleChangeText(subject)}
-              onFocus={() => setIsOpen(true)}
-            />
-          </View>
-          {isOpen &&
-            <View style={styles.suggestions}>
-              {displaySuggestions()}
-            </View>
-          }
-        </View>
-        <LinearButton
-          title={t('explore.research')}
-          onPress={handleSearch}
-        /> */}
         {teachers.length === 0 && !refreshing &&
           <Text style={styles.noDatas}>{t('explore.no')}</Text>
         }
@@ -109,9 +84,6 @@ export const ExploreScreen = ({ navigation }) => {
         <View style={styles.filter}>
           <LinearButton
             title={t('explore.advanced')}
-            // primary={THEME.colors.white}
-            // secondary={THEME.colors.white}
-            // color={THEME.colors.primary}
             onPress={()=>setIsOpen(true)}
           />
         </View>
@@ -119,7 +91,7 @@ export const ExploreScreen = ({ navigation }) => {
           <FilterModal toggleModal={toggleModal} />
         }
       </View>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 

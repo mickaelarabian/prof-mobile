@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, RefreshControl, TouchableOpacity, Alert } from 'react-native'
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { View, Text, ScrollView, StyleSheet, RefreshControl, TouchableOpacity, Alert, Linking, Platform } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { LanguageButton } from '../components/LanguageButton';
@@ -14,6 +14,7 @@ import { LinearButton } from '../components/LinearButton';
 import { CODES } from '../constants/global';
 import { addDuration, formatdateTime } from '../utils/generalUtils';
 import { setCalendarAction } from '../redux/calendar';
+import { env } from '../../app.config';
 
 export const ColabScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -113,6 +114,20 @@ export const ColabScreen = ({ route, navigation }) => {
     fetchLesson()
   }, [])
 
+  const handleJoin = () => {
+    if (lesson.address) {
+      const url = useMemo(() => Platform.select({
+        ios: `maps:0,0?q=${lesson.address.address}`,
+        android: `geo:0,0?q=${lesson.address.address}`
+      }), []);
+      Linking.openURL(url)
+    } else if (lesson.video_link) {
+      Linking.openURL(lesson.video_link)
+    } else {
+      Linking.openURL(`${env.URL}/classroom/${lesson.id}`)
+    }
+  }
+
   const currentDate = new Date().getTime()
   const endDate = lesson.scheduled_at ? addDuration(lesson.duration, lesson.scheduled_at) : new Date()
   const isTooLate = currentDate > endDate.getTime()
@@ -161,10 +176,17 @@ export const ColabScreen = ({ route, navigation }) => {
                 <Text style={styles.subTitle}>{t('lessons.duration')} :</Text>
                 <Text style={styles.text}>{lesson?.duration}h</Text>
               </View>
-              <View style={styles.infosRow}>
-                <Text style={styles.subTitle}>{t('lessons.type')} :</Text>
-                <Text style={styles.text}>Vidéo Zoom</Text>
-              </View>
+              {lesson.address ?
+                <View style={{ marginBottom: 15 }}>
+                  <Text style={styles.subTitle}>{t('lessons.address')} :</Text>
+                  <Text style={styles.text}>{lesson.address.address}</Text>
+                </View>
+                :
+                <View style={styles.infosRow}>
+                  <Text style={styles.subTitle}>{t('lessons.type')} :</Text>
+                  <Text style={styles.text}>{t('lessons.online')}</Text>
+                </View>
+              }
               <View style={styles.infosRow}>
                 <Text style={styles.subTitle}>{t('lessons.students')}:</Text>
                 <Text style={styles.text}>{`${lesson?.students?.length} / ${lesson?.capacity} ${t('lessons.students')}`}</Text>
@@ -197,6 +219,7 @@ export const ColabScreen = ({ route, navigation }) => {
                         title={t('lessons.join')}
                         fontSize={17}
                         flex={1}
+                        onPress={handleJoin}
                       />
                     }
                   </>

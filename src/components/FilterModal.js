@@ -70,6 +70,12 @@ console.log('red', selectedDate)
     setSubject(null)
     setDate(null)
     setPreference(false)
+    dispatch(setFiltersAction({
+      searchedName: null,
+      selectedSubject: null,
+      selectedDate: null,
+      selectedPreference: false
+    }))
   }
 
   return (
@@ -165,8 +171,7 @@ console.log('red', selectedDate)
 
 const styles = StyleSheet.create({
   modal: {
-    // maxHeight: hp('70%'),
-    height: hp('55'),
+    height: hp('60'),
     width: wp('100%'),
     shadowOpacity: 0.5,
     shadowRadius: 3,

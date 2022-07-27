@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, TextInput } from 'react-native'
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, RefreshControl } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
 import { THEME } from '../styles/theme.style';
-import { Title } from '../components/Title';
 import { getRoom, getRoomMessages } from '../queries/ChatQuery';
 import { Message } from '../components/Message';
 import { SendIcon } from '../components/svgs/Send';
 import { useSocket } from '../hooks/useSocket';
-import { setCurrentMessagesAction, setCurrentRoomAction } from '../redux/chat';
+import { resetCurrentMessagesAction, setCurrentMessagesAction, setCurrentRoomAction } from '../redux/chat';
 
 export const RoomScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -18,21 +17,26 @@ export const RoomScreen = ({ route, navigation }) => {
   const { user } = useSelector(s => s.user);
   const { room, messages } = useSelector(s => s.chat);
   const [content, setContent] = useState('')
+  const [refreshing, setRefreshing] = useState(false);
 
   const { id } = route.params;
 
   const { emitNewMessage } = useSocket()
 
   const fetchRoom = async () => {
+    setRefreshing(true)
     const res = await getRoom(id)
     if (res) {
+      setRefreshing(false)
       dispatch(setCurrentRoomAction(res))
     }
   }
 
   const fetchMessages = async () => {
+    setRefreshing(true)
     const res = await getRoomMessages(id)
     if (res) {
+      setRefreshing(false)
       dispatch(setCurrentMessagesAction(res.reverse()))
     }
   }
@@ -40,6 +44,9 @@ export const RoomScreen = ({ route, navigation }) => {
   useEffect(() => {
     fetchRoom()
     fetchMessages()
+    return () => {
+      dispatch(resetCurrentMessagesAction())
+    }
   }, [])
 
   const keyExtractor = useCallback(({ id }) => `message-${id}`, []);
@@ -58,6 +65,10 @@ export const RoomScreen = ({ route, navigation }) => {
       }
     }
   }
+
+  const onRefresh = useCallback(() => {
+    fetchMessages()
+  }, []);
 
   return (
     <View style={styles.contain}>
@@ -78,9 +89,15 @@ export const RoomScreen = ({ route, navigation }) => {
           renderItem={renderMessage}
           keyExtractor={keyExtractor}
           inverted
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
         //contentContainerStyle={{ flexDirection: 'column-reverse' }}
         />
-        {messages.length === 0 &&
+        {!refreshing && messages.length === 0 &&
           <Text style={styles.noDatas}>{t('chat.nomess')}</Text>
         }
         <View style={styles.messageArea}>

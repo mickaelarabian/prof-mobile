@@ -11,6 +11,7 @@ import { Routes } from '../constants/routes';
 import { toastSuccess } from '../utils/toastUtils';
 import { resetAction } from '../redux/chat';
 import { useSocket } from '../hooks/useSocket';
+import { logoutToken } from '../queries/AuthQuery';
 
 export const ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ export const ProfileScreen = ({ navigation }) => {
 
   
   const handleLogout = () => {
+    logoutToken()
     AsyncStorage.removeItem('user_token')
     dispatch(resetUserAction())
     dispatch(resetAction())
