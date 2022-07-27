@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, Linking } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { THEME } from '../styles/theme.style';
 import { Routes } from '../constants/routes';
@@ -17,7 +17,7 @@ export const Message = (props) => {
 
   const handlePressLong = () => {
     Clipboard.setString(content);
-    toastInfos('copié')
+    toastInfos(t('chat.copy'))
   }
 
   const date = new Date(created_at)
@@ -30,39 +30,58 @@ export const Message = (props) => {
   return (
     <View style={[styles.message, { alignSelf: isMe ? 'flex-end' : 'flex-start' }]}>
       {!isMe &&
-        <View style={{paddingRight:5}}>
+        <View style={{ paddingRight: 5 }}>
           <Image
-            source={{ uri: avatar}}
+            source={{ uri: avatar }}
             style={{
-              width:30,
-              height:30,
-              borderRadius:25,
+              width: 30,
+              height: 30,
+              borderRadius: 25,
               backgroundColor: THEME.colors.noPic
             }}
           />
-      </View>
+        </View>
       }
-      <View style={{flex:1}}>
+      <View style={{ flex: 1 }}>
         <View style={[styles.header, { alignSelf: isMe ? 'flex-end' : 'flex-start' }]}>
           <Text style={styles.author}>{firstname} {lastname}</Text>
           <Text style={styles.date}>{format}</Text>
         </View>
         {type.includes('image') ?
-          <View style={styles.imgArea}>
-            <Image
-              source={{ uri: content }}
-              style={styles.img}
-              resizeMode="stretch"
-            />
-          </View>
-          :
-          <TouchableOpacity 
-          style={[styles.content, { backgroundColor: isMe ? THEME.colors.white : THEME.colors.primary, alignSelf: isMe ? 'flex-end' : 'flex-start', borderTopLeftRadius: isMe ? 10 : 0, borderTopRightRadius: isMe ? 0 : 10 }]}
-          activeOpacity={0.75}
-          onLongPress={handlePressLong}
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => Linking.openURL(content)}
           >
-            <Text style={[styles.text, { color: isMe ? THEME.colors.gray : THEME.colors.white }]}>{content}</Text>
+            <View style={styles.imgArea}>
+              <Image
+                source={{ uri: content }}
+                style={styles.img}
+                resizeMode="stretch"
+              />
+            </View>
           </TouchableOpacity>
+          :
+          type === 'text' ?
+            <TouchableOpacity
+              style={[styles.content, { backgroundColor: isMe ? THEME.colors.white : THEME.colors.primary, alignSelf: isMe ? 'flex-end' : 'flex-start', borderTopLeftRadius: isMe ? 10 : 0, borderTopRightRadius: isMe ? 0 : 10 }]}
+              activeOpacity={0.75}
+              onLongPress={handlePressLong}
+            >
+              <Text style={[styles.text, { color: isMe ? THEME.colors.gray : THEME.colors.white }]}>{content}</Text>
+            </TouchableOpacity>
+            :
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => Linking.openURL(content)}
+            >
+              <View style={styles.imgArea}>
+              <Image
+                source={{ uri: 'https://www.computerhope.com/jargon/t/text-file.png' }}
+                style={styles.file}
+                resizeMode='center'
+                />
+                </View>
+            </TouchableOpacity>
         }
       </View>
     </View>
@@ -73,13 +92,13 @@ const styles = StyleSheet.create({
   message: {
     marginTop: 10,
     marginBottom: 10,
-    flexDirection:'row'
+    flexDirection: 'row'
   },
   content: {
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 10,
-    flex:1
+    flex: 1
   },
   header: {
     flexDirection: 'row'
@@ -92,8 +111,8 @@ const styles = StyleSheet.create({
   date: {
     color: THEME.colors.blueGray,
     fontSize: 8,
-    paddingTop:4,
-    paddingLeft:5
+    paddingTop: 4,
+    paddingLeft: 5
   },
   text: {
     fontSize: 13
@@ -107,5 +126,10 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 10,
     backgroundColor: THEME.colors.noPic
+  },
+  file: {
+    flex: 1,
+    borderRadius: 10,
+    backgroundColor: THEME.colors.bg
   }
 })

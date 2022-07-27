@@ -57,9 +57,34 @@ export const RoomScreen = ({ route, navigation }) => {
     setContent(value)
   }
 
+  // const handleFileSelect = useCallback(async (room) => {
+  //   try {
+  //     const response = await DocumentPicker.pick({
+  //       presentationStyle: 'fullScreen',
+  //     });
+  //     // console.log('rzs', response[0].uri)
+  //     if (response) {
+  //       RNFS.readFile(response[0].uri, 'base64')
+  //         .then(res => {
+  //           console.log(res);
+  //           let files = [{
+  //             uri: response[0].uri,
+  //             type: response[0].type,
+  //             name: response[0].name,
+  //             data: res
+  //           }]
+  //           emitNewMessage('', room.id, user.id, response[0].type, files)
+  //         });
+  //     }
+
+  //   } catch (err) {
+  //     console.warn(err);
+  //   }
+  // }, []);
+
   const handleSubmit = () => {
     if (content.length > 0) {
-      const res = emitNewMessage(content, room.id, user.id)
+      const res = emitNewMessage(content, room.id, user.id, 'text', [])
       if (res) {
         setContent('')
       }
@@ -109,6 +134,13 @@ export const RoomScreen = ({ route, navigation }) => {
               placeholderTextColor={THEME.colors.gray}
               onChangeText={(value) => handleChange(value)}
             />
+            {/* <TouchableOpacity
+              activeOpacity={0.5}
+              style={styles.file}
+              onPress={() => handleFileSelect(room)}
+            >
+              <LinkIcon size={20} color={THEME.colors.blueGray} />
+            </TouchableOpacity> */}
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.submit}
@@ -134,7 +166,7 @@ const styles = StyleSheet.create({
   topSection: {
     // flex: 1,
     backgroundColor: THEME.colors.white,
-    flexDirection:'row'
+    flexDirection: 'row'
   },
   bottomSection: {
     borderTopWidth: 1,
@@ -144,7 +176,7 @@ const styles = StyleSheet.create({
   back: {
     width: '25%',
     padding: '8%',
-    paddingBottom:'3%',
+    paddingBottom: '3%',
     paddingTop: '10%',
     backgroundColor: THEME.colors.white
   },
@@ -164,6 +196,13 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     height: 45
   },
+  file: {
+    backgroundColor: THEME.colors.lightGray,
+    height: 45,
+    width: 45,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   submit: {
     backgroundColor: THEME.colors.lightGray,
     padding: 5,
@@ -182,7 +221,7 @@ const styles = StyleSheet.create({
     color: THEME.colors.gray,
     fontSize: 18,
     fontWeight: 'bold',
-    textTransform:'capitalize',
+    textTransform: 'capitalize',
     paddingTop: '11%',
   },
   noDatas: {

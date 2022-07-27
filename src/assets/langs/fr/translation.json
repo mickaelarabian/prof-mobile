@@ -115,7 +115,9 @@
     "title": "Discussions",
     "no": "Aucune discussions",
     "nomess": "Aucun message",
-    "type": "Tapez un message"
+    "type": "Tapez un message",
+    "attachment": "Nouvelle pièce jointe",
+    "copy": "copié"
   },
   "explore": {
     "title": "Rechercher",

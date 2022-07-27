@@ -115,7 +115,9 @@
     "title": "Chat",
     "no": "No discussion",
     "nomess": "No message",
-    "type": "Type a message"
+    "type": "Type a message",
+    "attachment": "New attachment file",
+    "copy": "copy"
   },
   "explore": {
     "title": "Explore",

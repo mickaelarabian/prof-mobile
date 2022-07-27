@@ -20,6 +20,8 @@ export const RoomCard = (props) => {
   hours = hours % 12;
   hours = hours ? hours : 12;
   const format = `${hours}:${minutes} ${unit}`
+
+  console.log('object', last_message)
   return (
     <TouchableOpacity
       style={styles.card}
@@ -32,7 +34,7 @@ export const RoomCard = (props) => {
       <View style={styles.content}>
         <Text style={styles.author}>{last_message ? users && users.find(user => user.id === last_message.userId)?.firstname : name} {last_message && users && users.find(user => user.id === last_message.userId)?.lastname}</Text>
         <View style={styles.sectionFlex}>
-          <Text style={styles.message}>{last_message ? last_message.content : t('chat.nomess')}</Text>
+          <Text numberOfLines={1} style={styles.message}>{last_message ? last_message.type === 'text' ? last_message.content : t('chat.attachment') : t('chat.nomess')}</Text>
           <Text style={styles.date}>{last_message && format}</Text>
         </View>
       </View>
@@ -43,8 +45,8 @@ export const RoomCard = (props) => {
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: '8%'
+    paddingVertical: 10,
+    paddingHorizontal: '8%',
   },
   user: {
     backgroundColor: THEME.colors.white,
@@ -61,17 +63,20 @@ const styles = StyleSheet.create({
   },
   sectionFlex: {
     flexDirection: 'row',
-    alignItems:'flex-end'
+    alignItems:'flex-end',
+    // flex:1
   },
   content: {
-    paddingLeft:10
+    paddingLeft:10,
+    flex:1
   },
   author: {
     color: THEME.colors.darkGray
   },
   message: {
     color: THEME.colors.gray,
-    fontSize:12
+    fontSize:12,
+    flex:1
   },
   date: {
     color: THEME.colors.gray,
