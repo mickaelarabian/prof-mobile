@@ -21,7 +21,6 @@ export const RoomCard = (props) => {
   hours = hours ? hours : 12;
   const format = `${hours}:${minutes} ${unit}`
 
-  console.log('object', last_message)
   return (
     <TouchableOpacity
       style={styles.card}

@@ -66,34 +66,21 @@ export const RoomScreen = ({ route, navigation }) => {
       const response = await DocumentPicker.pick({
         presentationStyle: 'fullScreen',
       });
-      // console.log('rzs', response[0].uri)
       if (response) {
         RNFS.readFile(response[0].uri, 'base64')
           .then(res => {
-            //console.log(res);
-            let file = `data:${response[0].type};base64,${res}`
-            // const urlToFile = async (url, filename, mimeType) => {
-            //   const res = await fetch(url);
-            //   const buf = await res.arrayBuffer();
-            //   return new File([buf], filename, { type: mimeType });
-            // };
             let files = [{
               uri: response[0].uri,
               type: response[0].type,
               name: response[0].name,
-              data: Buffer.from(file, 'base64')
+              data: Buffer.from(res, 'base64'),
+              base64:true
             }]
-            // let files = [urlToFile(response[0].uri, response[0].name, response[0].type)]
-            // console.log("test",res.charAt(0))
-            // console.log("test",res.charAt(1))
-            // console.log("test",res.charAt(2))
-            // console.log("test",res.charAt(3))
             emitNewMessage('', room.id, user.id, response[0].type, files)
           });
       }
-
     } catch (err) {
-      console.warn(err);
+      console.log(err);
     }
   }, []);
 

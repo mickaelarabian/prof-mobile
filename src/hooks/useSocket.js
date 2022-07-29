@@ -58,7 +58,7 @@ const useSocketProvider = () => {
           content,
           files,
           userId,
-          roomId,
+          roomId
         })
         return true
       }

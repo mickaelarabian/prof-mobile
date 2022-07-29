@@ -31,10 +31,7 @@ export const AppRouter = ({ theme }) => {
     const user = await getCurrentUser(token)
     if (user) {
       dispatch(setIsLoadingAction(false))
-      if (user.error) {
-        // AsyncStorage.removeItem('user_token')
-        //TODO
-      } else {
+      if (user.id) {
         const data = {
           user,
           token
@@ -45,6 +42,8 @@ export const AppRouter = ({ theme }) => {
         if (rooms) {
           dispatch(setRoomsAction(rooms))
         }
+      } else {
+        AsyncStorage.removeItem('user_token')
       }
     }
   }

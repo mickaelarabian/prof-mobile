@@ -50,6 +50,7 @@ export const Message = (props) => {
         {type.includes('image') ?
           <TouchableOpacity
             activeOpacity={0.5}
+            style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }}
             onPress={() => Linking.openURL(content)}
           >
             <View style={styles.imgArea}>
@@ -72,6 +73,7 @@ export const Message = (props) => {
             :
             <TouchableOpacity
               activeOpacity={0.5}
+              style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }}
               onPress={() => Linking.openURL(content)}
             >
               <View style={styles.imgArea}>

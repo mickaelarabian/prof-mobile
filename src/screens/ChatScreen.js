@@ -18,7 +18,7 @@ export const ChatScreen = ({ navigation }) => {
   const keyExtractor = useCallback(({ id }) => `room-${id}`, []);
 
   const renderRoom = ({ item, index }) => <RoomCard key={index} item={item} />
-console.log('ro', JSON.stringify(rooms[0]))
+
   const fetchRooms = async () => {
     setRefreshing(true)
     const response = await getMyRooms()
