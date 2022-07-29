@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native'
 import { LinearButton } from '../components/LinearButton';
 import { Routes } from '../constants/routes';
 import { useTranslation } from 'react-i18next';
 import { LanguageButton } from '../components/LanguageButton'
 import { THEME } from '../styles/theme.style';
+import { useSelector } from 'react-redux';
 
 export const AuthScreen = ({ navigation }) => {
   const { t } = useTranslation();
+  const {isLoading} = useSelector(s => s.app);
 
   return (
     <View style={styles.contain}>
@@ -19,7 +21,7 @@ export const AuthScreen = ({ navigation }) => {
             height:50
           }}
         />
-        <LanguageButton/>
+        <LanguageButton disabled={isLoading}/>
       </View>
       <View style={styles.content}>
         <Image
@@ -32,6 +34,7 @@ export const AuthScreen = ({ navigation }) => {
         <LinearButton
           onPress={() => navigation.push(Routes.Login)}
           title={t('login.button')}
+          disabled={isLoading}
         />
         <LinearButton
           title={t('register.button')}
@@ -39,8 +42,23 @@ export const AuthScreen = ({ navigation }) => {
           secondary={THEME.colors.white}
           color={THEME.colors.primary}
           onPress={() => navigation.push(Routes.Register)}
+          disabled={isLoading}
         />
       </View>
+      {isLoading &&
+        <ActivityIndicator
+          style={{
+            position: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0
+          }}
+          size={'large'} color={THEME.colors.primary}
+        />
+      }
     </View>
   )
 }

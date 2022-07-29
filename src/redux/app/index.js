@@ -4,6 +4,7 @@ export const appStateSlice = createSlice({
   name: 'appState',
   initialState: {
     lang: 'en',
+    isLoading: false,
     mapToken: {
       token: '',
       date: null
@@ -30,6 +31,9 @@ export const appStateSlice = createSlice({
       state.selectedSubject = action.payload.selectedSubject
       state.selectedDate = action.payload.selectedDate
       state.selectedPreference = action.payload.selectedPreference
+    },
+    setIsLoadingAction: (state, action) => {
+      state.isLoading = action.payload
     }
   },
 });
@@ -38,6 +42,7 @@ export const {
   setLanguageAction,
   setMapTokenAction,
   setSubjectsAction,
-  setFiltersAction
+  setFiltersAction,
+  setIsLoadingAction
 } = appStateSlice.actions;
 export default appStateSlice.reducer;

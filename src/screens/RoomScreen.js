@@ -7,8 +7,12 @@ import { THEME } from '../styles/theme.style';
 import { getRoom, getRoomMessages } from '../queries/ChatQuery';
 import { Message } from '../components/Message';
 import { SendIcon } from '../components/svgs/Send';
+import { LinkIcon } from '../components/svgs/Link';
 import { useSocket } from '../hooks/useSocket';
 import { resetCurrentMessagesAction, setCurrentMessagesAction, setCurrentRoomAction } from '../redux/chat';
+import DocumentPicker from 'react-native-document-picker';
+import RNFS from 'react-native-fs';
+import { Buffer } from "buffer";
 
 export const RoomScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -57,30 +61,41 @@ export const RoomScreen = ({ route, navigation }) => {
     setContent(value)
   }
 
-  // const handleFileSelect = useCallback(async (room) => {
-  //   try {
-  //     const response = await DocumentPicker.pick({
-  //       presentationStyle: 'fullScreen',
-  //     });
-  //     // console.log('rzs', response[0].uri)
-  //     if (response) {
-  //       RNFS.readFile(response[0].uri, 'base64')
-  //         .then(res => {
-  //           console.log(res);
-  //           let files = [{
-  //             uri: response[0].uri,
-  //             type: response[0].type,
-  //             name: response[0].name,
-  //             data: res
-  //           }]
-  //           emitNewMessage('', room.id, user.id, response[0].type, files)
-  //         });
-  //     }
+  const handleFileSelect = useCallback(async (room) => {
+    try {
+      const response = await DocumentPicker.pick({
+        presentationStyle: 'fullScreen',
+      });
+      // console.log('rzs', response[0].uri)
+      if (response) {
+        RNFS.readFile(response[0].uri, 'base64')
+          .then(res => {
+            //console.log(res);
+            let file = `data:${response[0].type};base64,${res}`
+            // const urlToFile = async (url, filename, mimeType) => {
+            //   const res = await fetch(url);
+            //   const buf = await res.arrayBuffer();
+            //   return new File([buf], filename, { type: mimeType });
+            // };
+            let files = [{
+              uri: response[0].uri,
+              type: response[0].type,
+              name: response[0].name,
+              data: Buffer.from(file, 'base64')
+            }]
+            // let files = [urlToFile(response[0].uri, response[0].name, response[0].type)]
+            // console.log("test",res.charAt(0))
+            // console.log("test",res.charAt(1))
+            // console.log("test",res.charAt(2))
+            // console.log("test",res.charAt(3))
+            emitNewMessage('', room.id, user.id, response[0].type, files)
+          });
+      }
 
-  //   } catch (err) {
-  //     console.warn(err);
-  //   }
-  // }, []);
+    } catch (err) {
+      console.warn(err);
+    }
+  }, []);
 
   const handleSubmit = () => {
     if (content.length > 0) {
@@ -134,13 +149,13 @@ export const RoomScreen = ({ route, navigation }) => {
               placeholderTextColor={THEME.colors.gray}
               onChangeText={(value) => handleChange(value)}
             />
-            {/* <TouchableOpacity
+            <TouchableOpacity
               activeOpacity={0.5}
               style={styles.file}
               onPress={() => handleFileSelect(room)}
             >
               <LinkIcon size={20} color={THEME.colors.blueGray} />
-            </TouchableOpacity> */}
+            </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.submit}
