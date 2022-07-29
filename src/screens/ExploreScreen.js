@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   topSection: {
     paddingHorizontal: '8%',
     paddingTop: '10%',
-    // flex: 1,
+    paddingBottom:'7%',
   },
   bottomSection: {
     flex: 1,

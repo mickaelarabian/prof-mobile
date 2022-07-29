@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ActivityIndicator, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
-import { setLanguageAction, setMapTokenAction } from '../redux/app';
+import { setMapTokenAction } from '../redux/app';
 import { THEME } from '../styles/theme.style';
-import { LANGS } from '../constants/global'
 import { LinearButton } from '../components/LinearButton';
 import { PositionIcon } from '../components/svgs/Position';
-import { setUserAddress } from '../redux/user';
-import { attachAddress, getMapToken, getMyAddress, searchAddress, searchAddressDetails } from '../queries/AddressQuery';
+import { setAddressAction } from '../redux/user';
+import { attachAddress, getMapToken, searchAddress, searchAddressDetails } from '../queries/AddressQuery';
 import { toastError } from '../utils/toastUtils';
 import { Title } from '../components/Title';
 import { Autocomplete } from '../components/Autocomplete';
@@ -20,18 +18,12 @@ export const UpdateAddressScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { mapToken } = useSelector(s => s.app);
-  const [address, setAddress] = useState('')
+  const { address } = useSelector(s => s.user);
+  const [localAddress, setLocalAddress] = useState(address)
   const [suggestions, setSuggestions] = useState([])
   const [selectedAddress, setSelectedAddress] = useState(null)
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-
-  const fetchAddress = async () => {
-    const res = await getMyAddress()
-    if (res) {
-      setAddress(res.address)
-    }
-  }
 
   const getToken = async () => {
     const date = new Date().getTime()
@@ -49,7 +41,7 @@ export const UpdateAddressScreen = ({ navigation }) => {
 
   const search = async () => {
     getToken()
-    const response = await searchAddress(address, mapToken.token)
+    const response = await searchAddress(localAddress, mapToken.token)
     if (response) {
       console.log(JSON.stringify(response))
       setSuggestions(response.results)
@@ -57,12 +49,11 @@ export const UpdateAddressScreen = ({ navigation }) => {
   }
 
   useEffect(() => {
-    fetchAddress()
     getToken()
   }, [])
 
   useEffect(() => {
-    if (address.length > 0) {
+    if (localAddress.length > 0) {
       if (response.length > 0) {
         setResponse('')
       }
@@ -73,7 +64,7 @@ export const UpdateAddressScreen = ({ navigation }) => {
     if (selectedAddress) {
       setSelectedAddress(null)
     }
-  }, [address])
+  }, [localAddress])
 
   const handleSelectAddress = (address) => {
     setSelectedAddress(address)
@@ -98,7 +89,7 @@ export const UpdateAddressScreen = ({ navigation }) => {
         const response = await attachAddress(data)
         if (response) {
           setIsLoading(false)
-          dispatch(setUserAddress())
+          dispatch(setAddressAction(selectedAddress.displayLines.join('')))
         }
       }
     } else {
@@ -120,8 +111,8 @@ export const UpdateAddressScreen = ({ navigation }) => {
       <View style={styles.bottomSection}>
         <Title title={t('address.title')} />
         <Autocomplete
-          setValue={setAddress}
-          defaultValue={selectedAddress?.displayLines.join(' ') || address}
+          setValue={setLocalAddress}
+          defaultValue={selectedAddress?.displayLines.join(' ') || localAddress}
           suggestions={suggestions}
           handleSelectValue={handleSelectAddress}
           traitment={joinStrings}

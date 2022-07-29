@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
-import { setLanguageAction } from '../redux/app';
 import { THEME } from '../styles/theme.style';
 import { GENDER_OPTIONS, LANGS } from '../constants/global'
 import { EmailIcon } from '../components/svgs/Email';
@@ -17,7 +15,7 @@ import { Select } from '../components/Select';
 import { updateAvatar, updateCurrentUser } from '../queries/UserQuery';
 import { Title } from '../components/Title';
 import { getCurrentUser } from '../queries/AuthQuery';
-import { setUserAction } from '../redux/user';
+import { setAddressAction, setUserAction } from '../redux/user';
 import { Routes } from '../constants/routes';
 import { getMyAddress } from '../queries/AddressQuery';
 import { PositionIcon } from '../components/svgs/Position';
@@ -25,13 +23,11 @@ import { PositionIcon } from '../components/svgs/Position';
 export const ProfileInfosScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { user, token } = useSelector(s => s.user);
+  const { user, token, address } = useSelector(s => s.user);
   const [form, setForm] = useState(user)
-  const [image, setImage] = useState(null)
   const [isOpen, setIsOpen] = useState(false)
-  const [address, setAddress] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  console.log("user", user)
+
   const handleSelectGender = (sexe) => {
     setForm({
       ...form,
@@ -43,7 +39,7 @@ export const ProfileInfosScreen = ({ navigation }) => {
   const fetchAddress = async () => {
     const res = await getMyAddress()
     if (res) {
-      setAddress(res.address)
+      dispatch(setAddressAction(res.address))
     }
   }
 
@@ -58,7 +54,6 @@ export const ProfileInfosScreen = ({ navigation }) => {
         const res = await updateAvatar(response.assets[0])
         if (res) {
           setIsLoading(false)
-          console.log('netoyage', res)
           const user = await getCurrentUser(token)
           if (user) {
             const data = {
