@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native'
 import Modal from 'react-native-modal'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
-import { getCalendar } from '../queries/CalendarQuery';
+import { getCalendar, getTeacherCalendar } from '../queries/CalendarQuery';
 import { bookLesson } from '../queries/LessonQuery';
 import { setCalendarAction } from '../redux/calendar';
 import { THEME } from '../styles/theme.style';
@@ -16,6 +16,7 @@ import { PositionIcon } from './svgs/Position';
 import { getMapToken, searchAddress, searchAddressDetails } from '../queries/AddressQuery';
 import { setMapTokenAction } from '../redux/app';
 import { joinStrings } from '../utils/generalUtils';
+import { setTeacherCalendarAction } from '../redux/teacher';
 
 export const BookModal = ({
   toggleModal,
@@ -105,6 +106,13 @@ export const BookModal = ({
     }
   }
 
+  const fetchTeacherCalendar = async () => {
+    const res = await getTeacherCalendar(teacher)
+    if(res){
+      dispatch(setTeacherCalendarAction(res))
+    }
+  }
+
   const handleSubmit = async () => {
     if (schedule && selectedHour, selectedSubject) {
       if (!isSelected) {
@@ -121,6 +129,7 @@ export const BookModal = ({
           setIsLoading(false)
           toggleModal(false)
           fetchCalendar()
+          fetchTeacherCalendar()
         }
       } else if (isSelected && selectedAddress) {
         setIsLoading(true)
@@ -146,6 +155,7 @@ export const BookModal = ({
             setIsLoading(false)
             toggleModal(false)
             fetchCalendar()
+            fetchTeacherCalendar()
           }
         }
       } else {

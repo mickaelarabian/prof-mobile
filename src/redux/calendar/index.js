@@ -1,9 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export const calendarStateSlice = createSlice({
-  name: 'caleandarState',
+  name: 'calendarState',
   initialState: {
-    calendar: {}
+    calendar: {},
+    lessons: [],
+    isHistory: false
   },
 
   reducers: {
@@ -12,6 +14,12 @@ export const calendarStateSlice = createSlice({
     },
     resetAction: (state) => {
       state.calendar = {}
+    },
+    setLessonsAction: (state, action) => {
+      state.lessons = action.payload
+    },
+    setIsHistoryAction: (state, action) => {
+      state.isHistory = action.payload
     }
   },
 });
@@ -19,5 +27,7 @@ export const calendarStateSlice = createSlice({
 export const {
   setCalendarAction,
   resetAction,
+  setLessonsAction,
+  setIsHistoryAction
 } = calendarStateSlice.actions;
 export default calendarStateSlice.reducer;

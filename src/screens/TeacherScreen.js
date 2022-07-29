@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity, RefreshControl, Image } from 'react-native'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { getTeacherCalendar } from '../queries/CalendarQuery';
 import Swiper from 'react-native-swiper';
@@ -16,15 +16,14 @@ import { StarIcon } from '../components/svgs/Star';
 import { PositionIcon } from '../components/svgs/Position';
 import { LinearButton } from '../components/LinearButton';
 import { ReviewModal } from '../components/ReviewModal';
-import { CODES } from '../constants/global';
+import { setTeacherAction, setTeacherCalendarAction } from '../redux/teacher';
 
 export const TeacherScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
+  const { calendar, teacher } = useSelector(s => s.teacher);
   const { t } = useTranslation();
-  const [calendar, setCalendar] = useState({})
   const [currentIndex, setCurrentIndex] = useState(0)
   const [safeIndex, setSafeIndex] = useState(0)
-  const [teacher, setTeacher] = useState({})
   const [isOpinion, setIsOpinion] = useState(false)
   const [refreshing, setRefreshing] = useState(false);
   const [currentSchedule, setCurrentSchedule] = useState(null);
@@ -36,12 +35,12 @@ export const TeacherScreen = ({ route, navigation }) => {
   const { id } = route.params;
 
   const { width, height } = Dimensions.get('window')
-console.log(JSON.stringify(calendar))
+
   const fetchCalendar = async () => {
     setRefreshing(true)
     const response = await getTeacherCalendar(id)
     if (response) {
-      setCalendar(response)
+      dispatch(setTeacherCalendarAction(response))
       setRefreshing(false)
     }
   }
@@ -49,7 +48,7 @@ console.log(JSON.stringify(calendar))
   const fetchTeacher = async () => {
     const response = await getTeacher(id)
     if (response) {
-      setTeacher(response)
+      dispatch(setTeacherAction(response))
       if (response.teacher_subjects) {
         let datas = []
         response.teacher_subjects.map(item => {

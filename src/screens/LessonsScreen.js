@@ -6,11 +6,13 @@ import { getHistoryLessons, getUpcomingLessons } from '../queries/LessonQuery';
 import { THEME } from '../styles/theme.style';
 import { LessonCard } from '../components/LessonCard';
 import { Title } from '../components/Title';
+import { useSelector, useDispatch } from 'react-redux';
+import { setIsHistoryAction, setLessonsAction } from '../redux/calendar';
 
 export const LessonsScreen = ({ navigation }) => {
   const { t } = useTranslation();
-  const [lessons, setLessons] = useState([])
-  const [isHistory, setIsHistory] = useState(false)
+  const dispatch = useDispatch();
+  const { lessons, isHistory } = useSelector(s => s.calendar);
   const [refreshing, setRefreshing] = useState(false);
   const [lastPage, setLastPage] = useState(1)
   const [page, setPage] = useState(1)
@@ -22,7 +24,7 @@ export const LessonsScreen = ({ navigation }) => {
       setRefreshing(false)
       const data = page === 1 ? response.data : [...lessons, ...response.data]
       setLastPage(response.lastPage)
-      setLessons(data)
+      dispatch(setLessonsAction(data))
     }
   }
 
@@ -33,7 +35,7 @@ export const LessonsScreen = ({ navigation }) => {
       setRefreshing(false)
       const data = page === 1 ? response.data : [...lessons, ...response.data]
       setLastPage(response.lastPage)
-      setLessons(data)
+      dispatch(setLessonsAction(data))
     }
   }
 
@@ -70,10 +72,10 @@ export const LessonsScreen = ({ navigation }) => {
   const renderLesson = ({ item, index }) => <LessonCard key={index} item={item} />
 
   const toggleHistory = (isHistory) => {
-    setIsHistory(isHistory)
+    dispatch(setIsHistoryAction(isHistory))
     setPage(1)
   }
-  console.log('lessons', lessons)
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.topSection}>
