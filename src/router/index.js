@@ -1,27 +1,23 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
-import React, { createRef, useEffect, useState } from 'react';
+import React, { createRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { setLanguageAction } from '../redux/app';
+import { setIsLoadingAction, setLanguageAction } from '../redux/app';
 import { OfflineRouter } from './OfflineRouter';
 import { OnlineRouter } from './OnlineRouter';
 import { setUserAction } from '../redux/user';
 import { apiClient } from '../utils/axiosClient.';
 import { getCurrentUser } from '../queries/AuthQuery';
-import { env } from '../../app.config'
 import { getMyRooms } from '../queries/ChatQuery';
 import { setRoomsAction } from '../redux/chat';
 import SocketProvider from '../contexts/SocketProvider';
-import { ActivityIndicator } from 'react-native';
-import { THEME } from '../styles/theme.style';
 
 export const AppRouter = ({ theme }) => {
   const navigationRef = createRef();
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
   const user = useSelector(s => s.user);
-  const [isLoading, setIsLoading] = useState(false)
 
   const reloadLang = async () => {
     const lang = await AsyncStorage.getItem('current_lng');
@@ -34,12 +30,8 @@ export const AppRouter = ({ theme }) => {
   const fetchUser = async (token) => {
     const user = await getCurrentUser(token)
     if (user) {
-      setIsLoading(false)
-      console.log(user)
-      if (user.error) {
-        // AsyncStorage.removeItem('user_token')
-        //TODO
-      } else {
+      dispatch(setIsLoadingAction(false))
+      if (user.id) {
         const data = {
           user,
           token
@@ -50,6 +42,8 @@ export const AppRouter = ({ theme }) => {
         if (rooms) {
           dispatch(setRoomsAction(rooms))
         }
+      } else {
+        AsyncStorage.removeItem('user_token')
       }
     }
   }
@@ -57,7 +51,7 @@ export const AppRouter = ({ theme }) => {
   const reloadUser = async () => {
     const token = await AsyncStorage.getItem('user_token');
     if (token) {
-      setIsLoading(true)
+      dispatch(setIsLoadingAction(true))
       fetchUser(token)
     }
   }
@@ -75,20 +69,6 @@ export const AppRouter = ({ theme }) => {
         </SocketProvider>
         :
         <OfflineRouter />
-      }
-      {isLoading &&
-        <ActivityIndicator
-          style={{
-            position: 'absolute',
-            alignItems: 'center',
-            justifyContent: 'center',
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0
-          }}
-          size={'large'} color={THEME.colors.primary}
-        />
       }
     </NavigationContainer>
   )

@@ -11,6 +11,28 @@ export const GENDER_OPTIONS = [
   }
 ]
 
+export const TYPE_OPTIONS = [
+  {
+    label: 'register.form.student',
+    value: 'student'
+  },
+  {
+    label: 'register.form.teacher',
+    value: 'teacher'
+  }
+]
+
+export const PREFERENCE_OPTIONS = [
+  {
+    label: 'explore.athome',
+    value: true
+  },
+  {
+    label: 'explore.notathome',
+    value: false
+  }
+]
+
 export const LANGS = [
   {
     label: 'English',

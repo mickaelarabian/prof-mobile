@@ -14,7 +14,7 @@ export const ChatScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
   const { rooms, notifications } = useSelector(s => s.chat);
-
+  
   const keyExtractor = useCallback(({ id }) => `room-${id}`, []);
 
   const renderRoom = ({ item, index }) => <RoomCard key={index} item={item} />

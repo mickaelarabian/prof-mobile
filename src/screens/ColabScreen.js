@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity } from 'react-native'
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { View, Text, ScrollView, StyleSheet, RefreshControl, TouchableOpacity, Alert, Linking, Platform } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { LanguageButton } from '../components/LanguageButton';
@@ -12,6 +12,9 @@ import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
 import { cancelLesson, getLesson, joinLesson } from '../queries/LessonQuery';
 import { LinearButton } from '../components/LinearButton';
 import { CODES } from '../constants/global';
+import { addDuration, formatdateTime } from '../utils/generalUtils';
+import { setCalendarAction } from '../redux/calendar';
+import { env } from '../../app.config';
 
 export const ColabScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -19,13 +22,16 @@ export const ColabScreen = ({ route, navigation }) => {
   const { id } = route.params;
   const [lesson, setLesson] = useState({})
   const { user } = useSelector(s => s.user);
-  const [isInLesson, setIsInLesson] = useState(false)
-// console.log('user', user)
+  const [isInLesson, setIsInLesson] = useState(true)
+  const [refreshing, setRefreshing] = useState(false);
+  // console.log('user', user)
   const fetchLesson = async () => {
+    setRefreshing(true)
     const response = await getLesson(id)
     if (response) {
       setLesson(response)
-      if(response.students.findIndex(item => item.id === user.id) > -1){
+      setRefreshing(false)
+      if (response.students.findIndex(item => item.id === user.id) > -1) {
         setIsInLesson(true)
       }
     }
@@ -35,64 +41,194 @@ export const ColabScreen = ({ route, navigation }) => {
     fetchLesson()
   }, [id])
 
+  const fetchCalendar = async () => {
+    const response = await getCalendar()
+    if (response) {
+      dispatch(setCalendarAction(response))
+    }
+  }
+
+  const handleCancel = async (id) => {
+    setRefreshing(true)
+    const response = await cancelLesson(id)
+    if (response) {
+      setRefreshing(false)
+      fetchLesson()
+      fetchCalendar()
+    }
+  }
+
+  const showConfirmSubscribe = () => {
+    return Alert.alert(
+      "Are your sure?",
+      "Are you sure you want to join this lesson ?",
+      [
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "No",
+        },
+        // The "Yes" button
+        {
+          text: "Yes",
+          onPress: async () => {
+            handleSubscribe(lesson?.id)
+          },
+        }
+      ]
+    );
+  };
+
+  const showConfirmCancel = () => {
+    return Alert.alert(
+      "Are your sure?",
+      "Are you sure you want to cancel this lesson ?",
+      [
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "No",
+        },
+        // The "Yes" button
+        {
+          text: "Yes",
+          onPress: async () => {
+            handleCancel(lesson.id)
+          },
+        }
+      ]
+    );
+  };
+
   const handleSubscribe = async (id) => {
+    setRefreshing(true)
     const response = await joinLesson(id)
     if (response) {
+      setRefreshing(false)
       console.log('response', response)
       fetchLesson()
     }
   }
 
-  return (
-    <ScrollView scrollEnabled={false} contentContainerStyle={{ flexGrow: 1 }} style={styles.contain}>
-      <View style={styles.topSection}>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          onPress={() => navigation.goBack()}
-          style={styles.back}
-        >
-          <ArrowLeftIcon size={35} color={THEME.colors.gray} />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.bottomSection}>
-        <Text style={[styles.title, { backgroundColor: lesson?.subject?.color }]}>{t(lesson?.subject?.libelle)}</Text>
-        <View>
-          <View style={styles.infosRow}>
-            <Text style={styles.subTitle}>{t('lessons.teacher')} :</Text>
-            <Text style={styles.text}>{`${lesson?.teacher?.firstname} ${lesson?.teacher?.lastname}`}</Text>
-          </View>
-          <View style={styles.infosRow}>
-            <Text style={styles.subTitle}>{t('lessons.status')} :</Text>
-            <Text style={[styles.status, { backgroundColor: CODES[lesson?.status?.code], color: lesson?.status?.code === 'unconfirmed' ? THEME.colors.gray : THEME.colors.white }]}>{lesson?.status?.code}</Text>
-          </View>
-          <Text style={styles.subTitle}>{t('lessons.description')} :</Text>
-          <Text style={[styles.text, { marginBottom: 15 }]}>{lesson?.teacher_subject?.description}</Text>
-          <View style={styles.infosRow}>
-            <Text style={styles.subTitle}>{t('lessons.schedule')} :</Text>
-            <Text style={styles.text}>{lesson?.scheduled_at}</Text>
-          </View>
-          <View style={styles.infosRow}>
-            <Text style={styles.subTitle}>{t('lessons.duration')} :</Text>
-            <Text style={styles.text}>{lesson?.duration}h</Text>
-          </View>
-          <View style={styles.infosRow}>
-            <Text style={styles.subTitle}>{t('lessons.type')} :</Text>
-            <Text style={styles.text}>Vidéo Zoom</Text>
-          </View>
-          <View style={styles.infosRow}>
-            <Text style={styles.subTitle}>{t('lessons.students')}:</Text>
-            <Text style={styles.text}>{`${lesson?.students?.length} / ${lesson?.capacity} ${t('lessons.students')}`}</Text>
-          </View>
+  const onRefresh = useCallback(() => {
+    fetchLesson()
+  }, [])
 
-        </View>
-      </View>
-      <View style={styles.btnArea}>
-        <LinearButton
-          textTransform='uppercase'
-          title={`S\`inscrire pour ${lesson?.amount} ${lesson?.currency}`}
-          onPress={()=> handleSubscribe(lesson?.id)}
+  const handleJoin = () => {
+    if (lesson.address) {
+      const url = useMemo(() => Platform.select({
+        ios: `maps:0,0?q=${lesson.address.address}`,
+        android: `geo:0,0?q=${lesson.address.address}`
+      }), []);
+      Linking.openURL(url)
+    } else if (lesson.video_link) {
+      Linking.openURL(lesson.video_link)
+    } else {
+      Linking.openURL(`${env.URL}/classroom/${lesson.id}`)
+    }
+  }
+
+  const currentDate = new Date().getTime()
+  const endDate = lesson.scheduled_at ? addDuration(lesson.duration, lesson.scheduled_at) : new Date()
+  const isTooLate = currentDate > endDate.getTime()
+
+  return (
+    <ScrollView
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
         />
-      </View>
+      }
+      scrollEnabled={false}
+      contentContainerStyle={{ flexGrow: 1 }}
+      style={styles.contain}
+    >
+      {lesson.status &&
+        <>
+          <View style={styles.topSection}>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => navigation.goBack()}
+              style={styles.back}
+            >
+              <ArrowLeftIcon size={35} color={THEME.colors.gray} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.bottomSection}>
+            <Text style={[styles.title, { backgroundColor: lesson?.subject?.color }]}>{t(lesson?.subject?.libelle)}</Text>
+            <View>
+              <View style={styles.infosRow}>
+                <Text style={styles.subTitle}>{t('lessons.teacher')} :</Text>
+                <Text style={styles.text}>{`${lesson?.teacher?.firstname} ${lesson?.teacher?.lastname}`}</Text>
+              </View>
+              <View style={styles.infosRow}>
+                <Text style={styles.subTitle}>{t('lessons.status')} :</Text>
+                <Text style={[styles.status, { backgroundColor: CODES[lesson?.status?.code], color: lesson?.status?.code === 'unconfirmed' ? THEME.colors.gray : THEME.colors.white }]}>{lesson?.status?.code}</Text>
+              </View>
+              <Text style={styles.subTitle}>{t('lessons.description')} :</Text>
+              <Text style={[styles.text, { marginBottom: 15 }]}>{lesson?.teacher_subject?.description}</Text>
+              <View style={styles.infosRow}>
+                <Text style={styles.subTitle}>{t('lessons.schedule')} :</Text>
+                <Text style={styles.text}>{lesson.scheduled_at && formatdateTime(lesson?.scheduled_at, true)}</Text>
+              </View>
+              <View style={styles.infosRow}>
+                <Text style={styles.subTitle}>{t('lessons.duration')} :</Text>
+                <Text style={styles.text}>{lesson?.duration}h</Text>
+              </View>
+              {lesson.address ?
+                <View style={{ marginBottom: 15 }}>
+                  <Text style={styles.subTitle}>{t('lessons.address')} :</Text>
+                  <Text style={styles.text}>{lesson.address.address}</Text>
+                </View>
+                :
+                <View style={styles.infosRow}>
+                  <Text style={styles.subTitle}>{t('lessons.type')} :</Text>
+                  <Text style={styles.text}>{t('lessons.online')}</Text>
+                </View>
+              }
+              <View style={styles.infosRow}>
+                <Text style={styles.subTitle}>{t('lessons.students')}:</Text>
+                <Text style={styles.text}>{`${lesson?.students?.length} / ${lesson?.capacity} ${t('lessons.students')}`}</Text>
+              </View>
+
+            </View>
+          </View>
+          <View style={styles.btnArea}>
+            {!isInLesson ?
+              <LinearButton
+                textTransform='uppercase'
+                title={`${t('lessons.subscribe')} ${lesson?.amount} ${lesson?.currency}`}
+                onPress={showConfirmSubscribe}
+              />
+              :
+              <>
+                {lesson.status.code !== 'cancelled' && !isTooLate &&
+                  <>
+                    <LinearButton
+                      primary={THEME.colors.white}
+                      secondary={THEME.colors.white}
+                      color={THEME.colors.primary}
+                      title={t('lessons.cancel')}
+                      fontSize={17}
+                      onPress={showConfirmCancel}
+                      flex={1}
+                    />
+                    {lesson.status.code === 'confirmed' &&
+                      <LinearButton
+                        title={t('lessons.join')}
+                        fontSize={17}
+                        flex={1}
+                        onPress={handleJoin}
+                      />
+                    }
+                  </>
+                }
+              </>
+            }
+          </View>
+        </>
+      }
     </ScrollView>
   )
 }

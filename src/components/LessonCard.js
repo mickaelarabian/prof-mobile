@@ -11,12 +11,12 @@ export const LessonCard = (props) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
-  const { id, scheduled_at, relative_status, subject, teacher} = props.item
+  const { id, scheduled_at, relative_status, subject, teacher, capacity} = props.item
 
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.push(Routes.Lesson, { id })}
+      onPress={capacity > 1 ? () => navigation.push(Routes.Colab, { id }) : () => navigation.push(Routes.Lesson, { id })}
       activeOpacity={0.5}
     >
       <View style={styles.col3}>

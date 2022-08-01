@@ -16,7 +16,9 @@ export const formatdateTime = (time, isFull) => {
   const unit = hours >= 12 ? 'pm' : 'am';
   hours = hours % 12;
   hours = hours ? hours : 12;
-  return `${MONTHS[month].substring(0, 3)} ${days}${isFull ? ' '+year : ''}, ${hours}:${minutes < 10 ? '0' + minutes : minutes} ${unit}`
+  if(MONTHS[month]){
+    return `${MONTHS[month].substring(0, 3)} ${days}${isFull ? ' ' + year : ''}, ${hours}:${minutes < 10 ? '0' + minutes : minutes} ${unit}`
+  }
 }
 
 export const formatdate = (time) => {
@@ -25,4 +27,8 @@ export const formatdate = (time) => {
   const year = date.getFullYear()
   const days = date.getDate()
   return `${MONTHS[month].substring(0, 3)} ${days}, ${year}`
+}
+
+export const joinStrings = (item) => {
+  return item.join(' ') || ''
 }

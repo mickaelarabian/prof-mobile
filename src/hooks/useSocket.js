@@ -50,15 +50,15 @@ const useSocketProvider = () => {
 
   }, [])
 
-  const emitNewMessage = (content, roomId, userId) => {
+  const emitNewMessage = (content, roomId, userId, type = 'text', files) => {
     if (ws !== null) {
       if (ws.connected) {
         ws.emit('new_message', {
-          type: 'text',
+          type,
           content,
-          files: [],
+          files,
           userId,
-          roomId,
+          roomId
         })
         return true
       }

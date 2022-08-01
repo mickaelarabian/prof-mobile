@@ -10,7 +10,7 @@ import { LockIcon } from './svgs/Lock';
 import { EmailIcon } from './svgs/Email';
 import { LinearButton } from './LinearButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GENDER_OPTIONS } from '../constants/global';
+import { GENDER_OPTIONS, TYPE_OPTIONS } from '../constants/global';
 import { register } from '../queries/AuthQuery';
 import { Input } from './Input';
 import { Select } from './Select';
@@ -18,25 +18,29 @@ import { toastError, toastSuccess } from '../utils/toastUtils';
 import DatePicker from 'react-native-date-picker'
 import { formatdate } from '../utils/generalUtils';
 import { apiClient } from '../utils/axiosClient.';
+import { CalendarIcon } from './svgs/Calendar';
 
 export const RegisterForm = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const inputRefs = useRef([]);
   const [isOpen, setIsOpen] = useState(false)
+  const [isTypeOpen, setIsTypeOpen] = useState(false)
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState({
-    type: 'student'
+    sexe: 'm',
+    type: 'student',
+    birth: new Date('2000-01-01T14:42:00.000Z')
   })
-  console.log(response)
+
   inputRefs.current = [0, 0, 0, 0].map(
     (ref, index) => inputRefs.current[index] = createRef()
   )
 
   const onSubmit = async () => {
-    if (form.lastname && form.firstname && form.sexe && form.birth && form.email && form.password && form.repeat_password) {
+    if (form.lastname && form.firstname && form.sexe && form.type && form.birth && form.email && form.password && form.repeat_password) {
       setIsLoading(true)
       const result = await register(form)
       if (result) {
@@ -64,6 +68,28 @@ export const RegisterForm = () => {
       sexe
     })
     setIsOpen(false)
+  }
+
+  const handleSelectType = (type) => {
+    setForm({
+      ...form,
+      type
+    })
+    setIsTypeOpen(false)
+  }
+
+  const handleSetIsOpen = (isOpen) => {
+    setIsOpen(isOpen)
+    if (isOpen) {
+      setIsTypeOpen(false)
+    }
+  }
+
+  const handleSetIsTypeOpen = (isOpen) => {
+    setIsTypeOpen(isOpen)
+    if (isOpen) {
+      setIsOpen(false)
+    }
   }
 
   const today = new Date()
@@ -109,7 +135,7 @@ export const RegisterForm = () => {
       }
       <Select
         isOpen={isOpen}
-        setIsOpen={setIsOpen}
+        setIsOpen={handleSetIsOpen}
         value={GENDER_OPTIONS.find(item => item.value === form.sexe)?.label}
         handleSelect={handleSelectGender}
         defaultValue={'register.form.sex'}
@@ -117,10 +143,21 @@ export const RegisterForm = () => {
       >
         <ProfileIcon size={20} />
       </Select>
-
-
       {(response.sexe) &&
         <Text style={styles.error}>{response.sexe}</Text>
+      }
+      <Select
+        isOpen={isTypeOpen}
+        setIsOpen={handleSetIsTypeOpen}
+        value={TYPE_OPTIONS.find(item => item.value === form.type)?.label}
+        handleSelect={handleSelectType}
+        defaultValue={'register.form.type'}
+        options={TYPE_OPTIONS}
+      >
+        <ProfileIcon size={20} />
+      </Select>
+      {(response.type) &&
+        <Text style={styles.error}>{response.type}</Text>
       }
       <TouchableOpacity
         activeOpacity={0.5}
@@ -131,7 +168,7 @@ export const RegisterForm = () => {
           defaultValue={form.birth && formatdate(form.birth)}
           placeholder={t('register.form.birth')}
         >
-          <LockIcon size={20} />
+          <CalendarIcon color={THEME.colors.blueGray} size={20} />
         </Input>
       </TouchableOpacity>
       {(response.birth) &&
@@ -196,9 +233,6 @@ export const RegisterForm = () => {
         }}
       />
       <View style={styles.btnArea}>
-        {isLoading &&
-          <ActivityIndicator size={'large'} color={THEME.colors.primary} />
-        }
         <LinearButton
           disabled={isLoading}
           title={t('register.button')}
@@ -210,6 +244,20 @@ export const RegisterForm = () => {
           <ArrowRightIcon />
         </LinearButton>
       </View>
+      {isLoading &&
+        <ActivityIndicator
+          style={{
+            position: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0
+          }}
+          size={'large'} color={THEME.colors.primary}
+        />
+      }
     </View>
   )
 }

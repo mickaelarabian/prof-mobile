@@ -54,6 +54,22 @@ export const getCurrentUser = async (token) => {
   }
 }
 
+export const logoutToken = async () => {
+  try {
+    const res = await apiClient({
+      method: 'get',
+      url: `${env.API.BASE_URL}/auth/logout`
+    })
+    if (res) {
+      return res.data
+    } else {
+      throw new Error('Impossible de se deconnecter');
+    }
+  } catch (e) {
+    throw e
+  }
+}
+
 export const resetpassword = async (email) => {
   try {
     const res = await apiClient({
@@ -64,7 +80,6 @@ export const resetpassword = async (email) => {
       }
     })
     if (res) {
-      console.log('ress', res)
       if(res.status === 200){
         toastSuccess('Email envoyé avec succé')
         return {"data": true}

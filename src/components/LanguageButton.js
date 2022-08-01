@@ -6,7 +6,7 @@ import { Routes } from '../constants/routes';
 import { THEME } from '../styles/theme.style';
 import { LANGSOBJ } from '../constants/global';
 
-export const LanguageButton = () => {
+export const LanguageButton = ({disabled = false}) => {
   const { lang } = useSelector(s => s.app);
   const navigation = useNavigation();
 
@@ -14,6 +14,7 @@ export const LanguageButton = () => {
     <TouchableOpacity
       activeOpacity={0.5}
       style={styles.button}
+      disabled={disabled}
       onPress={() => navigation.push(Routes.Language)}
     >
       <Image style={styles.img} source={LANGSOBJ[lang]} />

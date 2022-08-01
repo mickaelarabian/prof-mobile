@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
-import { setLanguageAction } from '../redux/app';
 import { THEME } from '../styles/theme.style';
 import { GENDER_OPTIONS, LANGS } from '../constants/global'
 import { EmailIcon } from '../components/svgs/Email';
@@ -17,8 +15,7 @@ import { Select } from '../components/Select';
 import { updateAvatar, updateCurrentUser } from '../queries/UserQuery';
 import { Title } from '../components/Title';
 import { getCurrentUser } from '../queries/AuthQuery';
-import { setUserAction } from '../redux/user';
-import { Buffer } from 'buffer'
+import { setAddressAction, setUserAction } from '../redux/user';
 import { Routes } from '../constants/routes';
 import { getMyAddress } from '../queries/AddressQuery';
 import { PositionIcon } from '../components/svgs/Position';
@@ -26,11 +23,9 @@ import { PositionIcon } from '../components/svgs/Position';
 export const ProfileInfosScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { user, token } = useSelector(s => s.user);
+  const { user, token, address } = useSelector(s => s.user);
   const [form, setForm] = useState(user)
-  const [image, setImage] = useState(null)
   const [isOpen, setIsOpen] = useState(false)
-  const [address, setAddress] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSelectGender = (sexe) => {
@@ -43,8 +38,8 @@ export const ProfileInfosScreen = ({ navigation }) => {
 
   const fetchAddress = async () => {
     const res = await getMyAddress()
-    if(res){
-      setAddress(res.address)
+    if (res) {
+      dispatch(setAddressAction(res.address))
     }
   }
 
@@ -53,35 +48,38 @@ export const ProfileInfosScreen = ({ navigation }) => {
   }, [])
 
   const handleChoosePhoto = () => {
-    launchImageLibrary({ mediaType:'photo', includeBase64:true }, async (response) => {
+    launchImageLibrary({ mediaType: 'photo', includeBase64: true }, async (response) => {
       if (response.assets) {
         setIsLoading(true)
-        const buffer = Buffer.from(response.assets[0].base64, 'base64')
-        const res = await updateAvatar(buffer)
-        if(res){
+        const res = await updateAvatar(response.assets[0])
+        if (res) {
           setIsLoading(false)
-          console.log('netoyage', res)
+          const user = await getCurrentUser(token)
+          if (user) {
+            const data = {
+              user,
+              token
+            }
+            dispatch(setUserAction({ ...data, hasAddress: true }))
+          }
         }
-        // ca part direct, j'affiche le taost puis je fetch en comun
-        // setImage(response.assets[0].uri)
       }
     });
   };
-  console.log('image', image)
 
   const handleSubmit = async () => {
     const response = await updateCurrentUser(form)
-    if(response){
+    if (response) {
       console.log(user)
       const user = await getCurrentUser(token)
-      if(user){
+      if (user) {
         const data = {
           user,
           token
         }
         dispatch(setUserAction({ ...data, hasAddress: true }))
         setForm(current => {
-          const {password, repeat_password, ...form} = current;
+          const { password, repeat_password, ...form } = current;
           return form;
         })
       }
@@ -106,7 +104,7 @@ export const ProfileInfosScreen = ({ navigation }) => {
           onPress={handleChoosePhoto}
         >
           <Image
-            source={{ uri: form.image }}
+            source={{ uri: user.image }}
             style={styles.img}
           />
         </TouchableOpacity>
@@ -134,8 +132,8 @@ export const ProfileInfosScreen = ({ navigation }) => {
           handleSelect={handleSelectGender}
           defaultValue={'register.form.sex'}
           options={GENDER_OPTIONS}
-          >
-          
+        >
+
           <ProfileIcon size={20} />
         </Select>
         <Input
@@ -147,14 +145,19 @@ export const ProfileInfosScreen = ({ navigation }) => {
         >
           <EmailIcon size={20} />
         </Input>
-        <Input
-          placeholder={t('address.title')}
-          defaultValue={address}
-          editable={false}
-          placeholderTextColor={THEME.colors.blueGray}
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => navigation.navigate(Routes.NewAddress)}
         >
-          <PositionIcon size={20} />
-        </Input>
+          <Input
+            placeholder={t('address.title')}
+            defaultValue={address}
+            editable={false}
+            placeholderTextColor={THEME.colors.blueGray}
+          >
+            <PositionIcon size={20} />
+          </Input>
+        </TouchableOpacity>
         <Input
           returnKeyType="next"
           placeholder={t('register.form.password')}
@@ -183,20 +186,20 @@ export const ProfileInfosScreen = ({ navigation }) => {
           color={THEME.colors.primary}
           onPress={() => navigation.navigate(Routes.NewAddress)}
         />
-         {isLoading &&
-        <ActivityIndicator
-          style={{
-            position: 'absolute',
-            alignItems: 'center',
-            justifyContent: 'center',
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0
-          }}
-          size={'large'} color={THEME.colors.primary}
-        />
-      }
+        {isLoading &&
+          <ActivityIndicator
+            style={{
+              position: 'absolute',
+              alignItems: 'center',
+              justifyContent: 'center',
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0
+            }}
+            size={'large'} color={THEME.colors.primary}
+          />
+        }
       </View>
     </View>
   )
@@ -243,9 +246,9 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     alignSelf: 'center',
-    borderRadius:100,
+    borderRadius: 100,
     backgroundColor: THEME.colors.noPic,
-    borderWidth:1,
+    borderWidth: 1,
     borderColor: THEME.colors.primary
   }
 })

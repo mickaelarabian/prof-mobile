@@ -1,15 +1,18 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, TextInput } from 'react-native'
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, RefreshControl } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeftIcon } from '../components/svgs/ArrowLeft';
 import { THEME } from '../styles/theme.style';
-import { Title } from '../components/Title';
 import { getRoom, getRoomMessages } from '../queries/ChatQuery';
 import { Message } from '../components/Message';
 import { SendIcon } from '../components/svgs/Send';
+import { LinkIcon } from '../components/svgs/Link';
 import { useSocket } from '../hooks/useSocket';
-import { setCurrentMessagesAction, setCurrentRoomAction } from '../redux/chat';
+import { resetCurrentMessagesAction, setCurrentMessagesAction, setCurrentRoomAction } from '../redux/chat';
+import DocumentPicker from 'react-native-document-picker';
+import RNFS from 'react-native-fs';
+import { Buffer } from "buffer";
 
 export const RoomScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -18,21 +21,26 @@ export const RoomScreen = ({ route, navigation }) => {
   const { user } = useSelector(s => s.user);
   const { room, messages } = useSelector(s => s.chat);
   const [content, setContent] = useState('')
+  const [refreshing, setRefreshing] = useState(false);
 
   const { id } = route.params;
 
   const { emitNewMessage } = useSocket()
 
   const fetchRoom = async () => {
+    setRefreshing(true)
     const res = await getRoom(id)
     if (res) {
+      setRefreshing(false)
       dispatch(setCurrentRoomAction(res))
     }
   }
 
   const fetchMessages = async () => {
+    setRefreshing(true)
     const res = await getRoomMessages(id)
     if (res) {
+      setRefreshing(false)
       dispatch(setCurrentMessagesAction(res.reverse()))
     }
   }
@@ -40,6 +48,9 @@ export const RoomScreen = ({ route, navigation }) => {
   useEffect(() => {
     fetchRoom()
     fetchMessages()
+    return () => {
+      dispatch(resetCurrentMessagesAction())
+    }
   }, [])
 
   const keyExtractor = useCallback(({ id }) => `message-${id}`, []);
@@ -50,14 +61,41 @@ export const RoomScreen = ({ route, navigation }) => {
     setContent(value)
   }
 
+  const handleFileSelect = useCallback(async (room) => {
+    try {
+      const response = await DocumentPicker.pick({
+        presentationStyle: 'fullScreen',
+      });
+      if (response) {
+        RNFS.readFile(response[0].uri, 'base64')
+          .then(res => {
+            let files = [{
+              uri: response[0].uri,
+              type: response[0].type,
+              name: response[0].name,
+              data: Buffer.from(res, 'base64'),
+              base64:true
+            }]
+            emitNewMessage('', room.id, user.id, response[0].type, files)
+          });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
   const handleSubmit = () => {
     if (content.length > 0) {
-      const res = emitNewMessage(content, room.id, user.id)
+      const res = emitNewMessage(content, room.id, user.id, 'text', [])
       if (res) {
         setContent('')
       }
     }
   }
+
+  const onRefresh = useCallback(() => {
+    fetchMessages()
+  }, []);
 
   return (
     <View style={styles.contain}>
@@ -78,9 +116,15 @@ export const RoomScreen = ({ route, navigation }) => {
           renderItem={renderMessage}
           keyExtractor={keyExtractor}
           inverted
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
         //contentContainerStyle={{ flexDirection: 'column-reverse' }}
         />
-        {messages.length === 0 &&
+        {!refreshing && messages.length === 0 &&
           <Text style={styles.noDatas}>{t('chat.nomess')}</Text>
         }
         <View style={styles.messageArea}>
@@ -92,6 +136,13 @@ export const RoomScreen = ({ route, navigation }) => {
               placeholderTextColor={THEME.colors.gray}
               onChangeText={(value) => handleChange(value)}
             />
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={styles.file}
+              onPress={() => handleFileSelect(room)}
+            >
+              <LinkIcon size={20} color={THEME.colors.blueGray} />
+            </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.submit}
@@ -117,7 +168,7 @@ const styles = StyleSheet.create({
   topSection: {
     // flex: 1,
     backgroundColor: THEME.colors.white,
-    flexDirection:'row'
+    flexDirection: 'row'
   },
   bottomSection: {
     borderTopWidth: 1,
@@ -127,7 +178,7 @@ const styles = StyleSheet.create({
   back: {
     width: '25%',
     padding: '8%',
-    paddingBottom:'3%',
+    paddingBottom: '3%',
     paddingTop: '10%',
     backgroundColor: THEME.colors.white
   },
@@ -147,6 +198,13 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     height: 45
   },
+  file: {
+    backgroundColor: THEME.colors.lightGray,
+    height: 45,
+    width: 45,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   submit: {
     backgroundColor: THEME.colors.lightGray,
     padding: 5,
@@ -165,7 +223,7 @@ const styles = StyleSheet.create({
     color: THEME.colors.gray,
     fontSize: 18,
     fontWeight: 'bold',
-    textTransform:'capitalize',
+    textTransform: 'capitalize',
     paddingTop: '11%',
   },
   noDatas: {

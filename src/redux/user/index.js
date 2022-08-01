@@ -6,6 +6,7 @@ export const userStateSlice = createSlice({
     isAuthenticated: false,
     hasAddress: false,
     user: {},
+    address: '',
     token: '',
     expire: ''
   },
@@ -27,6 +28,9 @@ export const userStateSlice = createSlice({
       state.user = {},
       state.expire = '',
       state.token = ''
+    },
+    setAddressAction: (state, action) => {
+      state.address = action.payload
     }
   },
 });
@@ -34,6 +38,7 @@ export const userStateSlice = createSlice({
 export const {
   setUserAction,
   resetUserAction,
-  setUserAddress
+  setUserAddress,
+  setAddressAction
 } = userStateSlice.actions;
 export default userStateSlice.reducer;

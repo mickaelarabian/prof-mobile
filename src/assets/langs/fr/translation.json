@@ -30,7 +30,10 @@
       "email": "Email",
       "birth": "Date de naissance",
       "password": "Mot de passe",
-      "repeat": "Répétez votre mot de passe"
+      "repeat": "Répétez votre mot de passe",
+      "student": "Étudiant",
+      "teacher": "Professeur",
+      "type": "Type" 
     }
   },
   "reset": {
@@ -70,7 +73,10 @@
     "firstname": "Prénom",
     "type": "Type",
     "cancel": "Annuler le cours",
-    "join": "Rejoindre le cours"
+    "join": "Rejoindre le cours",
+    "subscribe": "S'inscrire pour",
+    "address": "Adresse",
+    "online": "Cours en distanciel"
   },
   "newcard": {
     "title": "Nouvelle carte",
@@ -109,13 +115,22 @@
     "title": "Discussions",
     "no": "Aucune discussions",
     "nomess": "Aucun message",
-    "type": "Tapez un message"
+    "type": "Tapez un message",
+    "attachment": "Nouvelle pièce jointe",
+    "copy": "copié"
   },
   "explore": {
     "title": "Rechercher",
     "search": "Chercher un lieu, un professeur...",
-    "no": "Aucun professeur à proximité",
-    "research": "Rechercher"
+    "no": "Aucun professeur à proximité de votre adresse",
+    "research": "Rechercher",
+    "advanced": "Recherche avancée",
+    "all": "Toutes les matières",
+    "name": "Rechercher par nom",
+    "date": "Date de lesson",
+    "reset": "Réinitialiser",
+    "athome": "À domicile",
+    "notathome": "À distance"
   },
   "tab":{
     "Dashboard": "Calendrier",

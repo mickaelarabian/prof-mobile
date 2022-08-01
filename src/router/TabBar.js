@@ -12,18 +12,29 @@ import { useTranslation } from 'react-i18next';
 
 export const TabBar = ({ state, navigation }) => {
   const { notifications } = useSelector(s => s.chat);
+  const { user } = useSelector(s => s.user);
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const getIcon = (color, index) => {
-    const icons = [
-      <CalendarIcon color={color} />,
-      <LessonIcon color={color} />,
-      <SearchIcon color={color} />,
-      <ChatIcon color={color} />,
-      <ProfileIcon color={color} />
-    ]
-    return icons[index]
+    if(user?.role?.slug === 'student'){
+      const icons = [
+        <CalendarIcon color={color} />,
+        <LessonIcon color={color} />,
+        <SearchIcon color={color} />,
+        <ChatIcon color={color} />,
+        <ProfileIcon color={color} />
+      ]
+      return icons[index]
+    } else {
+      const icons = [
+        <CalendarIcon color={color} />,
+        <LessonIcon color={color} />,
+        <ChatIcon color={color} />,
+        <ProfileIcon color={color} />
+      ]
+      return icons[index]
+    }
   }
 
   const Tabs = () => state.routes.map((item, index) => {
